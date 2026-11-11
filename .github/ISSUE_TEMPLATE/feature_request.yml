@@ -1,0 +1,21 @@
+name: Feature request
+description: Something you would like the editor to do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What you are trying to do
+      description: The task, as your users see it — "my users paste letters from Word and…". If Word, CKEditor or another editor does it, say how.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How you picture it
+      description: Optional — an input, a menu item, a keyboard shortcut…
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options: ['<we-editor> toolbar / formatting', 'Lists / links / blocks', 'HTML input / output / sanitizer', 'Forms (ControlValueAccessor)', 'Theming / localization', 'Other']

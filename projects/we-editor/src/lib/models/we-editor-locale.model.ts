@@ -1,0 +1,143 @@
+import { InjectionToken } from '@angular/core';
+
+/** Every user-facing string the editor renders. Provide `WE_EDITOR_LOCALE` to translate. */
+export interface WeEditorLocale {
+  toolbar: string;
+  content: string;
+  undo: string;
+  redo: string;
+  blockType: string;
+  paragraph: string;
+  /** Prefix for heading options; rendered as `${heading} ${level}`. */
+  heading: string;
+  fontFamily: string;
+  fontFamilyDefault: string;
+  fontSize: string;
+  fontSizeDefault: string;
+  bold: string;
+  italic: string;
+  underline: string;
+  strike: string;
+  subscript: string;
+  superscript: string;
+  code: string;
+  textColor: string;
+  highlight: string;
+  alignLeft: string;
+  alignCenter: string;
+  alignRight: string;
+  alignJustify: string;
+  bulletList: string;
+  orderedList: string;
+  taskList: string;
+  taskItemToggle: string;
+  indent: string;
+  outdent: string;
+  blockquote: string;
+  codeBlock: string;
+  horizontalRule: string;
+  link: string;
+  unlink: string;
+  linkUrl: string;
+  linkUrlPlaceholder: string;
+  linkNewTab: string;
+  linkApply: string;
+  linkCancel: string;
+  linkInvalid: string;
+  clearFormatting: string;
+}
+
+export const weEditorLocaleEn: WeEditorLocale = {
+  toolbar: 'Editor toolbar',
+  content: 'Rich text editor',
+  undo: 'Undo',
+  redo: 'Redo',
+  blockType: 'Text style',
+  paragraph: 'Paragraph',
+  heading: 'Heading',
+  fontFamily: 'Font',
+  fontFamilyDefault: 'Default font',
+  fontSize: 'Font size',
+  fontSizeDefault: 'Default size',
+  bold: 'Bold',
+  italic: 'Italic',
+  underline: 'Underline',
+  strike: 'Strikethrough',
+  subscript: 'Subscript',
+  superscript: 'Superscript',
+  code: 'Inline code',
+  textColor: 'Text colour',
+  highlight: 'Highlight',
+  alignLeft: 'Align left',
+  alignCenter: 'Align centre',
+  alignRight: 'Align right',
+  alignJustify: 'Justify',
+  bulletList: 'Bulleted list',
+  orderedList: 'Numbered list',
+  taskList: 'Task list',
+  taskItemToggle: 'Mark task as done',
+  indent: 'Increase indent',
+  outdent: 'Decrease indent',
+  blockquote: 'Quote',
+  codeBlock: 'Code block',
+  horizontalRule: 'Horizontal line',
+  link: 'Insert link',
+  unlink: 'Remove link',
+  linkUrl: 'Link address',
+  linkUrlPlaceholder: 'https://example.com',
+  linkNewTab: 'Open in new tab',
+  linkApply: 'Apply',
+  linkCancel: 'Cancel',
+  linkInvalid: 'This link address is not allowed.',
+  clearFormatting: 'Clear formatting'
+};
+
+export const weEditorLocaleTr: WeEditorLocale = {
+  toolbar: 'Editör araç çubuğu',
+  content: 'Zengin metin editörü',
+  undo: 'Geri al',
+  redo: 'Yinele',
+  blockType: 'Metin stili',
+  paragraph: 'Paragraf',
+  heading: 'Başlık',
+  fontFamily: 'Yazı tipi',
+  fontFamilyDefault: 'Varsayılan yazı tipi',
+  fontSize: 'Yazı boyutu',
+  fontSizeDefault: 'Varsayılan boyut',
+  bold: 'Kalın',
+  italic: 'İtalik',
+  underline: 'Altı çizili',
+  strike: 'Üstü çizili',
+  subscript: 'Alt simge',
+  superscript: 'Üst simge',
+  code: 'Satır içi kod',
+  textColor: 'Yazı rengi',
+  highlight: 'Vurgu rengi',
+  alignLeft: 'Sola hizala',
+  alignCenter: 'Ortala',
+  alignRight: 'Sağa hizala',
+  alignJustify: 'İki yana yasla',
+  bulletList: 'Madde işaretli liste',
+  orderedList: 'Numaralı liste',
+  taskList: 'Görev listesi',
+  taskItemToggle: 'Görevi tamamlandı işaretle',
+  indent: 'Girintiyi artır',
+  outdent: 'Girintiyi azalt',
+  blockquote: 'Alıntı',
+  codeBlock: 'Kod bloğu',
+  horizontalRule: 'Yatay çizgi',
+  link: 'Bağlantı ekle',
+  unlink: 'Bağlantıyı kaldır',
+  linkUrl: 'Bağlantı adresi',
+  linkUrlPlaceholder: 'https://ornek.com',
+  linkNewTab: 'Yeni sekmede aç',
+  linkApply: 'Uygula',
+  linkCancel: 'Vazgeç',
+  linkInvalid: 'Bu bağlantı adresine izin verilmiyor.',
+  clearFormatting: 'Biçimlendirmeyi temizle'
+};
+
+export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {
+  providedIn: 'root',
+  factory: () => weEditorLocaleEn
+});

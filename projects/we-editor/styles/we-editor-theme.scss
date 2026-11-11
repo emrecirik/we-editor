@@ -1,0 +1,115 @@
+// ─────────────────────────────────────────────────────────────────────
+// we-editor-angular default theme
+// The editor itself only reads CSS custom properties (`var(--we-editor-xxx, fallback)` in
+// WeEditorComponent's SCSS), so it never depends on any particular design system. This file is a
+// complete, framework-independent set of defaults for light and dark; copy it and override values
+// to match your own branding.
+//
+// Dark mode is opt-in via `[data-theme="dark"]` on an ancestor element, or automatic via
+// `prefers-color-scheme` when no explicit theme is set. The prefers-color-scheme block is guarded
+// with `:not([data-theme="light"])` so an explicit light choice wins over the OS preference, and
+// `[data-theme="dark"]` is repeated afterwards so an explicit dark toggle wins in both directions.
+//
+// A new property must be added to ALL THREE blocks.
+// ─────────────────────────────────────────────────────────────────────
+
+:root {
+  --we-editor-bg: #ffffff;
+  --we-editor-font-color: #212529;
+  --we-editor-muted-color: #878a99;
+  --we-editor-border-color: #dee2e6;
+  --we-editor-radius: 6px;
+  --we-editor-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --we-editor-font-size: 0.9375rem;
+  --we-editor-line-height: 1.6;
+  --we-editor-content-padding: 12px 16px;
+  --we-editor-min-height: 180px;
+  --we-editor-accent-color: #405189;
+  --we-editor-focus-ring: rgba(64, 81, 137, 0.35);
+  --we-editor-toolbar-bg: #f3f6f9;
+  --we-editor-toolbar-gap: 2px;
+  --we-editor-btn-color: #495057;
+  --we-editor-btn-hover-bg: rgba(0, 0, 0, 0.06);
+  --we-editor-btn-active-bg: rgba(64, 81, 137, 0.14);
+  --we-editor-btn-active-color: #405189;
+  --we-editor-btn-disabled-opacity: 0.4;
+  --we-editor-separator-color: #ced4da;
+  --we-editor-input-bg: #ffffff;
+  --we-editor-link-color: #3b6fd8;
+  --we-editor-code-bg: #f1f3f5;
+  --we-editor-code-color: #c2255c;
+  --we-editor-code-font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  --we-editor-blockquote-border: #ced4da;
+  --we-editor-blockquote-color: #5c636a;
+  --we-editor-hr-color: #dee2e6;
+  --we-editor-selection-bg: rgba(64, 81, 137, 0.2);
+  --we-editor-placeholder-color: #adb5bd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --we-editor-bg: #212529;
+    --we-editor-font-color: #ced4da;
+    --we-editor-muted-color: #878a99;
+    --we-editor-border-color: #32383e;
+    --we-editor-radius: 6px;
+    --we-editor-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --we-editor-font-size: 0.9375rem;
+    --we-editor-line-height: 1.6;
+    --we-editor-content-padding: 12px 16px;
+    --we-editor-min-height: 180px;
+    --we-editor-accent-color: #8a9ce6;
+    --we-editor-focus-ring: rgba(138, 156, 230, 0.4);
+    --we-editor-toolbar-bg: #2a2f34;
+    --we-editor-toolbar-gap: 2px;
+    --we-editor-btn-color: #ced4da;
+    --we-editor-btn-hover-bg: rgba(255, 255, 255, 0.08);
+    --we-editor-btn-active-bg: rgba(138, 156, 230, 0.22);
+    --we-editor-btn-active-color: #b4c0f0;
+    --we-editor-btn-disabled-opacity: 0.4;
+    --we-editor-separator-color: #41474e;
+    --we-editor-input-bg: #1b1f23;
+    --we-editor-link-color: #79a6ff;
+    --we-editor-code-bg: #2c3136;
+    --we-editor-code-color: #f783ac;
+    --we-editor-code-font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+    --we-editor-blockquote-border: #495057;
+    --we-editor-blockquote-color: #adb5bd;
+    --we-editor-hr-color: #41474e;
+    --we-editor-selection-bg: rgba(138, 156, 230, 0.3);
+    --we-editor-placeholder-color: #6c757d;
+  }
+}
+
+:root[data-theme='dark'] {
+  --we-editor-bg: #212529;
+  --we-editor-font-color: #ced4da;
+  --we-editor-muted-color: #878a99;
+  --we-editor-border-color: #32383e;
+  --we-editor-radius: 6px;
+  --we-editor-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --we-editor-font-size: 0.9375rem;
+  --we-editor-line-height: 1.6;
+  --we-editor-content-padding: 12px 16px;
+  --we-editor-min-height: 180px;
+  --we-editor-accent-color: #8a9ce6;
+  --we-editor-focus-ring: rgba(138, 156, 230, 0.4);
+  --we-editor-toolbar-bg: #2a2f34;
+  --we-editor-toolbar-gap: 2px;
+  --we-editor-btn-color: #ced4da;
+  --we-editor-btn-hover-bg: rgba(255, 255, 255, 0.08);
+  --we-editor-btn-active-bg: rgba(138, 156, 230, 0.22);
+  --we-editor-btn-active-color: #b4c0f0;
+  --we-editor-btn-disabled-opacity: 0.4;
+  --we-editor-separator-color: #41474e;
+  --we-editor-input-bg: #1b1f23;
+  --we-editor-link-color: #79a6ff;
+  --we-editor-code-bg: #2c3136;
+  --we-editor-code-color: #f783ac;
+  --we-editor-code-font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  --we-editor-blockquote-border: #495057;
+  --we-editor-blockquote-color: #adb5bd;
+  --we-editor-hr-color: #41474e;
+  --we-editor-selection-bg: rgba(138, 156, 230, 0.3);
+  --we-editor-placeholder-color: #6c757d;
+}

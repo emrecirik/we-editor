@@ -1,0 +1,90 @@
+<div class="we-editor" [class.we-editor--focused]="focused" [class.we-editor--disabled]="disabled" [class.we-editor--readonly]="readonly">
+  @if (toolbar.length) {
+    <div class="we-editor__toolbar" role="toolbar" [attr.aria-label]="locale.toolbar" (mousedown)="onToolbarMouseDown($event)">
+      @for (item of toolbar; track $index) {
+        @switch (item) {
+          @case ('|') {
+            <span class="we-editor__separator" role="separator" aria-orientation="vertical"></span>
+          }
+          @case ('blockType') {
+            <select class="we-editor__select" [title]="locale.blockType" [attr.aria-label]="locale.blockType"
+                    [disabled]="disabled || readonly" (change)="setBlock($any($event.target).value)">
+              <option value="-1" [selected]="ui.block === -1" hidden></option>
+              <option value="0" [selected]="ui.block === 0">{{ locale.paragraph }}</option>
+              @for (level of headingLevels; track level) {
+                <option [value]="level" [selected]="ui.block === level">{{ locale.heading }} {{ level }}</option>
+              }
+            </select>
+          }
+          @case ('fontFamily') {
+            <select class="we-editor__select" [title]="locale.fontFamily" [attr.aria-label]="locale.fontFamily"
+                    [disabled]="disabled || readonly" (change)="setStyle('font_family', $any($event.target).value)">
+              <option value="" [selected]="!ui.fontFamily">{{ locale.fontFamilyDefault }}</option>
+              @for (font of fontFamilies; track font.value) {
+                <option [value]="font.value" [selected]="ui.fontFamily === font.value">{{ font.label }}</option>
+              }
+            </select>
+          }
+          @case ('fontSize') {
+            <select class="we-editor__select we-editor__select--narrow" [title]="locale.fontSize" [attr.aria-label]="locale.fontSize"
+                    [disabled]="disabled || readonly" (change)="setStyle('font_size', $any($event.target).value)">
+              <option value="" [selected]="!ui.fontSize">{{ locale.fontSizeDefault }}</option>
+              @for (size of fontSizes; track size.value) {
+                <option [value]="size.value" [selected]="ui.fontSize === size.value">{{ size.label }}</option>
+              }
+            </select>
+          }
+          @case ('textColor') {
+            <label class="we-editor__btn we-editor__color" [title]="locale.textColor" [class.we-editor__btn--disabled]="disabled || readonly">
+              <span aria-hidden="true" [innerHTML]="icon('textColor')" [style.--we-editor-swatch]="ui.textColor"></span>
+              <input type="color" class="we-editor__color-input" [attr.aria-label]="locale.textColor" [disabled]="disabled || readonly"
+                     (change)="setStyle('text_color', $any($event.target).value)" />
+            </label>
+          }
+          @case ('highlight') {
+            <label class="we-editor__btn we-editor__color" [title]="locale.highlight" [class.we-editor__btn--disabled]="disabled || readonly">
+              <span aria-hidden="true" [innerHTML]="icon('highlight')" [style.--we-editor-swatch]="ui.highlight"></span>
+              <input type="color" class="we-editor__color-input" [attr.aria-label]="locale.highlight" [disabled]="disabled || readonly"
+                     (change)="setStyle('highlight', $any($event.target).value)" />
+            </label>
+          }
+          @case ('link') {
+            <button type="button" class="we-editor__btn" data-item="link" [class.we-editor__btn--active]="ui.active.link || linkOpen"
+                    [disabled]="!ui.enabled.link" [title]="locale.link" [attr.aria-label]="locale.link"
+                    [attr.aria-expanded]="linkOpen" (click)="linkOpen ? closeLink() : openLink()">
+              <span aria-hidden="true" [innerHTML]="icon('link')"></span>
+            </button>
+          }
+          @default {
+            @if (button(item); as def) {
+              <button type="button" class="we-editor__btn" [attr.data-item]="item" [class.we-editor__btn--active]="!!ui.active[item]"
+                      [attr.aria-pressed]="def.active ? !!ui.active[item] : null" [disabled]="!ui.enabled[item]"
+                      [title]="locale[def.label]" [attr.aria-label]="locale[def.label]" (click)="run(item)">
+                <span aria-hidden="true" [innerHTML]="icon(def.icon)"></span>
+              </button>
+            }
+          }
+        }
+      }
+    </div>
+  }
+
+  @if (linkOpen) {
+    <form class="we-editor__linkbar" (submit)="applyLink($event)" (keydown.escape)="closeLink()">
+      <input #linkInput class="we-editor__input" type="text" inputmode="url" autocomplete="off" [attr.aria-label]="locale.linkUrl"
+             [placeholder]="locale.linkUrlPlaceholder" [value]="linkUrl" [attr.aria-invalid]="linkError"
+             (input)="linkUrl = $any($event.target).value; linkError = false" />
+      <label class="we-editor__check">
+        <input type="checkbox" [checked]="linkNewTab" (change)="linkNewTab = $any($event.target).checked" />
+        {{ locale.linkNewTab }}
+      </label>
+      <button type="submit" class="we-editor__text-btn we-editor__text-btn--primary">{{ locale.linkApply }}</button>
+      <button type="button" class="we-editor__text-btn" (click)="closeLink()">{{ locale.linkCancel }}</button>
+      @if (linkError) {
+        <span class="we-editor__error" role="alert">{{ locale.linkInvalid }}</span>
+      }
+    </form>
+  }
+
+  <div #content class="we-editor__content"></div>
+</div>

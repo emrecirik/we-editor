@@ -1,0 +1,8 @@
+/* Global styles for the playground app (the theme file is added in angular.json) */
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--we-editor-toolbar-bg, #f3f6f9);
+  color: var(--we-editor-font-color, #212529);
+}

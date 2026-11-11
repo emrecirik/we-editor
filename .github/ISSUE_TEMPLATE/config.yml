@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://github.com/emrecirik/we-editor#docs
+    about: Guides and the API reference.

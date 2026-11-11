@@ -1,0 +1,28 @@
+# Localization
+
+Every string the editor renders is a key of `WeEditorLocale`. English (`weEditorLocaleEn`) is the
+default; Turkish (`weEditorLocaleTr`) ships too.
+
+```ts
+import { WE_EDITOR_LOCALE, weEditorLocaleTr } from 'we-editor-angular';
+
+providers: [{ provide: WE_EDITOR_LOCALE, useValue: weEditorLocaleTr }]
+```
+
+Partial overrides: `{ ...weEditorLocaleEn, bold: 'Strong' }`. The token is resolved per component
+injector, so different editors on one page can use different languages (put the provider on a
+wrapping component).
+
+## Keys
+
+`toolbar`, `content`, `undo`, `redo`, `blockType`, `paragraph`, `heading` (rendered as
+`heading + ' ' + level`), `fontFamily`, `fontFamilyDefault`, `fontSize`, `fontSizeDefault`, `bold`,
+`italic`, `underline`, `strike`, `subscript`, `superscript`, `code`, `textColor`, `highlight`,
+`alignLeft`, `alignCenter`, `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`,
+`taskItemToggle`, `indent`, `outdent`, `blockquote`, `codeBlock`, `horizontalRule`, `link`,
+`unlink`, `linkUrl`, `linkUrlPlaceholder`, `linkNewTab`, `linkApply`, `linkCancel`, `linkInvalid`,
+`clearFormatting`.
+
+Adding a key: interface + `weEditorLocaleEn` + `weEditorLocaleTr` in the same change (a spec fails
+when the two shipped locales differ in keys), and a line here. A new key is a breaking change for
+consumers with a hand-written full locale object — say so in the changelog.

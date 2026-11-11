@@ -1,0 +1,36 @@
+<header class="pg-header">
+  <strong>we-editor-angular</strong>
+  <span class="pg-spacer"></span>
+  <button type="button" (click)="lang = lang === 'en' ? 'tr' : 'en'">{{ lang === 'en' ? 'TR' : 'EN' }}</button>
+  <button type="button" (click)="toggleTheme()">{{ dark ? 'Light' : 'Dark' }} theme</button>
+  <button type="button" (click)="readonly = !readonly">{{ readonly ? 'Editable' : 'Read-only' }}</button>
+  <button type="button" (click)="toggleDisabled()">{{ control.disabled ? 'Enable' : 'Disable' }}</button>
+</header>
+
+<main class="pg-main">
+  <section>
+    @if (lang === 'en') {
+      <we-editor [formControl]="control" [readonly]="readonly" />
+    } @else {
+      <app-editor-tr [control]="control" [readonly]="readonly" />
+    }
+    <p class="pg-status">
+      valid: {{ control.valid }} · dirty: {{ control.dirty }} · touched: {{ control.touched }} ·
+      {{ control.value.length }} characters of HTML
+    </p>
+  </section>
+
+  <section>
+    <h3>Form value (HTML out)</h3>
+    <pre class="pg-code">{{ control.value }}</pre>
+  </section>
+
+  <section>
+    <h3>HTML in</h3>
+    <textarea class="pg-textarea" rows="6" [value]="sourceDraft" (input)="sourceDraft = $any($event.target).value"
+              placeholder="Paste HTML here, then load it into the editor"></textarea>
+    <button type="button" (click)="loadSource()">Load into editor</button>
+    <p>Sanitized by <code>weEditorSanitizeHtml</code>:</p>
+    <pre class="pg-code">{{ sanitizedPreview() }}</pre>
+  </section>
+</main>

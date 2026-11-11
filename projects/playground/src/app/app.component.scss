@@ -1,0 +1,43 @@
+.pg-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--we-editor-bg, #fff);
+  border-bottom: 1px solid var(--we-editor-border-color, #dee2e6);
+}
+
+.pg-spacer {
+  flex: 1;
+}
+
+.pg-main {
+  display: grid;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.pg-status {
+  color: var(--we-editor-muted-color, #878a99);
+  font-size: 0.8125rem;
+}
+
+.pg-code {
+  max-height: 260px;
+  overflow: auto;
+  padding: 12px;
+  background: var(--we-editor-code-bg, #f1f3f5);
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.75rem;
+}
+
+.pg-textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  font-family: var(--we-editor-code-font-family, monospace);
+}

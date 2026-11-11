@@ -1,0 +1,110 @@
+name: Release
+
+# Publishes the library to npm and cuts the matching GitHub release when a v* tag is pushed.
+#
+# Authentication is npm Trusted Publishing (OIDC) — there is no NPM_TOKEN secret and no
+# one-time password. It requires a one-off setup on npmjs.com: package settings →
+# Trusted Publisher → GitHub Actions, with repository `emrecirik/we-editor` and workflow
+# `release.yml`. Until that is configured, this workflow will fail at the publish step.
+#
+# Both halves are idempotent: re-running the workflow, or tagging a version that was already
+# published or already released, is a no-op rather than a red build.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # required to create the GitHub release
+      id-token: write # required for OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # Trusted publishing needs npm 11.5.1+, newer than the version bundled with Node 20.
+      # Pinned to the 11.x line on purpose: npm 12 requires Node 22+, and the build stays on
+      # the same Node version CI uses so the published output matches what CI tested.
+      - name: Update npm
+        run: npm install -g npm@^11.5.1
+
+      - run: npm ci
+
+      - name: Build library
+        run: npm run build:lib
+
+      - name: Unit tests
+        run: npm test
+
+      # On a tag push the tag must match the built version; a manual run just uses the built
+      # version, so the workflow can be exercised without inventing a tag.
+      - name: Resolve the version to publish
+        id: version
+        run: |
+          PKG=$(node -p "require('./dist/we-editor/package.json').version")
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            TAG="${GITHUB_REF_NAME#v}"
+            echo "tag=$TAG package=$PKG"
+            test "$TAG" = "$PKG" || { echo "::error::Tag $GITHUB_REF_NAME does not match package version $PKG"; exit 1; }
+          else
+            echo "manual run — publishing whatever the workspace builds: $PKG"
+          fi
+          echo "value=$PKG" >> "$GITHUB_OUTPUT"
+
+      # Makes the workflow idempotent: re-running it, or tagging a version that was published
+      # by hand, is a no-op instead of a red build.
+      - name: Check whether this version is already on npm
+        id: published
+        run: |
+          if npm view "we-editor-angular@${{ steps.version.outputs.value }}" version > /dev/null 2>&1; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::we-editor-angular@${{ steps.version.outputs.value }} is already published — skipping."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: steps.published.outputs.already == 'false'
+        run: npm publish
+        working-directory: dist/we-editor
+
+      # ─── GitHub release ──────────────────────────────────────────────────────────────
+      # Only on a real tag: a manual run has no tag to attach a release to.
+      - name: Build the release notes from the changelog
+        if: github.ref_type == 'tag'
+        run: |
+          VERSION="${{ steps.version.outputs.value }}"
+          node .github/scripts/changelog-section.mjs "$VERSION" > "$RUNNER_TEMP/notes.md"
+          cat >> "$RUNNER_TEMP/notes.md" <<'FOOTER'
+
+          ---
+
+          Published through npm Trusted Publishing (OIDC) with a signed SLSA provenance attestation.
+
+          **Install:** `npm install we-editor-angular`
+          FOOTER
+
+      - name: Create the GitHub release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="$GITHUB_REF_NAME"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "::notice::A GitHub release for $TAG already exists — skipping."
+            exit 0
+          fi
+          # --latest is deliberately not passed: GitHub already marks a new release latest by
+          # default, and forcing it would be wrong the day a patch is cut for an older line.
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --verify-tag
