@@ -31,6 +31,7 @@ export type WeEditorToolbarItem =
   | 'unlink'
   | 'image'
   | 'table'
+  | 'findReplace'
   | 'clearFormatting';
 
 export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
@@ -42,7 +43,7 @@ export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'bulletList', 'orderedList', 'taskList', 'outdent', 'indent', '|',
   'blockquote', 'codeBlock', 'horizontalRule', '|',
   'link', 'unlink', 'image', 'table', '|',
-  'clearFormatting'
+  'findReplace', 'clearFormatting'
 ];
 
 /** An entry of the font family / font size pickers. `value` is the CSS value written to the text. */

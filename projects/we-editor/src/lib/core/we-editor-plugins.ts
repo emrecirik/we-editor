@@ -2,6 +2,7 @@ import { baseKeymap, chainCommands, toggleMark } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, textblockTypeInputRule, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
+import { search } from 'prosemirror-search';
 import { columnResizing, goToNextCell, tableEditing } from 'prosemirror-tables';
 import { Node as PmNode } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
@@ -36,6 +37,7 @@ export function weEditorPlugins(): Plugin[] {
   return [
     history(),
     inputRules({ rules: weEditorInputRules() }),
+    search(),
     columnResizing(),
     tableEditing(),
     keymap({

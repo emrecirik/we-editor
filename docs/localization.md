@@ -27,7 +27,10 @@ wrapping component).
 `imageUploadFailed`, `table`, `tableRows`, `tableColumns`, `tableHeaderRow`, `tableInsert`,
 `tableCancel`, `tableTools`, `tableAddRowBefore`, `tableAddRowAfter`, `tableDeleteRow`,
 `tableAddColumnBefore`, `tableAddColumnAfter`, `tableDeleteColumn`, `tableMergeCells`,
-`tableSplitCell`, `tableToggleHeaderRow`, `tableToggleHeaderColumn`, `tableDelete`.
+`tableSplitCell`, `tableToggleHeaderRow`, `tableToggleHeaderColumn`, `tableDelete`, `findReplace`,
+`findPlaceholder`, `replacePlaceholder`, `findCaseSensitive`, `findWholeWord`, `findPrevious`,
+`findNext`, `replaceOne`, `replaceAll`, `findClose`, `findCount` (`{current}` and `{total}` are
+replaced), `findNoResults`.
 
 Adding a key: interface + `weEditorLocaleEn` + `weEditorLocaleTr` in the same change (a spec fails
 when the two shipped locales differ in keys), and a line here. A new key is a breaking change for

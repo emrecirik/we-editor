@@ -1,3 +1,4 @@
+import { findNext, replaceAll } from 'prosemirror-search';
 import { Command, EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 
 import {
@@ -9,6 +10,8 @@ import {
   weEditorSetAlign,
   weEditorSetBlock,
   weEditorInsertTable,
+  weEditorSearchCount,
+  weEditorSetSearch,
   weEditorSetImage,
   weEditorSetLink,
   weEditorSetStyle,
@@ -118,6 +121,27 @@ describe('we-editor commands', () => {
     expect(run(stateOf('<p>a</p>', 1), weEditorInsertTable(0, 3))).toBeNull();
     expect(run(stateOf('<p>a</p>', 1), weEditorInsertTable(51, 3))).toBeNull();
     expect(run(stateOf('<pre><code>a</code></pre>', 1), weEditorInsertTable(2, 2))).toBeNull();
+  });
+
+  it('counts, steps through and replaces search matches', () => {
+    let state = weEditorCreateState('<p>Cat cat <strong>cat</strong>alog</p>');
+    const apply = (cmd: Command) => cmd(state, (tr) => (state = state.apply(tr)));
+    apply(weEditorSetSearch({ search: 'cat', replace: 'dog' }));
+    expect(weEditorSearchCount(state)).toEqual({ current: 0, total: 3 });
+    apply(findNext);
+    expect(weEditorSearchCount(state)).toEqual({ current: 1, total: 3 });
+    apply(weEditorSetSearch({ search: 'cat', replace: 'dog', caseSensitive: true, wholeWord: true }));
+    expect(weEditorSearchCount(state).total).toBe(1);
+    apply(replaceAll);
+    expect(weEditorSerializeHtml(state.doc)).toBe('<p>Cat dog <strong>cat</strong>alog</p>');
+    apply(weEditorSetSearch({ search: '' }));
+    expect(weEditorSearchCount(state)).toEqual({ current: 0, total: 0 });
+  });
+
+  it('treats the search text literally, not as a pattern', () => {
+    let state = weEditorCreateState('<p>a.c abc</p>');
+    weEditorSetSearch({ search: 'a.c' })(state, (tr) => (state = state.apply(tr)));
+    expect(weEditorSearchCount(state).total).toBe(1);
   });
 
   it('clears marks and block styles', () => {

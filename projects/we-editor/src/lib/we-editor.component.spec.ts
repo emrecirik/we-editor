@@ -212,6 +212,40 @@ describe('WeEditorComponent', () => {
     expect(el().querySelector('[data-bar="table-tools"]')).toBeNull();
   });
 
+  it('opens find & replace with Ctrl+F, counts matches and replaces all', () => {
+    host.control.setValue('<p>one two one</p>');
+    const content = el().querySelector('.we-editor__prosemirror') as HTMLElement;
+    content.dispatchEvent(new KeyboardEvent('keydown', { key: 'f', ctrlKey: true, bubbles: true, cancelable: true }));
+    fixture.detectChanges();
+    const bar = el().querySelector('form[data-bar="find"]') as HTMLFormElement;
+    expect(bar).not.toBeNull();
+    const [search, , , replace] = Array.from(bar.querySelectorAll('input')) as HTMLInputElement[];
+    search.value = 'one';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(bar.querySelector('.we-editor__count')?.textContent?.trim()).toBe('– of 2');
+    expect(content.querySelectorAll('.ProseMirror-search-match').length).toBe(2);
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    expect(bar.querySelector('.we-editor__count')?.textContent?.trim()).toBe('1 of 2');
+
+    replace.value = '1';
+    replace.dispatchEvent(new Event('input'));
+    const replaceAllBtn = Array.from(bar.querySelectorAll('button')).find((b) => b.textContent?.trim() === weEditorLocaleEn.replaceAll)!;
+    replaceAllBtn.click();
+    fixture.detectChanges();
+    expect(host.control.value).toBe('<p>1 two 1</p>');
+    expect(bar.querySelector('.we-editor__count')?.textContent?.trim()).toBe(weEditorLocaleEn.findNoResults);
+  });
+
+  it('keeps find but hides replace in read-only mode', () => {
+    editor.readonly = true;
+    btn('findReplace').click();
+    fixture.detectChanges();
+    const bar = el().querySelector('form[data-bar="find"]') as HTMLFormElement;
+    expect(bar.querySelectorAll('input[type="text"]').length).toBe(1);
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

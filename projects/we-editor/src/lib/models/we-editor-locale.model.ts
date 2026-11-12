@@ -79,6 +79,19 @@ export interface WeEditorLocale {
   tableToggleHeaderRow: string;
   tableToggleHeaderColumn: string;
   tableDelete: string;
+  findReplace: string;
+  findPlaceholder: string;
+  replacePlaceholder: string;
+  findCaseSensitive: string;
+  findWholeWord: string;
+  findPrevious: string;
+  findNext: string;
+  replaceOne: string;
+  replaceAll: string;
+  findClose: string;
+  /** `{current}` and `{total}` are replaced with numbers. */
+  findCount: string;
+  findNoResults: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -157,7 +170,19 @@ export const weEditorLocaleEn: WeEditorLocale = {
   tableSplitCell: 'Split cell',
   tableToggleHeaderRow: 'Header row',
   tableToggleHeaderColumn: 'Header column',
-  tableDelete: 'Delete table'
+  tableDelete: 'Delete table',
+  findReplace: 'Find and replace',
+  findPlaceholder: 'Find',
+  replacePlaceholder: 'Replace with',
+  findCaseSensitive: 'Match case',
+  findWholeWord: 'Whole words',
+  findPrevious: 'Previous match',
+  findNext: 'Next match',
+  replaceOne: 'Replace',
+  replaceAll: 'Replace all',
+  findClose: 'Close',
+  findCount: '{current} of {total}',
+  findNoResults: 'No results'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -236,7 +261,19 @@ export const weEditorLocaleTr: WeEditorLocale = {
   tableSplitCell: 'Hücreyi böl',
   tableToggleHeaderRow: 'Başlık satırı',
   tableToggleHeaderColumn: 'Başlık sütunu',
-  tableDelete: 'Tabloyu sil'
+  tableDelete: 'Tabloyu sil',
+  findReplace: 'Bul ve değiştir',
+  findPlaceholder: 'Bul',
+  replacePlaceholder: 'Şununla değiştir',
+  findCaseSensitive: 'Büyük/küçük harf',
+  findWholeWord: 'Tam kelime',
+  findPrevious: 'Önceki eşleşme',
+  findNext: 'Sonraki eşleşme',
+  replaceOne: 'Değiştir',
+  replaceAll: 'Tümünü değiştir',
+  findClose: 'Kapat',
+  findCount: '{current} / {total}',
+  findNoResults: 'Sonuç yok'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

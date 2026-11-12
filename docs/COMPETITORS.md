@@ -58,7 +58,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | **Productivity** | | |
 | Word / character count | CK, Ty, TT, Fr, Lx | 🟡 output only, no status bar |
 | Placeholder | CK, Ty, TT, Fr, Q, Lx | ✅ |
-| Find & replace | CK, Ty, Fr | ⬜ |
+| Find & replace | CK, Ty, Fr | ✅ |
 | Autosave hook | CK, Ty, Fr | ⬜ |
 | Full screen | CK, Ty, Fr | ⬜ |
 | Slash commands / quick insert | CK-P, Fr, TT, Lx | ⬜ |

@@ -35,6 +35,8 @@ or copy that file and change values. Dark mode: `data-theme="dark"` on an ancest
 | `--we-editor-hr-color` | Horizontal rule |
 | `--we-editor-selection-bg` | Text selection |
 | `--we-editor-placeholder-color` | Placeholder text in an empty editor |
+| `--we-editor-search-match-bg` | Find & replace: every match |
+| `--we-editor-search-active-bg` | Find & replace: the current match |
 | `--we-editor-swatch` | Set by the component on the colour buttons to show the current colour |
 
 A new property is added to all three blocks of `we-editor-theme.scss`.

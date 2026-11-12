@@ -50,7 +50,13 @@ Disabled state comes from the form control (`control.disable()`).
 `undo`, `redo`, `blockType`, `fontFamily`, `fontSize`, `bold`, `italic`, `underline`, `strike`,
 `subscript`, `superscript`, `code`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
-`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `table`, `clearFormatting`, `'|'`.
+`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `table`, `findReplace`,
+`clearFormatting`, `'|'`.
+
+`findReplace` (also **Ctrl/Cmd+F** while the editor has focus) opens the find bar: search text (a short
+selection is taken over), match count, previous/next (Shift+Enter / Enter), match case, whole words,
+replace and replace all; Esc closes it and removes the highlights. Search text is literal, never a
+pattern. In read-only mode only finding is offered.
 
 `table` opens the insert bar (rows, columns up to 50, header row). While the cursor is in a table a
 **table tools** bar appears: row above/below, delete row, column left/right, delete column, merge
@@ -72,6 +78,7 @@ image files (PNG, JPEG, GIF, WebP, AVIF) are inserted too.
 | Ctrl/Cmd+, / . | Subscript / superscript |
 | Ctrl/Cmd+Z, Ctrl/Cmd+Y, Ctrl/Cmd+Shift+Z | Undo / redo |
 | Shift+Enter | Line break (`<br>`) |
+| Ctrl/Cmd+F | Find & replace |
 | Tab / Shift+Tab | Nest / lift a list item; next / previous table cell (elsewhere Tab moves focus) |
 
 Input rules, typed at the start of a block (not inside code blocks): `# ` … `###### ` heading,
@@ -106,7 +113,10 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,
+image), `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
+(highlight / clear a query), `weEditorSearchCount(state)` (`{ current, total }`, capped at
+`WE_EDITOR_MAX_SEARCH_COUNT` = 1000; `findNext`, `findPrev`, `replaceNext`, `replaceAll` come from
+`prosemirror-search`), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,
 column, merge and header commands come from `prosemirror-tables` (`addRowAfter`, `mergeCells`, …) and
 work on `editorView` directly; queries `weEditorImageAt`, `weEditorMarkActive`, `weEditorMarkAt`,
 `weEditorBlockLevel`, `weEditorAlignAt`, `weEditorListAt`, `weEditorLinkAt`.

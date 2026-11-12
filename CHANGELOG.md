@@ -28,6 +28,11 @@ Target: 0.1.0 — first public release (roadmap phase F0).
   column resize by drag, cell selection, Tab / Shift+Tab between cells; `weEditorInsertTable`,
   `WE_EDITOR_MAX_CELL_SPAN`, `WE_EDITOR_MAX_TABLE_SIZE`; new locale keys `table*`; DOM baseline
   re-recorded. New dependency `prosemirror-tables` (MIT).
+- Find & replace (P1 / F1.7): `findReplace` toolbar item and Ctrl/Cmd+F, match highlights and count,
+  previous/next, match case, whole words, replace, replace all; `weEditorSetSearch`,
+  `weEditorSearchCount`; theme variables `--we-editor-search-match-bg`,
+  `--we-editor-search-active-bg`; locale keys `find*`/`replace*`; DOM baseline re-recorded. New
+  dependency `prosemirror-search` (MIT).
 - Keyboard shortcuts (Ctrl/Cmd+B/I/U/E, Ctrl/Cmd+Shift+X, Ctrl/Cmd+,/., undo/redo, Shift+Enter,
   Tab/Shift+Tab in lists).
 - Schema-based HTML allowlist: `weEditorSanitizeHtml`, `weEditorParseHtml`,

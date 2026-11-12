@@ -138,6 +138,22 @@ we-editor {
   }
 }
 
+.we-editor__findbar {
+  gap: 6px;
+
+  .we-editor__btn {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.we-editor__count {
+  min-width: 5em;
+  color: var(--we-editor-muted-color, #878a99);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
 .we-editor__input--tiny {
   width: 4.5em;
 }
@@ -233,6 +249,14 @@ we-editor {
     height: 0;
     color: var(--we-editor-placeholder-color, #adb5bd);
     pointer-events: none;
+  }
+
+  .ProseMirror-search-match {
+    background: var(--we-editor-search-match-bg, rgba(255, 212, 59, 0.45));
+  }
+
+  .ProseMirror-active-search-match {
+    background: var(--we-editor-search-active-bg, rgba(253, 126, 20, 0.55));
   }
 
   .tableWrapper {

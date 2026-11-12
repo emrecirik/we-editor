@@ -4,7 +4,7 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": ["prosemirror-commands", "prosemirror-history", "prosemirror-inputrules", "prosemirror-keymap", "prosemirror-model", "prosemirror-schema-list", "prosemirror-state", "prosemirror-tables", "prosemirror-transform", "prosemirror-view"],
+  "allowedNonPeerDependencies": ["prosemirror-commands", "prosemirror-history", "prosemirror-inputrules", "prosemirror-keymap", "prosemirror-model", "prosemirror-schema-list", "prosemirror-search", "prosemirror-state", "prosemirror-tables", "prosemirror-transform", "prosemirror-view"],
   "assets": [
     "./styles/we-editor-theme.scss"
   ]

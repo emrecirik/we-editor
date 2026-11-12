@@ -69,6 +69,13 @@
               <span aria-hidden="true" [innerHTML]="icon('table')"></span>
             </button>
           }
+          @case ('findReplace') {
+            <button type="button" class="we-editor__btn" data-item="findReplace" [class.we-editor__btn--active]="findOpen"
+                    [disabled]="disabled" [title]="locale.findReplace" [attr.aria-label]="locale.findReplace"
+                    [attr.aria-expanded]="findOpen" (click)="findOpen ? closeFind() : openFind()">
+              <span aria-hidden="true" [innerHTML]="icon('findReplace')"></span>
+            </button>
+          }
           @default {
             @if (button(item); as def) {
               <button type="button" class="we-editor__btn" [attr.data-item]="item" [class.we-editor__btn--active]="!!ui.active[item]"
@@ -126,6 +133,42 @@
       @if (imageError) {
         <span class="we-editor__error" role="alert">{{ imageError === 'invalid' ? locale.imageInvalid : locale.imageUploadFailed }}</span>
       }
+    </form>
+  }
+
+  @if (findOpen) {
+    <form class="we-editor__linkbar we-editor__findbar" data-bar="find" role="search" [attr.aria-label]="locale.findReplace"
+          (submit)="findStep($event)" (keydown.escape)="closeFind()">
+      <input #findInput class="we-editor__input" type="text" autocomplete="off" [attr.aria-label]="locale.findPlaceholder"
+             [placeholder]="locale.findPlaceholder" [value]="find.search" (input)="setFind({ search: $any($event.target).value })"
+             (keydown.shift.enter)="findStep($event, true)" />
+      <span class="we-editor__count" aria-live="polite">{{ matchLabel() }}</span>
+      <button type="button" class="we-editor__btn" [title]="locale.findPrevious" [attr.aria-label]="locale.findPrevious"
+              [disabled]="!ui.matches.total" (click)="findStep(null, true)">
+        <span aria-hidden="true" [innerHTML]="icon('findPrevious')"></span>
+      </button>
+      <button type="submit" class="we-editor__btn" [title]="locale.findNext" [attr.aria-label]="locale.findNext"
+              [disabled]="!ui.matches.total">
+        <span aria-hidden="true" [innerHTML]="icon('findNext')"></span>
+      </button>
+      <label class="we-editor__check">
+        <input type="checkbox" [checked]="find.caseSensitive" (change)="setFind({ caseSensitive: $any($event.target).checked })" />
+        {{ locale.findCaseSensitive }}
+      </label>
+      <label class="we-editor__check">
+        <input type="checkbox" [checked]="find.wholeWord" (change)="setFind({ wholeWord: $any($event.target).checked })" />
+        {{ locale.findWholeWord }}
+      </label>
+      @if (!readonly) {
+        <input class="we-editor__input" type="text" autocomplete="off" [attr.aria-label]="locale.replacePlaceholder"
+               [placeholder]="locale.replacePlaceholder" [value]="find.replace" (input)="setFind({ replace: $any($event.target).value })"
+               (keydown.enter)="$event.preventDefault(); replaceStep()" />
+        <button type="button" class="we-editor__text-btn" [disabled]="!ui.matches.total" (click)="replaceStep()">{{ locale.replaceOne }}</button>
+        <button type="button" class="we-editor__text-btn" [disabled]="!ui.matches.total" (click)="replaceStep(true)">{{ locale.replaceAll }}</button>
+      }
+      <button type="button" class="we-editor__btn" [title]="locale.findClose" [attr.aria-label]="locale.findClose" (click)="closeFind()">
+        <span aria-hidden="true" [innerHTML]="icon('close')"></span>
+      </button>
     </form>
   }
 

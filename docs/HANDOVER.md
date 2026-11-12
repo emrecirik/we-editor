@@ -34,7 +34,7 @@ Last updated: 2026-11-12 (session 2: F0.12, F1.2 images, first push). Owner: Emr
 
 ## Next tasks (in order)
 
-1. **Competitor parity, section P of `docs/ROADMAP.md`** (P1 find & replace next). Matrix and sources:
+1. **Competitor parity, section P of `docs/ROADMAP.md`** (P1 done; P2 autolink next). Matrix and sources:
    `docs/COMPETITORS.md`. Landing page `docs/index.html` + live demo `/demo/` via
    `.github/workflows/pages.yml` (https://emrecirik.github.io/we-editor/). When P is done: first npm
    release, free.

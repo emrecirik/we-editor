@@ -1,6 +1,7 @@
 import { chainCommands, exitCode, lift, setBlockType, toggleMark, wrapIn } from 'prosemirror-commands';
 import { Mark, MarkType, Node as PmNode, NodeType } from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapInList } from 'prosemirror-schema-list';
+import { SearchQuery, getSearchState, setSearchState } from 'prosemirror-search';
 import { Command, EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 
 import {
@@ -380,4 +381,38 @@ export function weEditorInsertTable(rows: number, cols: number, header = true): 
     }
     return true;
   };
+}
+
+/** Find & replace options, as the find bar edits them. */
+export interface WeEditorSearch {
+  search: string;
+  replace?: string;
+  caseSensitive?: boolean;
+  wholeWord?: boolean;
+}
+
+/** Sets (or, with an empty `search`, clears) the highlighted search query. Never changes the document. */
+export function weEditorSetSearch(options: WeEditorSearch): Command {
+  return (state, dispatch) => {
+    if (dispatch) dispatch(setSearchState(state.tr, new SearchQuery({ ...options, literal: true })));
+    return true;
+  };
+}
+
+/** Largest number of matches counted for the "n of m" label. */
+export const WE_EDITOR_MAX_SEARCH_COUNT = 1000;
+
+/** Number of matches of the active query and the 1-based index of the selected one (0 = none selected). */
+export function weEditorSearchCount(state: EditorState): { current: number; total: number } {
+  const query = getSearchState(state)?.query;
+  if (!query?.valid) return { current: 0, total: 0 };
+  const { from, to } = state.selection;
+  let total = 0;
+  let current = 0;
+  for (let pos = 0, hit = query.findNext(state, pos); hit && total < WE_EDITOR_MAX_SEARCH_COUNT; hit = query.findNext(state, pos)) {
+    total++;
+    if (hit.from === from && hit.to === to) current = total;
+    pos = hit.to > hit.from ? hit.to : hit.to + 1;
+  }
+  return { current, total };
 }

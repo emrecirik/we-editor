@@ -13,6 +13,7 @@ Runtime dependencies of the published package `we-editor-angular`, verified from
 | prosemirror-history | 1.5.1 | MIT | Undo/redo |
 | prosemirror-inputrules | 1.5.1 | MIT | Markdown-style input rules |
 | prosemirror-tables | 1.8.5 | MIT | Tables: cell selection, merge/split, column resize |
+| prosemirror-search | 1.1.1 | MIT | Find & replace: query, match highlights, replace |
 | prosemirror-keymap | 1.2.3 | MIT | Keyboard shortcuts |
 | prosemirror-schema-list | 1.6.0 | MIT | List commands |
 | orderedmap (transitive) | 2.1.1 | MIT | |

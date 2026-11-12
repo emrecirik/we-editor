@@ -36,7 +36,7 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 | F1.4 | Page break | Page-break node, visible in the editor, honoured when printing |
 | F1.5 | Print / PDF export | Print stylesheet; `print()` through the browser; optional we-report hook — no paid library |
 | F1.6 | Paste from Word | MSO list paragraphs become real lists, `mso-*` styles stripped, tables kept |
-| F1.7 | Find / replace | Ctrl+F panel, match case / whole word, highlight decorations, replace all |
+| F1.7 | Find / replace ✅ | Ctrl+F panel, match case / whole word, highlight decorations, replace all |
 | F1.8 | Spell-check hook | Native `spellcheck` on by default; `WeEditorSpellChecker` interface for a server checker with decorations |
 | F1.9 | Word / character counter | Status bar + `(stats)` output |
 | F1.10 | Full screen | Toggle; Esc exits; focus kept |
@@ -84,7 +84,7 @@ Froala / Quill / Lexical first. Everything here ships free in the MIT package.
 
 | # | Item | Notes |
 |---|---|---|
-| P1 | Find & replace | `prosemirror-search` (MIT) or own decorations; Ctrl+F panel, match case / whole word (= F1.7) |
+| P1 ✅ | Find & replace | `prosemirror-search` (MIT) or own decorations; Ctrl+F panel, match case / whole word (= F1.7) |
 | P2 | Autolink | URLs become links while typing and on paste; same `weEditorSafeUrl` check |
 | P3 | Media embed | YouTube / Vimeo iframe node, provider allowlist on the parsed `src` |
 | P4 | Colour palette + special characters + emoji | Palette popover with "remove colour" (F0.4), character picker |

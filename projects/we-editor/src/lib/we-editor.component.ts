@@ -19,6 +19,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { redo, undo } from 'prosemirror-history';
 import { Node as PmNode } from 'prosemirror-model';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { findNext, findPrev, replaceAll, replaceNext } from 'prosemirror-search';
 import {
   addColumnAfter,
   addColumnBefore,
@@ -53,7 +54,9 @@ import {
   weEditorRemoveLink,
   weEditorSetAlign,
   weEditorSetBlock,
+  weEditorSearchCount,
   weEditorSetImage,
+  weEditorSetSearch,
   weEditorSetLink,
   weEditorSetStyle,
   weEditorToggleCodeBlock,
@@ -164,6 +167,7 @@ interface WeEditorUiState {
   link: string | null;
   image: WeEditorImageAttrs | null;
   inTable: boolean;
+  matches: { current: number; total: number };
   table: Partial<Record<TableAction, boolean>>;
 }
 
@@ -224,6 +228,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     ref?.nativeElement.focus();
   }
 
+  @ViewChild('findInput')
+  private set findInput(ref: ElementRef<HTMLInputElement> | undefined) {
+    ref?.nativeElement.select();
+  }
+
   @ViewChild('tableInput')
   private set tableInput(ref: ElementRef<HTMLInputElement> | undefined) {
     ref?.nativeElement.focus();
@@ -247,9 +256,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected imageError: '' | 'invalid' | 'upload' = '';
   protected image: { url: string; alt: string; width: string; align: string } = { url: '', alt: '', width: '', align: '' };
   protected tableOpen = false;
+  protected findOpen = false;
+  protected find = { search: '', replace: '', caseSensitive: false, wholeWord: false };
   protected tableSize = { rows: 3, cols: 3, header: true };
   protected readonly tableActions = Object.keys(TABLE_ACTIONS) as TableAction[];
-  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', textColor: null, highlight: null, link: null, image: null, inTable: false, table: {} };
+  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', textColor: null, highlight: null, link: null, image: null, inTable: false, table: {}, matches: { current: 0, total: 0 } };
 
   private readonly icons = inject(WE_EDITOR_ICONS);
   private readonly sanitizer = inject(DomSanitizer);
@@ -291,6 +302,15 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
         return this.insertImageFiles(event.dataTransfer?.files, pos);
       },
       dispatchTransaction: (tr) => this.apply(tr),
+      handleKeyDown: (_view, event) => {
+        if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === 'f') {
+          event.preventDefault();
+          this.openFind();
+          this.cdr.markForCheck();
+          return true;
+        }
+        return false;
+      },
       handleDOMEvents: {
         focus: () => this.setFocused(true),
         blur: () => {
@@ -392,7 +412,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.linkUrl = this.ui.link ?? '';
     this.linkNewTab = false;
     this.linkError = false;
-    this.imageOpen = this.tableOpen = false;
+    this.imageOpen = this.tableOpen = this.findOpen = false;
     this.linkOpen = true;
   }
 
@@ -422,7 +442,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     const img = this.ui.image;
     this.image = { url: img?.src ?? '', alt: img?.alt ?? '', width: img?.width ? String(img.width) : '', align: img?.align ?? '' };
     this.imageError = '';
-    this.linkOpen = this.tableOpen = false;
+    this.linkOpen = this.tableOpen = this.findOpen = false;
     this.imageOpen = true;
   }
 
@@ -455,7 +475,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
 
   protected openTable(): void {
     if (!this.view || !this.isEditable()) return;
-    this.linkOpen = this.imageOpen = false;
+    this.linkOpen = this.imageOpen = this.findOpen = false;
     this.tableOpen = true;
   }
 
@@ -470,11 +490,54 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.view?.focus();
   }
 
+  protected openFind(): void {
+    if (!this.view) return;
+    const { from, to, empty } = this.view.state.selection;
+    // Like most editors: a short single-line selection becomes the search text.
+    const selected = empty ? '' : this.view.state.doc.textBetween(from, to, ' ');
+    if (selected && selected.length <= 100 && !selected.includes('\n')) this.find = { ...this.find, search: selected };
+    this.linkOpen = this.imageOpen = this.tableOpen = false;
+    this.findOpen = true;
+    this.updateSearch();
+  }
+
+  protected closeFind(): void {
+    this.findOpen = false;
+    if (this.view) weEditorSetSearch({ search: '' })(this.view.state, this.view.dispatch);
+    this.view?.focus();
+  }
+
+  protected setFind(patch: Partial<WeEditorComponent['find']>): void {
+    this.find = { ...this.find, ...patch };
+    this.updateSearch();
+  }
+
+  /** Next (or previous) match; works in read-only mode too, it only moves the selection. */
+  protected findStep(event: Event | null, back = false): void {
+    event?.preventDefault();
+    if (this.view) (back ? findPrev : findNext)(this.view.state, this.view.dispatch);
+  }
+
+  protected replaceStep(all = false): void {
+    this.exec(all ? replaceAll : replaceNext);
+  }
+
+  protected matchLabel(): string {
+    const { current, total } = this.ui.matches;
+    if (!this.find.search) return '';
+    if (!total) return this.locale.findNoResults;
+    return this.locale.findCount.replace('{current}', String(current || '–')).replace('{total}', String(total));
+  }
+
   protected runTable(action: TableAction): void {
     this.exec(TABLE_ACTIONS[action]);
   }
 
   // ── Internals ───────────────────────────────────────────────────────
+
+  private updateSearch(): void {
+    if (this.view) weEditorSetSearch(this.find)(this.view.state, this.view.dispatch);
+  }
 
   /** Pasted or dropped image files: stored, then inserted at `pos` (or the selection). */
   private insertImageFiles(files: FileList | undefined, pos?: number): boolean {
@@ -571,6 +634,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     const table: WeEditorUiState['table'] = {};
     if (inTable) for (const a of this.tableActions) table[a] = editable && TABLE_ACTIONS[a](state);
     active.table = inTable;
+    active.findReplace = this.findOpen;
+    enabled.findReplace = !!view;
     enabled.table = editable;
     const image = weEditorImageAt(state);
     active.image = !!image;
@@ -586,7 +651,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       link: weEditorLinkAt(state),
       image,
       inTable,
-      table
+      table,
+      matches: this.findOpen ? weEditorSearchCount(state) : { current: 0, total: 0 }
     };
     this.cdr.markForCheck();
   }
