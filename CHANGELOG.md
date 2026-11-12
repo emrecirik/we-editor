@@ -45,4 +45,5 @@ Target: 0.1.0 — first public release (roadmap phase F0).
 - ProseMirror commands and queries exported for advanced use (`weEditorToggleList`,
   `weEditorSetLink`, …).
 - Theme `styles/we-editor-theme.scss` (light, `prefers-color-scheme` dark, `[data-theme='dark']`).
-- `WE_EDITOR_LOCALE` with `weEditorLocaleEn` and `weEditorLocaleTr`; `WE_EDITOR_ICONS` inline SVG set.
+- `WE_EDITOR_LOCALE` with `weEditorLocaleEn`, `weEditorLocaleTr`, `weEditorLocaleDe`, `weEditorLocaleFr`
+  and `weEditorLocaleEs`; `WE_EDITOR_ICONS` inline SVG set.

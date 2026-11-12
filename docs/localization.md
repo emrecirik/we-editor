@@ -1,7 +1,8 @@
 # Localization
 
 Every string the editor renders is a key of `WeEditorLocale`. English (`weEditorLocaleEn`) is the
-default; Turkish (`weEditorLocaleTr`) ships too.
+default; Turkish (`weEditorLocaleTr`), German (`weEditorLocaleDe`), French (`weEditorLocaleFr`) and
+Spanish (`weEditorLocaleEs`) ship too.
 
 ```ts
 import { WE_EDITOR_LOCALE, weEditorLocaleTr } from 'we-editor-angular';
@@ -33,6 +34,6 @@ wrapping component).
 replaced), `findNoResults`, `media`, `mediaUrl`, `mediaUrlPlaceholder`, `mediaInsert`, `mediaCancel`,
 `mediaInvalid`.
 
-Adding a key: interface + `weEditorLocaleEn` + `weEditorLocaleTr` in the same change (a spec fails
-when the two shipped locales differ in keys), and a line here. A new key is a breaking change for
+Adding a key: interface + every shipped locale (En, Tr, De, Fr, Es) in the same change (specs fail
+when a shipped locale misses a key), and a line here. A new key is a breaking change for
 consumers with a hand-written full locale object — say so in the changelog.

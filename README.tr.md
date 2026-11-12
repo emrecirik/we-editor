@@ -3,6 +3,7 @@
 [![CI](https://github.com/emrecirik/we-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/emrecirik/we-editor/actions/workflows/ci.yml)
 [![MIT Lisansı](https://img.shields.io/badge/lisans-MIT-blue.svg)](LICENSE)
 [![Angular 18-22](https://img.shields.io/badge/Angular-18%20%E2%80%93%2022-dd0031.svg)](https://angular.dev)
+[![Languages](https://img.shields.io/badge/UI-EN%20%C2%B7%20TR%20%C2%B7%20DE%20%C2%B7%20FR%20%C2%B7%20ES-5b5bd6.svg)](docs/localization.md)
 
 [English](README.md)
 
@@ -31,7 +32,7 @@ Angular için ücretsiz, temalanabilir zengin metin editörü; [ProseMirror](htt
 - **Güvenli HTML giriş/çıkış:** belge şeması allowlist'tir — script, olay işleyicileri,
   `javascript:` bağlantıları ve güvensiz CSS değerleri atılır; editörsüz kullanım için
   `weEditorSanitizeHtml()` dışa açıktır
-- CSS custom property ile açık/koyu tema; Türkçe ve İngilizce arayüz; satır içi SVG ikonlar
+- CSS custom property ile açık/koyu tema; Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca arayüz; satır içi SVG ikonlar
 
 ## Kurulum
 

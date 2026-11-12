@@ -5,6 +5,7 @@
 export * from './lib/we-editor.component';
 
 export * from './lib/models/we-editor-locale.model';
+export * from './lib/models/we-editor-locale-extra.model';
 export * from './lib/models/we-editor-icons.model';
 export * from './lib/models/we-editor-toolbar.model';
 

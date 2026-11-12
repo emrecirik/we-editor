@@ -3,6 +3,7 @@
 [![CI](https://github.com/emrecirik/we-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/emrecirik/we-editor/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Angular 18-22](https://img.shields.io/badge/Angular-18%20%E2%80%93%2022-dd0031.svg)](https://angular.dev)
+[![Languages](https://img.shields.io/badge/UI-EN%20%C2%B7%20TR%20%C2%B7%20DE%20%C2%B7%20FR%20%C2%B7%20ES-5b5bd6.svg)](docs/localization.md)
 [![No CSS framework](https://img.shields.io/badge/CSS%20framework-none-success.svg)](docs/theming.md)
 
 [Türkçe](README.tr.md)
@@ -32,7 +33,7 @@ No CSS framework, no icon font, no commercial dependency. A sibling of
 - **Safe HTML in and out:** the document schema is the allowlist — scripts, event handlers,
   `javascript:` links and unsafe CSS values are dropped; `weEditorSanitizeHtml()` is exported for use
   without an editor
-- Light and dark theme through CSS custom properties; English and Turkish UI; inline SVG icons
+- Light and dark theme through CSS custom properties; English, Turkish, German, French and Spanish UI; inline SVG icons
 
 ## Install
 
