@@ -1,20 +1,34 @@
 # Handover — read this first
 
-Last updated: 2026-11-12 (end of session 2). Owner: Emre CIRIK (`emrecirik`).
+Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
 
 ## Current state
 
 - Angular 18.2 workspace (mirrors `C:\Projects\we-grid`): library `projects/we-editor` (npm name
-  `we-editor-angular`, version `0.1.0`, **not on npm yet**), `projects/playground` (also the live demo),
+  `we-editor-angular`, version `0.1.0`, **release commit ready, first npm publish pending** — see manual
+  steps), `projects/playground` (feature sandbox), `projects/studio` (the live demo, mirrors we-grid Studio:
+  EN/TR, light/dark, Editor / Safe HTML / Get started tabs),
   CI / compat / release / pages workflows, `.claude/` agent + rule + skills (local only, gitignored).
 - Core decision: **ProseMirror used directly** — `docs/decisions/0001-editor-core.md`.
 - Public repo `github.com/emrecirik/we-editor`, `main` pushed (HTTPS remote — this machine has no
   GitHub SSH key; `gh auth setup-git` is the credential helper).
-- **Live:** landing page https://emrecirik.github.io/we-editor/ and demo
-  https://emrecirik.github.io/we-editor/demo/ — rebuilt by `.github/workflows/pages.yml` on every push.
+- **Live:** https://emrecirik.github.io/we-editor/ redirects to the Studio at `/studio/`; the old landing
+  page is `/features.html`; `/demo/` redirects to the Studio. Rebuilt by `.github/workflows/pages.yml` on
+  every push. Repo description, homepage and topics set (2026-11-12).
+- Author name is written **`Emre CIRIK`** everywhere (no Turkish letters) — fixed 2026-11-12 at Emre's request.
 - Goal set by Emre (2026-11-12): **no feature CKEditor 5 / TinyMCE / TipTap / Froala / Quill /
   Lexical have that we lack, plus features they do not have**; then publish free (MIT) on npm. Gap
   matrix with sources: `docs/COMPETITORS.md`; ordered work list: section **P** of `docs/ROADMAP.md`.
+
+### Done in session 3 (2026-11-12)
+
+| Item | What | Commit |
+|---|---|---|
+| Name | `Emre Çırık` → `Emre CIRIK` in READMEs, landing page, decision note | `5b5ecf3` |
+| Studio | `projects/studio` live demo like we-grid / we-report; CI builds it; Pages serves it at `/studio/` | `8af368e` |
+| Locales | `weEditorLocaleDe` / `Fr` / `Es` (UI languages now as in we-grid) | `b5d12d9` |
+| P4 | Colour palette bar (swatches, custom, remove, recent) + special characters / emoji picker | `41008d9` |
+| 0.1.0 | Changelog section, READMEs (npm badge, feature list, status) | release commit |
 
 ### Done in session 2 (each one commit, pushed, CI green)
 
@@ -52,8 +66,9 @@ excluded locally (`.git/info/exclude`), as in we-grid.
 
 ## Next tasks (in order)
 
-1. **P4** — colour palette popover with "remove colour" + recent colours (replaces the native picker;
-   closes open decision 3) and a special-characters picker. Then **P5…P18** in `docs/ROADMAP.md`
+0. **First npm publish of 0.1.0** (manual steps below), then bind Trusted Publishing; later
+   releases go through the `editor-release` skill (tag-driven).
+1. **P5…P18** in `docs/ROADMAP.md`
    order: code-block language + highlighting, source HTML view + preview (decision note on the
    code-editor dependency first), line height / case change / format painter / styles, full screen +
    autosave + status bar, paste from Word / Google Docs, image & table captions + cell properties,

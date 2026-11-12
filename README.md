@@ -1,5 +1,6 @@
 # we-editor-angular
 
+[![npm version](https://img.shields.io/npm/v/we-editor-angular.svg)](https://www.npmjs.com/package/we-editor-angular)
 [![CI](https://github.com/emrecirik/we-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/emrecirik/we-editor/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Angular 18-22](https://img.shields.io/badge/Angular-18%20%E2%80%93%2022-dd0031.svg)](https://angular.dev)
@@ -16,20 +17,29 @@ A free, themeable rich-text editor for Angular, built on [ProseMirror](https://p
 No CSS framework, no icon font, no commercial dependency. A sibling of
 [we-grid-angular](https://github.com/emrecirik/we-grid).
 
-> **Status: 0.1.0 in development (F0).** Not on npm yet. The roadmap goes to Word-level documents,
+> **Status: 0.1.0, the first public release.** The roadmap goes on to Word-level documents,
 > spreadsheet tables, a design/code/split HTML editor and mail-merge templates — see
 > [docs/ROADMAP.md](docs/ROADMAP.md).
 
-## Features (F0)
+## Features
 
 - `<we-editor>` standalone component, a **form control** (`formControlName`, `[formControl]`,
   `ngModel`) whose value is an HTML string; `''` when empty so `Validators.required` works
 - Bold, italic, underline, strikethrough, subscript, superscript, inline code
-- Paragraph and headings H1–H6, font family, font size, text colour, highlight
+- Paragraph and headings H1–H6, font family, font size
+- **Colour palette** for text colour and highlight: swatches, custom colour, remove colour, recent colours
 - Align left / centre / right / justify, indent / outdent
 - Bulleted, numbered and task lists (nest with Tab / Shift+Tab, clickable checkboxes)
 - Quote, code block, horizontal line, links (with "open in new tab"), clear formatting
-- Undo / redo, keyboard shortcuts
+- **Tables:** insert any size, add/delete rows and columns, merge/split cells, header row/column,
+  drag to resize columns
+- **Images:** URL, upload, paste or drag-and-drop; resize handle, float left/right, centre, alt text;
+  plug in your own upload endpoint (`imageUpload`)
+- **YouTube / Vimeo** embeds with an iframe allowlist
+- **Find & replace** (Ctrl/Cmd+F) with match case, whole words, replace all
+- **Special characters and emoji** picker
+- Markdown shortcuts (`# `, `- `, `1. `, `> `, ```` ``` ````), autolink for typed and pasted URLs
+- Placeholder, word and character counts (`stats` output), undo / redo, keyboard shortcuts
 - **Safe HTML in and out:** the document schema is the allowlist — scripts, event handlers,
   `javascript:` links and unsafe CSS values are dropped; `weEditorSanitizeHtml()` is exported for use
   without an editor

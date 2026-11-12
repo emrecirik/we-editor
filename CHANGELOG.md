@@ -4,7 +4,9 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
-Target: 0.1.0 — first public release (roadmap phase F0).
+## 0.1.0 — 2026-11-12
+
+First public release.
 
 ### Added
 
