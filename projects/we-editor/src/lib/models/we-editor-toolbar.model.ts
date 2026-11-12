@@ -29,6 +29,7 @@ export type WeEditorToolbarItem =
   | 'horizontalRule'
   | 'link'
   | 'unlink'
+  | 'image'
   | 'clearFormatting';
 
 export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
@@ -39,7 +40,7 @@ export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', '|',
   'bulletList', 'orderedList', 'taskList', 'outdent', 'indent', '|',
   'blockquote', 'codeBlock', 'horizontalRule', '|',
-  'link', 'unlink', '|',
+  'link', 'unlink', 'image', '|',
   'clearFormatting'
 ];
 

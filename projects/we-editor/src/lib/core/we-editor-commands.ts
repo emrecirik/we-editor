@@ -1,12 +1,15 @@
 import { chainCommands, exitCode, lift, setBlockType, toggleMark, wrapIn } from 'prosemirror-commands';
 import { Mark, MarkType, Node as PmNode, NodeType } from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapInList } from 'prosemirror-schema-list';
-import { Command, EditorState, TextSelection } from 'prosemirror-state';
+import { Command, EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 
 import {
   WE_EDITOR_MAX_INDENT,
+  WE_EDITOR_MAX_IMAGE_WIDTH,
   WeEditorAlign,
+  WeEditorImageAlign,
   weEditorSafeColor,
+  weEditorSafeImageSrc,
   weEditorSafeFontFamily,
   weEditorSafeFontSize,
   weEditorSafeUrl,
@@ -296,4 +299,52 @@ export const weEditorRemoveLink: Command = (state, dispatch) => {
 
 export function weEditorLinkAt(state: EditorState): string | null {
   return (weEditorMarkAt(state, s.marks['link'])?.attrs['href'] as string | undefined) ?? null;
+}
+
+/** Attributes of an image node, as the image bar edits them. */
+export interface WeEditorImageAttrs {
+  src: string;
+  alt?: string | null;
+  title?: string | null;
+  width?: number | null;
+  align?: WeEditorImageAlign | null;
+}
+
+function imageAttrs(attrs: WeEditorImageAttrs): Record<string, unknown> | null {
+  const src = weEditorSafeImageSrc(attrs.src);
+  if (!src) return null;
+  const width = attrs.width && attrs.width > 0 ? Math.min(Math.round(attrs.width), WE_EDITOR_MAX_IMAGE_WIDTH) : null;
+  const align = attrs.align === 'left' || attrs.align === 'center' || attrs.align === 'right' ? attrs.align : null;
+  return { src, alt: attrs.alt?.trim() || null, title: attrs.title?.trim() || null, width, align };
+}
+
+/** The selected image node (a `NodeSelection` on an image), if any. */
+export function weEditorImageAt(state: EditorState): WeEditorImageAttrs | null {
+  const sel = state.selection;
+  return sel instanceof NodeSelection && sel.node.type === s.nodes['image'] ? (sel.node.attrs as WeEditorImageAttrs) : null;
+}
+
+/**
+ * Inserts an image at the selection, or updates the selected image. Refuses an unsafe `src`
+ * (see `weEditorSafeImageSrc`).
+ */
+export function weEditorSetImage(attrs: WeEditorImageAttrs): Command {
+  return (state, dispatch) => {
+    const clean = imageAttrs(attrs);
+    if (!clean) return false;
+    const type = s.nodes['image'];
+    const selected = weEditorImageAt(state);
+    if (!selected && !state.selection.$from.parent.type.contentMatch.matchType(type)) return false;
+    if (dispatch) {
+      const tr = state.tr;
+      if (selected) {
+        const pos = state.selection.from;
+        tr.setNodeMarkup(pos, undefined, clean).setSelection(NodeSelection.create(tr.doc, pos));
+      } else {
+        tr.replaceSelectionWith(type.create(clean));
+      }
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };
 }

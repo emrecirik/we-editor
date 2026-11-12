@@ -30,6 +30,54 @@ export function weEditorSafeUrl(url: string | null | undefined): string | null {
   return ['http', 'https', 'mailto', 'tel'].includes(scheme[1]) ? trimmed : null;
 }
 
+/** How an image sits in the text: inline (default), floated left/right, or centred on its own line. */
+export type WeEditorImageAlign = 'left' | 'center' | 'right';
+
+/** Largest image width the editor writes, in pixels. */
+export const WE_EDITOR_MAX_IMAGE_WIDTH = 4000;
+
+const IMAGE_DATA_RE = /^data:image\/(png|jpe?g|gif|webp|avif);base64,[a-z0-9+/=\s]+$/i;
+
+/**
+ * Returns the URL when it is safe as an image `src`, otherwise `null`: http(s), relative URLs, and
+ * base64 raster `data:image/…` URLs. SVG data URLs and every other scheme are rejected.
+ */
+export function weEditorSafeImageSrc(src: string | null | undefined): string | null {
+  const v = src?.trim();
+  if (!v) return null;
+  if (/^data:/i.test(v)) return IMAGE_DATA_RE.test(v) ? v : null;
+  const safe = weEditorSafeUrl(v);
+  return safe && !/^(mailto|tel):/i.test(safe) ? safe : null;
+}
+
+function imageAttrsFromDom(dom: HTMLElement): Record<string, unknown> | false {
+  const src = weEditorSafeImageSrc(dom.getAttribute('src'));
+  if (!src) return false;
+  const width = parseInt(dom.getAttribute('width') || dom.style.width || '', 10);
+  const float = dom.style.cssFloat || dom.getAttribute('align') || '';
+  const centred = dom.style.display === 'block' && dom.style.marginLeft === 'auto' && dom.style.marginRight === 'auto';
+  return {
+    src,
+    alt: dom.getAttribute('alt') || null,
+    title: dom.getAttribute('title') || null,
+    width: Number.isFinite(width) && width > 0 ? Math.min(width, WE_EDITOR_MAX_IMAGE_WIDTH) : null,
+    align: float === 'left' || float === 'right' ? float : centred ? 'center' : null
+  };
+}
+
+function imageStyle(align: WeEditorImageAlign | null): string | null {
+  switch (align) {
+    case 'left':
+      return 'float: left; margin: 0 1em 0.5em 0';
+    case 'right':
+      return 'float: right; margin: 0 0 0.5em 1em';
+    case 'center':
+      return 'display: block; margin-left: auto; margin-right: auto';
+    default:
+      return null;
+  }
+}
+
 const COLOR_RE = /^(#[0-9a-f]{3,8}|rgba?\(\s*[\d.]+%?\s*,\s*[\d.]+%?\s*,\s*[\d.]+%?\s*(,\s*[\d.]+%?\s*)?\)|[a-z]{3,20})$/i;
 const FONT_SIZE_RE = /^\d{1,3}(\.\d{1,2})?(px|pt|em|rem|%)$/;
 const FONT_FAMILY_RE = /^[\w\s,'"-]{1,120}$/;
@@ -175,6 +223,24 @@ const nodes: Record<string, NodeSpec> = {
   },
 
   text: { group: 'inline' },
+
+  // Inline, so images can sit between words; `align` floats or centres them.
+  image: {
+    inline: true,
+    group: 'inline',
+    draggable: true,
+    attrs: { src: {}, alt: { default: null }, title: { default: null }, width: { default: null }, align: { default: null } },
+    parseDOM: [{ tag: 'img[src]', getAttrs: (dom) => imageAttrsFromDom(dom as HTMLElement) }],
+    toDOM: (node): DOMOutputSpec => {
+      const attrs: Record<string, string> = { src: weEditorSafeImageSrc(node.attrs['src']) ?? '' };
+      if (node.attrs['alt']) attrs['alt'] = node.attrs['alt'];
+      if (node.attrs['title']) attrs['title'] = node.attrs['title'];
+      if (node.attrs['width']) attrs['width'] = String(node.attrs['width']);
+      const style = imageStyle(node.attrs['align']);
+      if (style) attrs['style'] = style;
+      return ['img', attrs];
+    }
+  },
 
   hard_break: {
     inline: true,

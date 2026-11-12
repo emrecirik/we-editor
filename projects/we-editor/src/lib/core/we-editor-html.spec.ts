@@ -41,7 +41,7 @@ describe('weEditorSanitizeHtml', () => {
   });
 
   it('drops scripts, event handlers and unknown elements but keeps their text', () => {
-    const out = weEditorSanitizeHtml('<p onclick="x()">a<script>alert(1)</script><img src=x onerror="alert(1)"><iframe src="https://evil"></iframe><blink>b</blink></p>');
+    const out = weEditorSanitizeHtml('<p onclick="x()">a<script>alert(1)</script><img src="javascript:alert(1)" onerror="alert(1)"><iframe src="https://evil"></iframe><blink>b</blink></p>');
     expect(out).toBe('<p>ab</p>');
   });
 
@@ -67,6 +67,20 @@ describe('weEditorSanitizeHtml', () => {
     expect(weEditorSerializeHtml(weEditorParseHtml(''))).toBe('');
     expect(weEditorSanitizeHtml('<p></p>')).toBe('');
     expect(weEditorSanitizeHtml(null)).toBe('');
+  });
+
+  it('keeps safe images with alt, width and position', () => {
+    expect(weEditorSanitizeHtml('<p>a<img src="https://x.com/a.png" alt="A" width="120" style="float: right">b</p>')).toBe(
+      '<p>a<img src="https://x.com/a.png" alt="A" width="120" style="float: right; margin: 0px 0px 0.5em 1em;">b</p>'
+    );
+    expect(weEditorSanitizeHtml('<p><img src="data:image/png;base64,iVBORw0KGgo="></p>')).toBe('<p><img src="data:image/png;base64,iVBORw0KGgo="></p>');
+  });
+
+  it('drops images with unsafe sources and their event handlers', () => {
+    expect(weEditorSanitizeHtml('<p>a<img src="javascript:alert(1)">b</p>')).toBe('<p>ab</p>');
+    expect(weEditorSanitizeHtml('<p>a<img src="data:image/svg+xml;base64,PHN2Zz4=">b</p>')).toBe('<p>ab</p>');
+    expect(weEditorSanitizeHtml('<p>a<img src="data:text/html;base64,PHNjcmlwdD4=">b</p>')).toBe('<p>ab</p>');
+    expect(weEditorSanitizeHtml('<p><img src="x.png" onerror="alert(1)"></p>')).toBe('<p><img src="x.png"></p>');
   });
 
   it('wraps bare text in a paragraph', () => {

@@ -21,7 +21,10 @@ wrapping component).
 `alignLeft`, `alignCenter`, `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`,
 `taskItemToggle`, `indent`, `outdent`, `blockquote`, `codeBlock`, `horizontalRule`, `link`,
 `unlink`, `linkUrl`, `linkUrlPlaceholder`, `linkNewTab`, `linkApply`, `linkCancel`, `linkInvalid`,
-`clearFormatting`.
+`clearFormatting`, `image`, `imageUrl`, `imageUrlPlaceholder`, `imageUpload`, `imageAlt`,
+`imageAltPlaceholder`, `imageWidth`, `imageAlign`, `imageAlignInline`, `imageAlignLeft`,
+`imageAlignCenter`, `imageAlignRight`, `imageApply`, `imageCancel`, `imageInvalid`,
+`imageUploadFailed`.
 
 Adding a key: interface + `weEditorLocaleEn` + `weEditorLocaleTr` in the same change (a spec fails
 when the two shipped locales differ in keys), and a line here. A new key is a breaking change for

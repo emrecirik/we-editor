@@ -1,4 +1,4 @@
-import { Command, EditorState, TextSelection } from 'prosemirror-state';
+import { Command, EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 
 import {
   weEditorClearFormatting,
@@ -8,6 +8,7 @@ import {
   weEditorRemoveLink,
   weEditorSetAlign,
   weEditorSetBlock,
+  weEditorSetImage,
   weEditorSetLink,
   weEditorSetStyle,
   weEditorToggleList,
@@ -85,6 +86,20 @@ describe('we-editor commands', () => {
     expect(weEditorLinkAt(stateOf(html, 4))).toBe('https://a.com');
     expect(run(stateOf(html, 4), weEditorSetLink('https://b.com'))).toBe('<p>x<a href="https://b.com">link</a>y</p>');
     expect(run(stateOf(html, 4), weEditorRemoveLink)).toBe('<p>xlinky</p>');
+  });
+
+  it('inserts an image and refuses unsafe sources or code blocks', () => {
+    expect(run(stateOf('<p>ab</p>', 2), weEditorSetImage({ src: 'a.png', alt: ' A ', width: 99.6, align: 'center' }))).toBe(
+      '<p>a<img src="a.png" alt="A" width="100" style="display: block; margin-left: auto; margin-right: auto;">b</p>'
+    );
+    expect(run(stateOf('<p>ab</p>', 2), weEditorSetImage({ src: 'javascript:alert(1)' }))).toBeNull();
+    expect(run(stateOf('<pre><code>ab</code></pre>', 2), weEditorSetImage({ src: 'a.png' }))).toBeNull();
+  });
+
+  it('updates the selected image', () => {
+    const state = weEditorCreateState('<p>a<img src="a.png">b</p>');
+    const selected = state.apply(state.tr.setSelection(NodeSelection.create(state.doc, 2)));
+    expect(run(selected, weEditorSetImage({ src: 'b.png', width: 50 }))).toBe('<p>a<img src="b.png" width="50">b</p>');
   });
 
   it('clears marks and block styles', () => {

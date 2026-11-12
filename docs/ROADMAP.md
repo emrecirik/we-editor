@@ -31,7 +31,7 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 | # | Item | AC |
 |---|---|---|
 | F1.1 | Tables (`prosemirror-tables`, MIT) | Insert N×M, add/remove row/column, merge/split, header row, column resize by drag, Tab navigation; `<table>` round-trip with `colspan`/`rowspan`/`colwidth` |
-| F1.2 | Images | `imageUpload` hook returning a URL (no base64 by default), resize handles, align left/centre/right/inline, alt text; `src` allowlist (http/https/relative, `data:image` opt-in) |
+| F1.2 | Images ✅ | `imageUpload` hook returning a URL (base64 `data:` URL when no hook is set), resize handles, align left/centre/right/inline, alt text; `src` allowlist (http/https/relative, raster `data:image` allowed, SVG never) |
 | F1.3 | Page layout | Page size (A4/Letter), margins, "page view" with visible page boundaries |
 | F1.4 | Page break | Page-break node, visible in the editor, honoured when printing |
 | F1.5 | Print / PDF export | Print stylesheet; `print()` through the browser; optional we-report hook — no paid library |

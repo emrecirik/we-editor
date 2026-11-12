@@ -152,6 +152,41 @@ describe('WeEditorComponent', () => {
     expect(content.hasAttribute('aria-placeholder')).toBeFalse();
   });
 
+  it('inserts an image through the image bar and rejects an unsafe address', () => {
+    select(6, 6);
+    btn('image').click();
+    fixture.detectChanges();
+    const bar = el().querySelector('form[data-bar="image"]') as HTMLFormElement;
+    const [url, , alt] = Array.from(bar.querySelectorAll('input')) as HTMLInputElement[];
+    url.value = 'javascript:alert(1)';
+    url.dispatchEvent(new Event('input'));
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    expect(el().querySelector('.we-editor__error')?.textContent).toContain(weEditorLocaleEn.imageInvalid);
+
+    url.value = 'https://x.com/a.png';
+    url.dispatchEvent(new Event('input'));
+    alt.value = 'A';
+    alt.dispatchEvent(new Event('input'));
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    expect(host.control.value).toBe('<p>hello<img src="https://x.com/a.png" alt="A"> world</p>');
+    expect(el().querySelector('form[data-bar="image"]')).toBeNull();
+  });
+
+  it('stores pasted image files through imageUpload', async () => {
+    editor.imageUpload = (file) => Promise.resolve(`https://cdn.test/${file.name}`);
+    const data = new DataTransfer();
+    data.items.add(new File(['x'], 'p.png', { type: 'image/png' }));
+    data.items.add(new File(['<svg/>'], 'evil.svg', { type: 'image/svg+xml' }));
+    select(1, 1);
+    const content = el().querySelector('.we-editor__prosemirror') as HTMLElement;
+    content.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r));
+    expect(host.control.value).toBe('<p><img src="https://cdn.test/p.png">hello world</p>');
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

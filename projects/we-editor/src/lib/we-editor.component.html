@@ -55,6 +55,13 @@
               <span aria-hidden="true" [innerHTML]="icon('link')"></span>
             </button>
           }
+          @case ('image') {
+            <button type="button" class="we-editor__btn" data-item="image" [class.we-editor__btn--active]="ui.active.image || imageOpen"
+                    [disabled]="!ui.enabled.image" [title]="locale.image" [attr.aria-label]="locale.image"
+                    [attr.aria-expanded]="imageOpen" (click)="imageOpen ? closeImage() : openImage()">
+              <span aria-hidden="true" [innerHTML]="icon('image')"></span>
+            </button>
+          }
           @default {
             @if (button(item); as def) {
               <button type="button" class="we-editor__btn" [attr.data-item]="item" [class.we-editor__btn--active]="!!ui.active[item]"
@@ -82,6 +89,35 @@
       <button type="button" class="we-editor__text-btn" (click)="closeLink()">{{ locale.linkCancel }}</button>
       @if (linkError) {
         <span class="we-editor__error" role="alert">{{ locale.linkInvalid }}</span>
+      }
+    </form>
+  }
+
+  @if (imageOpen) {
+    <form class="we-editor__linkbar" data-bar="image" (submit)="applyImage($event)" (keydown.escape)="closeImage()">
+      <input #imageInput class="we-editor__input" type="text" inputmode="url" autocomplete="off" [attr.aria-label]="locale.imageUrl"
+             [placeholder]="locale.imageUrlPlaceholder" [value]="image.url" [attr.aria-invalid]="imageError === 'invalid'"
+             (input)="image.url = $any($event.target).value; imageError = ''" />
+      <label class="we-editor__text-btn we-editor__file" [class.we-editor__btn--disabled]="imageBusy">
+        {{ locale.imageUpload }}
+        <input type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" [disabled]="imageBusy"
+               (change)="pickImageFile($any($event.target))" />
+      </label>
+      <input class="we-editor__input" type="text" autocomplete="off" [attr.aria-label]="locale.imageAlt"
+             [placeholder]="locale.imageAltPlaceholder" [value]="image.alt" (input)="image.alt = $any($event.target).value" />
+      <input class="we-editor__input we-editor__input--narrow" type="number" min="16" max="4000" [attr.aria-label]="locale.imageWidth"
+             [placeholder]="locale.imageWidth" [value]="image.width" (input)="image.width = $any($event.target).value" />
+      <select class="we-editor__select" [attr.aria-label]="locale.imageAlign" [title]="locale.imageAlign"
+              (change)="image.align = $any($event.target).value">
+        <option value="" [selected]="!image.align">{{ locale.imageAlignInline }}</option>
+        <option value="left" [selected]="image.align === 'left'">{{ locale.imageAlignLeft }}</option>
+        <option value="center" [selected]="image.align === 'center'">{{ locale.imageAlignCenter }}</option>
+        <option value="right" [selected]="image.align === 'right'">{{ locale.imageAlignRight }}</option>
+      </select>
+      <button type="submit" class="we-editor__text-btn we-editor__text-btn--primary" [disabled]="imageBusy">{{ locale.imageApply }}</button>
+      <button type="button" class="we-editor__text-btn" (click)="closeImage()">{{ locale.imageCancel }}</button>
+      @if (imageError) {
+        <span class="we-editor__error" role="alert">{{ imageError === 'invalid' ? locale.imageInvalid : locale.imageUploadFailed }}</span>
       }
     </form>
   }

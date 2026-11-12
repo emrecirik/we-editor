@@ -42,6 +42,9 @@ Rules of thumb:
 - `href` passes `weEditorSafeUrl` (http/https/mailto/tel/relative) on parse, on command, and again on
   serialize. CSS values (`color`, `font-size`, `font-family`, `background-color`) pass regex
   validators; anything else is dropped.
+- Image `src` passes `weEditorSafeImageSrc`: http/https/relative, or a base64 raster
+  `data:image/(png|jpeg|gif|webp|avif)` URL. SVG and other `data:` types are dropped (on parse, on
+  command, in the node view, on serialize). Uploads accept the same raster types only.
 - The page's live DOM is never written with `innerHTML` from document content. The only
   `[innerHTML]` binding renders the developer-provided SVG icons (`WE_EDITOR_ICONS`), the same
   pattern as we-grid.

@@ -133,6 +133,30 @@ we-editor {
   }
 }
 
+.we-editor__input--narrow {
+  width: 7em;
+}
+
+// The real file input stays in the label (keyboard- and screen-reader-reachable) but invisible.
+.we-editor__file {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+
+  &:focus-within {
+    outline: 2px solid var(--we-editor-accent-color, #405189);
+    outline-offset: 1px;
+  }
+
+  input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
 .we-editor__check {
   display: inline-flex;
   align-items: center;
@@ -186,6 +210,65 @@ we-editor {
     height: 0;
     color: var(--we-editor-placeholder-color, #adb5bd);
     pointer-events: none;
+  }
+
+  .we-editor__image {
+    display: inline;
+
+    &--left {
+      float: left;
+      margin: 0 1em 0.5em 0;
+    }
+
+    &--right {
+      float: right;
+      margin: 0 0 0.5em 1em;
+    }
+
+    &--center {
+      display: block;
+      text-align: center;
+    }
+  }
+
+  .we-editor__image-frame {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    line-height: 0;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  .ProseMirror-selectednode .we-editor__image-frame {
+    outline: 2px solid var(--we-editor-accent-color, #405189);
+  }
+
+  .we-editor__image-handle {
+    display: none;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--we-editor-bg, #fff);
+    background: var(--we-editor-accent-color, #405189);
+    cursor: nwse-resize;
+    touch-action: none;
+  }
+
+  &[contenteditable='true'] .ProseMirror-selectednode .we-editor__image-handle {
+    display: block;
+  }
+
+  // Keep floated images inside the editor box.
+  &::after {
+    content: '';
+    display: block;
+    clear: both;
   }
 
   ::selection {

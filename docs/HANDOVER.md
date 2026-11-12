@@ -1,6 +1,6 @@
 # Handover — read this first
 
-Last updated: 2026-11-11 (session 2: F0.12). Owner: Emre Çırık (`emrecirik`).
+Last updated: 2026-11-12 (session 2: F0.12, F1.2 images, first push). Owner: Emre Çırık (`emrecirik`).
 
 ## Current state
 
@@ -9,7 +9,8 @@ Last updated: 2026-11-11 (session 2: F0.12). Owner: Emre Çırık (`emrecirik`).
   compat workflows, `.claude/` agent + rule + skills (local only, gitignored like we-grid).
 - Core decision: **ProseMirror used directly** — `docs/decisions/0001-editor-core.md`.
 - F0 status per item: `docs/ROADMAP.md` (F0.1–F0.12 done, F0.4 and F0.14 partial, F0.13 open).
-- Git: local repository, one commit on `main`. **No remote, nothing pushed, nothing published.**
+- Git: public `github.com/emrecirik/we-editor` (HTTPS remote; this machine has no GitHub SSH key). CI green on
+  the first push. **Not on npm yet.**
 
 ### Verified in this session
 
@@ -33,14 +34,13 @@ Last updated: 2026-11-11 (session 2: F0.12). Owner: Emre Çırık (`emrecirik`).
 
 ## Next tasks (in order)
 
-1. **Push + first CI run** (after Emre creates the repo, see below): fix whatever CI/compat finds;
-   run compat for 19–22.
-2. **F0.13** — keyboard/a11y: toolbar roving tabindex, `Mod-k` opens the link bar, focus return,
+1. **F1.1 Tables** (in progress next) with `prosemirror-tables`.
+2. Run the compat workflow for 19–22 on GitHub (`compat.yml`); fix what it finds.
+3. **F0.13** — keyboard/a11y: toolbar roving tabindex, `Mod-k` opens the link bar, focus return,
    Escape handling; check with NVDA. Then cut **0.1.0** (`editor-release` skill).
-3. **F1.1 Tables** with `prosemirror-tables` (merge/split, column resize, header row, Tab nav) —
-   biggest F1 item; design the table toolbar/context menu first.
-4. **F1.2 Images** — `imageUpload` hook (consumer returns URL), resize, align, alt text, `src`
-   allowlist; then F1.7 find/replace.
+4. CKEditor parity order agreed with Emre (2026-11-12): find/replace (F1.7), source HTML view (F3.1),
+   colour palette + special characters, media embed, paste from Word/Google Docs (F1.6), line
+   height / letter case / full screen, then a11y (F0.13).
 
 Before F2 and F3 start, write the decision notes they call for (`<we-sheet>` integration; code
 editor dependency for the HTML view).
@@ -91,9 +91,7 @@ bash .github/compat/probe.sh 22 <scratch-dir> "$PWD/.github/compat/probe.ts" "$P
 
 ## Manual steps for Emre
 
-1. **GitHub repo**: create public `emrecirik/we-editor` (empty, no README), then
-   `git remote add origin https://github.com/emrecirik/we-editor.git` and `git push -u origin main`.
-   CI runs on the push.
+1. ~~GitHub repo~~ — done 2026-11-12 (public, pushed).
 2. **npm Trusted Publishing** — the Trusted Publisher form lives in an existing package's settings
    (as of the last check; confirm on docs.npmjs.com/trusted-publishers), so the first version needs
    one manual publish:

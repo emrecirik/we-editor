@@ -24,6 +24,7 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `fontFamilies` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_FAMILIES` | `value` is the CSS `font-family` written to the text (must pass `weEditorSafeFontFamily`) |
 | `fontSizes` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_SIZES` | `value` is a CSS size (`px`, `pt`, `em`, `rem`, `%`) |
 | `readonly` | `boolean` | `false` | Content not editable, toolbar disabled; the value is still readable |
+| `imageUpload` | `(file: File) => Promise<string>` \| `null` | `null` | Stores an image file (upload button, paste, drop) and resolves to its URL. When `null`, files are embedded as base64 `data:` URLs |
 | `placeholder` | `string` | `''` | Shown in an empty document (also set as `aria-placeholder`) |
 
 Disabled state comes from the form control (`control.disable()`).
@@ -49,7 +50,12 @@ Disabled state comes from the form control (`control.disable()`).
 `undo`, `redo`, `blockType`, `fontFamily`, `fontSize`, `bold`, `italic`, `underline`, `strike`,
 `subscript`, `superscript`, `code`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
-`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `clearFormatting`, `'|'`.
+`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `clearFormatting`, `'|'`.
+
+`image` opens the image bar: address, upload from computer, alternative text, width in px, and
+position (in line with text / left or right with text wrapping / centred). With an image selected
+the bar edits it; dragging the corner handle of a selected image resizes it. Pasted and dropped
+image files (PNG, JPEG, GIF, WebP, AVIF) are inserted too.
 
 ### Keyboard
 
@@ -75,6 +81,7 @@ code block. Backspace right after a rule fired restores the typed text.
 | `weEditorParseHtml(html, schema?)` | HTML → ProseMirror document |
 | `weEditorSerializeHtml(doc, schema?)` | ProseMirror document → HTML (`''` for an empty doc) |
 | `weEditorSafeUrl(url)` | URL if http/https/mailto/tel/relative, else `null` |
+| `weEditorSafeImageSrc(src)` | Image URL if http/https/relative or a base64 raster `data:image/…`, else `null` |
 | `weEditorSafeColor`, `weEditorSafeFontSize`, `weEditorSafeFontFamily` | CSS value validators |
 
 Output format: inline styles are written by the browser's CSSOM, so colours come out as `rgb(...)`
@@ -83,7 +90,8 @@ and declarations end with `;` (`<span style="color: rgb(255, 0, 0);">`).
 ## Schema and commands
 
 `weEditorSchema` (nodes: `paragraph`, `heading`, `blockquote`, `code_block`, `horizontal_rule`,
-`bullet_list`, `ordered_list`, `list_item`, `task_list`, `task_item`, `hard_break`; marks: `link`,
+`bullet_list`, `ordered_list`, `list_item`, `task_list`, `task_item`, `hard_break`, `image` (inline;
+`src`, `alt`, `title`, `width`, `align`); marks: `link`,
 `bold`, `italic`, `underline`, `strike`, `subscript`, `superscript`, `code`, `font_family`,
 `font_size`, `text_color`, `highlight`).
 
@@ -91,8 +99,11 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorSetStyle`, `weEditorClearFormatting`, `weEditorSetBlock`, `weEditorSetAlign`,
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
-`weEditorSetLink`, `weEditorRemoveLink`; queries `weEditorMarkActive`, `weEditorMarkAt`,
+`weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
+image); queries `weEditorImageAt`, `weEditorMarkActive`, `weEditorMarkAt`,
 `weEditorBlockLevel`, `weEditorAlignAt`, `weEditorListAt`, `weEditorLinkAt`.
+
+Node views: `WeEditorImageView` (resize handle).
 
 State: `weEditorCreateState(html)`, `weEditorPlugins()`, `weEditorInputRules()`, `weEditorStats(doc)`,
 `WeEditorTaskItemView`.

@@ -4,12 +4,12 @@ import { InputRule, inputRules, textblockTypeInputRule, undoInputRule, wrappingI
 import { keymap } from 'prosemirror-keymap';
 import { Node as PmNode } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
-import { EditorState, Plugin } from 'prosemirror-state';
+import { EditorState, NodeSelection, Plugin } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 
 import { weEditorInsertHardBreak } from './we-editor-commands';
 import { weEditorParseHtml } from './we-editor-html';
-import { weEditorSchema } from './we-editor-schema';
+import { WE_EDITOR_MAX_IMAGE_WIDTH, weEditorSafeImageSrc, weEditorSchema } from './we-editor-schema';
 
 const s = weEditorSchema;
 
@@ -130,5 +130,87 @@ export class WeEditorTaskItemView implements NodeView {
       return;
     }
     this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, checked: this.checkbox.checked }));
+  }
+}
+
+/**
+ * Renders an image with a drag handle (bottom-right corner, visible while the image is selected)
+ * that resizes it. Keyboard users set the width in the image bar instead.
+ */
+export class WeEditorImageView implements NodeView {
+  readonly dom: HTMLSpanElement;
+  private readonly frame: HTMLSpanElement;
+  private readonly img: HTMLImageElement;
+
+  constructor(
+    private node: PmNode,
+    private readonly view: EditorView,
+    private readonly getPos: () => number | undefined
+  ) {
+    this.dom = document.createElement('span');
+    this.frame = document.createElement('span');
+    this.frame.className = 'we-editor__image-frame';
+    this.img = document.createElement('img');
+    this.img.draggable = false;
+    const handle = document.createElement('span');
+    handle.className = 'we-editor__image-handle';
+    handle.setAttribute('aria-hidden', 'true');
+    handle.addEventListener('pointerdown', (e) => this.startResize(e, handle));
+    this.frame.append(this.img, handle);
+    this.dom.appendChild(this.frame);
+    this.render();
+  }
+
+  update(node: PmNode): boolean {
+    if (node.type !== this.node.type) return false;
+    this.node = node;
+    this.render();
+    return true;
+  }
+
+  stopEvent(event: Event): boolean {
+    return (event.target as HTMLElement).classList?.contains('we-editor__image-handle') ?? false;
+  }
+
+  ignoreMutation(): boolean {
+    return true;
+  }
+
+  private render(): void {
+    const { src, alt, title, width, align } = this.node.attrs;
+    // The schema already validated src; the DOM serializer is not used here, so check again.
+    this.img.src = weEditorSafeImageSrc(src) ?? '';
+    this.img.alt = alt ?? '';
+    if (title) this.img.title = title;
+    else this.img.removeAttribute('title');
+    this.img.style.width = width ? `${width}px` : '';
+    this.dom.className = `we-editor__image${align ? ` we-editor__image--${align}` : ''}`;
+  }
+
+  private startResize(event: PointerEvent, handle: HTMLElement): void {
+    if (!this.view.editable) return;
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = this.img.getBoundingClientRect().width;
+    // Dragging a right-floated image's handle leftwards should still grow it from its anchored edge.
+    const direction = this.node.attrs['align'] === 'right' ? -1 : 1;
+    let width = startWidth;
+    handle.setPointerCapture(event.pointerId);
+    const move = (e: PointerEvent): void => {
+      width = Math.max(16, Math.min(WE_EDITOR_MAX_IMAGE_WIDTH, startWidth + direction * (e.clientX - startX)));
+      this.img.style.width = `${Math.round(width)}px`;
+    };
+    const end = (): void => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', end);
+      handle.removeEventListener('pointercancel', end);
+      const pos = this.getPos();
+      if (pos == null || Math.round(width) === Math.round(startWidth)) return this.render();
+      const tr = this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, width: Math.round(width) });
+      this.view.dispatch(tr.setSelection(NodeSelection.create(tr.doc, pos)));
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', end);
+    handle.addEventListener('pointercancel', end);
   }
 }

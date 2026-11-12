@@ -45,6 +45,22 @@ export interface WeEditorLocale {
   linkCancel: string;
   linkInvalid: string;
   clearFormatting: string;
+  image: string;
+  imageUrl: string;
+  imageUrlPlaceholder: string;
+  imageUpload: string;
+  imageAlt: string;
+  imageAltPlaceholder: string;
+  imageWidth: string;
+  imageAlign: string;
+  imageAlignInline: string;
+  imageAlignLeft: string;
+  imageAlignCenter: string;
+  imageAlignRight: string;
+  imageApply: string;
+  imageCancel: string;
+  imageInvalid: string;
+  imageUploadFailed: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -89,7 +105,23 @@ export const weEditorLocaleEn: WeEditorLocale = {
   linkApply: 'Apply',
   linkCancel: 'Cancel',
   linkInvalid: 'This link address is not allowed.',
-  clearFormatting: 'Clear formatting'
+  clearFormatting: 'Clear formatting',
+  image: 'Insert image',
+  imageUrl: 'Image address',
+  imageUrlPlaceholder: 'https://example.com/picture.png',
+  imageUpload: 'Upload from computer',
+  imageAlt: 'Alternative text',
+  imageAltPlaceholder: 'Describe the image for screen readers',
+  imageWidth: 'Width (px)',
+  imageAlign: 'Position',
+  imageAlignInline: 'In line with text',
+  imageAlignLeft: 'Left, text wraps',
+  imageAlignCenter: 'Centred',
+  imageAlignRight: 'Right, text wraps',
+  imageApply: 'Apply',
+  imageCancel: 'Cancel',
+  imageInvalid: 'This image address is not allowed.',
+  imageUploadFailed: 'The image could not be added.'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -134,7 +166,23 @@ export const weEditorLocaleTr: WeEditorLocale = {
   linkApply: 'Uygula',
   linkCancel: 'Vazgeç',
   linkInvalid: 'Bu bağlantı adresine izin verilmiyor.',
-  clearFormatting: 'Biçimlendirmeyi temizle'
+  clearFormatting: 'Biçimlendirmeyi temizle',
+  image: 'Resim ekle',
+  imageUrl: 'Resim adresi',
+  imageUrlPlaceholder: 'https://ornek.com/resim.png',
+  imageUpload: 'Bilgisayardan yükle',
+  imageAlt: 'Alternatif metin',
+  imageAltPlaceholder: 'Resmi ekran okuyucular için tanımlayın',
+  imageWidth: 'Genişlik (px)',
+  imageAlign: 'Konum',
+  imageAlignInline: 'Metinle aynı satırda',
+  imageAlignLeft: 'Solda, metin çevresinde',
+  imageAlignCenter: 'Ortada',
+  imageAlignRight: 'Sağda, metin çevresinde',
+  imageApply: 'Uygula',
+  imageCancel: 'Vazgeç',
+  imageInvalid: 'Bu resim adresine izin verilmiyor.',
+  imageUploadFailed: 'Resim eklenemedi.'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

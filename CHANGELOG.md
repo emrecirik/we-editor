@@ -18,6 +18,11 @@ Target: 0.1.0 — first public release (roadmap phase F0).
 - `placeholder` input; `stats` output and `getStats()` (word/character count), `weEditorStats(doc)`.
 - Markdown-style input rules (`# `, `- `, `* `, `1. `, `> `, ```` ``` ````; Backspace undoes the rule),
   `weEditorInputRules()`. New dependency `prosemirror-inputrules` (MIT).
+- Images (F1.2): `image` toolbar item and image bar (URL, upload, alt text, width, position),
+  resize handle, paste/drop of image files, `imageUpload` input (base64 `data:` URL when unset),
+  `image` schema node, `weEditorSetImage`, `weEditorImageAt`, `weEditorSafeImageSrc`,
+  `WeEditorImageView`. New locale keys `image*` (breaking for hand-written full locale objects). DOM
+  baseline re-recorded for the new toolbar button.
 - Keyboard shortcuts (Ctrl/Cmd+B/I/U/E, Ctrl/Cmd+Shift+X, Ctrl/Cmd+,/., undo/redo, Shift+Enter,
   Tab/Shift+Tab in lists).
 - Schema-based HTML allowlist: `weEditorSanitizeHtml`, `weEditorParseHtml`,
