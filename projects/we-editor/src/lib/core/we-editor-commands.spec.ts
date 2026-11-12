@@ -10,6 +10,7 @@ import {
   weEditorSetAlign,
   weEditorSetBlock,
   weEditorInsertEmbed,
+  weEditorInsertText,
   weEditorInsertTable,
   weEditorSearchCount,
   weEditorSetSearch,
@@ -37,6 +38,12 @@ function run(state: EditorState, command: Command): string | null {
 }
 
 describe('we-editor commands', () => {
+  it('inserts text over the selection, keeping the marks there', () => {
+    expect(run(stateOf('<p><strong>ab</strong></p>', 2), weEditorInsertText('©'))).toBe('<p><strong>a©b</strong></p>');
+    expect(run(stateOf('<p>abc</p>', 1, 3), weEditorInsertText('€'))).toBe('<p>€c</p>');
+    expect(run(stateOf('<p>abc</p>', 1), weEditorInsertText(''))).toBeNull();
+  });
+
   it('toggles a mark on the selection', () => {
     expect(run(stateOf('<p>hello</p>', 1, 6), weEditorToggleMark(weEditorSchema.marks['bold']))).toBe('<p><strong>hello</strong></p>');
     expect(run(stateOf('<p><strong>hello</strong></p>', 1, 6), weEditorToggleMark(weEditorSchema.marks['bold']))).toBe('<p>hello</p>');

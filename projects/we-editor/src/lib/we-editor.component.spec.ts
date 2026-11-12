@@ -266,6 +266,50 @@ describe('WeEditorComponent', () => {
     expect(el().querySelector('.we-editor__embed iframe')?.getAttribute('sandbox')).toBe('allow-scripts allow-presentation');
   });
 
+  it('colours text from the palette, remembers recent colours and removes the colour', () => {
+    select(1, 6);
+    btn('textColor').click();
+    fixture.detectChanges();
+    const swatch = el().querySelector('[data-bar="color"] .we-editor__swatch[title="#c92a2a"]') as HTMLButtonElement;
+    swatch.click();
+    fixture.detectChanges();
+    expect(host.control.value).toBe('<p><span style="color: rgb(201, 42, 42);">hello</span> world</p>');
+    expect(el().querySelector('[data-bar="color"]')).toBeNull();
+
+    btn('textColor').click();
+    fixture.detectChanges();
+    expect(el().querySelectorAll('[data-bar="color"] [data-recent]').length).toBe(1);
+    (el().querySelector('[data-action="colorRemove"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(host.control.value).toBe('<p>hello world</p>');
+  });
+
+  it('highlights through its own palette and closes it with Escape', () => {
+    select(1, 6);
+    btn('highlight').click();
+    fixture.detectChanges();
+    expect(btn('highlight').getAttribute('aria-expanded')).toBe('true');
+    editor.editorView!.dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    expect(el().querySelector('[data-bar="color"]')).toBeNull();
+    btn('highlight').click();
+    fixture.detectChanges();
+    (el().querySelector('[data-bar="color"] .we-editor__swatch[title="#ffe066"]') as HTMLButtonElement).click();
+    expect(host.control.value).toContain('<mark style="background-color: rgb(255, 224, 102);">hello</mark>');
+  });
+
+  it('inserts special characters and keeps the picker open', () => {
+    select(6, 6);
+    btn('specialChars').click();
+    fixture.detectChanges();
+    const chars = Array.from(el().querySelectorAll('[data-bar="chars"] .we-editor__char')) as HTMLButtonElement[];
+    chars.find((c) => c.textContent === '©')!.click();
+    chars.find((c) => c.textContent === '😀')!.click();
+    fixture.detectChanges();
+    expect(host.control.value).toBe('<p>hello©😀 world</p>');
+    expect(el().querySelector('[data-bar="chars"]')).not.toBeNull();
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

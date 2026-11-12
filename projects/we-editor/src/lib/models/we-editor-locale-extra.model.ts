@@ -94,7 +94,11 @@ export const weEditorLocaleDe: WeEditorLocale = {
   mediaUrlPlaceholder: 'YouTube- oder Vimeo-Link',
   mediaInsert: 'Einfügen',
   mediaCancel: 'Abbrechen',
-  mediaInvalid: 'Nur YouTube- und Vimeo-Links können eingebettet werden.'
+  mediaInvalid: 'Nur YouTube- und Vimeo-Links können eingebettet werden.',
+  colorRemove: 'Farbe entfernen',
+  colorCustom: 'Eigene Farbe…',
+  colorRecent: 'Zuletzt verwendet',
+  specialChars: 'Sonderzeichen'
 };
 
 export const weEditorLocaleFr: WeEditorLocale = {
@@ -191,7 +195,11 @@ export const weEditorLocaleFr: WeEditorLocale = {
   mediaUrlPlaceholder: 'Lien YouTube ou Vimeo',
   mediaInsert: 'Insérer',
   mediaCancel: 'Annuler',
-  mediaInvalid: 'Seuls les liens YouTube et Vimeo peuvent être intégrés.'
+  mediaInvalid: 'Seuls les liens YouTube et Vimeo peuvent être intégrés.',
+  colorRemove: 'Retirer la couleur',
+  colorCustom: 'Couleur personnalisée…',
+  colorRecent: 'Récentes',
+  specialChars: 'Caractères spéciaux'
 };
 
 export const weEditorLocaleEs: WeEditorLocale = {
@@ -288,5 +296,9 @@ export const weEditorLocaleEs: WeEditorLocale = {
   mediaUrlPlaceholder: 'Enlace de YouTube o Vimeo',
   mediaInsert: 'Insertar',
   mediaCancel: 'Cancelar',
-  mediaInvalid: 'Solo se pueden insertar enlaces de YouTube y Vimeo.'
+  mediaInvalid: 'Solo se pueden insertar enlaces de YouTube y Vimeo.',
+  colorRemove: 'Quitar color',
+  colorCustom: 'Color personalizado…',
+  colorRecent: 'Recientes',
+  specialChars: 'Caracteres especiales'
 };

@@ -44,6 +44,7 @@ export const weEditorDefaultIcons: WeEditorIcons = {
   findReplace: svg('<path d="M10 3a7 7 0 0 1 5.6 11.2l5.1 5.1-1.4 1.4-5.1-5.1A7 7 0 1 1 10 3Zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>'),
   findPrevious: svg('<path d="m12 8 6 6-1.4 1.4-4.6-4.6-4.6 4.6L6 14z"/>'),
   findNext: svg('<path d="m12 16-6-6 1.4-1.4 4.6 4.6 4.6-4.6L18 10z"/>'),
+  specialChars: svg('<path d="M12 4a7 7 0 0 1 4.2 12.6V18H20v2h-6v-4.6a5 5 0 1 0-4 0V20H4v-2h3.8v-1.4A7 7 0 0 1 12 4Z"/>'),
   close: svg('<path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6 10.6 12 5 6.4z"/>'),
   clearFormatting: svg('<path d="M6 4h13v2.5h-5.3L12.5 10l-2-2 .7-1.5H6V4Zm-2.7.3L19.7 20.7l-1.4 1.4-6.1-6.1L10.6 20H8l2.4-5.8-8.5-8.5 1.4-1.4Z"/>')
 };

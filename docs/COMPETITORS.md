@@ -20,13 +20,13 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 |---|---|---|
 | **Text formatting** | | |
 | Bold/italic/underline/strike, sub/sup, inline code | all | ✅ |
-| Font family/size, text colour, highlight | CK, Ty, TT, Fr, Q | 🟡 native picker, no palette/recent colours |
+| Font family/size, text colour, highlight | CK, Ty, TT, Fr, Q | ✅ palette, custom colour, remove, recent colours (P4) |
 | Line height | CK-P, Ty, TT, Fr | ⬜ |
 | Format painter | CK-P, Ty-P | ⬜ |
 | Case change | CK-P, Ty-P | ⬜ |
 | Styles / CSS classes | CK, Ty, Fr | ⬜ |
 | Typography (smart quotes, dashes) | CK, Ty-P, TT | ⬜ |
-| Special characters, emoji | CK, Ty, TT, Fr, Lx | ⬜ |
+| Special characters, emoji | CK, Ty, TT, Fr, Lx | ✅ configurable symbol + emoji picker (P4) |
 | Text direction (RTL), language of parts | CK, Ty, Q | ⬜ |
 | **Blocks & lists** | | |
 | Paragraph, H1–H6, quote, rule, alignment, indent | all | ✅ |

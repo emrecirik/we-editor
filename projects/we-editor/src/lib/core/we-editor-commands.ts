@@ -74,6 +74,15 @@ export function weEditorSetStyle(markName: WeEditorStyleMark, value: string | nu
   };
 }
 
+/** Inserts plain text at the selection (replacing it), keeping the marks in effect there. */
+export function weEditorInsertText(text: string): Command {
+  return (state, dispatch) => {
+    if (!text) return false;
+    dispatch?.(state.tr.insertText(text).scrollIntoView());
+    return true;
+  };
+}
+
 /** Removes every mark from the selection and resets block alignment/indent. */
 export const weEditorClearFormatting: Command = (state, dispatch) => {
   const { from, to, empty } = state.selection;

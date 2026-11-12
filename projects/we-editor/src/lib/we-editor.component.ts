@@ -43,6 +43,7 @@ import {
   weEditorBlockLevel,
   weEditorImageAt,
   weEditorInsertEmbed,
+  weEditorInsertText,
   weEditorInsertTable,
   weEditorClearFormatting,
   weEditorIndent,
@@ -71,7 +72,9 @@ import { weEditorSchema } from './core/we-editor-schema';
 import { WE_EDITOR_ICONS } from './models/we-editor-icons.model';
 import { WE_EDITOR_LOCALE, WeEditorLocale } from './models/we-editor-locale.model';
 import {
+  WE_EDITOR_DEFAULT_COLORS,
   WE_EDITOR_DEFAULT_FONT_FAMILIES,
+  WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS,
   WE_EDITOR_DEFAULT_FONT_SIZES,
   WE_EDITOR_DEFAULT_TOOLBAR,
   WeEditorOption,
@@ -79,6 +82,9 @@ import {
 } from './models/we-editor-toolbar.model';
 
 const s = weEditorSchema;
+
+/** How many recently used colours the palette remembers (per editor). */
+const RECENT_COLORS = 8;
 
 interface ButtonDef {
   icon: string;
@@ -193,6 +199,10 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() toolbar: readonly WeEditorToolbarItem[] = WE_EDITOR_DEFAULT_TOOLBAR;
   @Input() fontFamilies: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_FONT_FAMILIES;
   @Input() fontSizes: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_FONT_SIZES;
+  /** Swatches of the text colour and highlight palettes (any CSS colour the editor accepts). */
+  @Input() colors: readonly string[] = WE_EDITOR_DEFAULT_COLORS;
+  /** Characters of the special-characters picker. */
+  @Input() specialCharacters: readonly string[] = WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS;
 
   /** Text shown while the document is empty. */
   @Input()
@@ -266,6 +276,10 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected mediaUrl = '';
   protected mediaError = false;
   protected findOpen = false;
+  /** Which palette is open: text colour or highlight. */
+  protected colorOpen: 'text_color' | 'highlight' | null = null;
+  protected recentColors: string[] = [];
+  protected charsOpen = false;
   protected find = { search: '', replace: '', caseSensitive: false, wholeWord: false };
   protected tableSize = { rows: 3, cols: 3, header: true };
   protected readonly tableActions = Object.keys(TABLE_ACTIONS) as TableAction[];
@@ -313,6 +327,12 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       },
       dispatchTransaction: (tr) => this.apply(tr),
       handleKeyDown: (_view, event) => {
+        // The palette and character bars keep focus in the editor, so Escape is handled here.
+        if (event.key === 'Escape' && (this.colorOpen || this.charsOpen)) {
+          this.closeBars();
+          this.cdr.markForCheck();
+          return true;
+        }
         if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === 'f') {
           event.preventDefault();
           this.openFind();
@@ -558,6 +578,36 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     return this.locale.findCount.replace('{current}', String(current || '–')).replace('{total}', String(total));
   }
 
+  protected openColor(markName: 'text_color' | 'highlight'): void {
+    if (!this.view || !this.isEditable()) return;
+    this.closeBars();
+    this.colorOpen = markName;
+  }
+
+  /** Applies a palette colour (`null` removes it) and remembers it as recently used. */
+  protected pickColor(value: string | null): void {
+    if (!this.colorOpen) return;
+    if (this.exec(weEditorSetStyle(this.colorOpen, value)) && value) {
+      this.recentColors = [value, ...this.recentColors.filter((c) => c !== value)].slice(0, RECENT_COLORS);
+    }
+    this.colorOpen = null;
+  }
+
+  protected toggleChars(): void {
+    if (this.charsOpen) {
+      this.charsOpen = false;
+      return;
+    }
+    if (!this.view || !this.isEditable()) return;
+    this.closeBars();
+    this.charsOpen = true;
+  }
+
+  /** Inserts a character; the bar stays open so several can be added in a row. */
+  protected insertChar(char: string): void {
+    this.exec(weEditorInsertText(char));
+  }
+
   protected runTable(action: TableAction): void {
     this.exec(TABLE_ACTIONS[action]);
   }
@@ -567,7 +617,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   /** Only one bar under the toolbar at a time. */
   private closeBars(): void {
     if (this.findOpen && this.view) weEditorSetSearch({ search: '' })(this.view.state, this.view.dispatch);
-    this.linkOpen = this.imageOpen = this.tableOpen = this.findOpen = this.mediaOpen = false;
+    this.linkOpen = this.imageOpen = this.tableOpen = this.findOpen = this.mediaOpen = this.charsOpen = false;
+    this.colorOpen = null;
   }
 
   private updateSearch(): void {
@@ -672,6 +723,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     active.findReplace = this.findOpen;
     active.media = this.mediaOpen;
     enabled.media = editable;
+    active.specialChars = this.charsOpen;
+    enabled.specialChars = editable;
     enabled.findReplace = !!view;
     enabled.table = editable;
     const image = weEditorImageAt(state);

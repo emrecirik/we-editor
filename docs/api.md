@@ -23,6 +23,8 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `toolbar` | `readonly WeEditorToolbarItem[]` | `WE_EDITOR_DEFAULT_TOOLBAR` | Order of toolbar entries; `'|'` is a separator; `[]` hides the toolbar |
 | `fontFamilies` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_FAMILIES` | `value` is the CSS `font-family` written to the text (must pass `weEditorSafeFontFamily`) |
 | `fontSizes` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_SIZES` | `value` is a CSS size (`px`, `pt`, `em`, `rem`, `%`) |
+| `colors` | `readonly string[]` | `WE_EDITOR_DEFAULT_COLORS` | Swatches of the text colour and highlight palettes; each must pass `weEditorSafeColor` |
+| `specialCharacters` | `readonly string[]` | `WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS` | Entries of the special-characters picker (symbols and emoji); each is inserted as text |
 | `readonly` | `boolean` | `false` | Content not editable, toolbar disabled; the value is still readable |
 | `imageUpload` | `(file: File) => Promise<string>` \| `null` | `null` | Stores an image file (upload button, paste, drop) and resolves to its URL. When `null`, files are embedded as base64 `data:` URLs |
 | `placeholder` | `string` | `''` | Shown in an empty document (also set as `aria-placeholder`) |
@@ -50,8 +52,13 @@ Disabled state comes from the form control (`control.disable()`).
 `undo`, `redo`, `blockType`, `fontFamily`, `fontSize`, `bold`, `italic`, `underline`, `strike`,
 `subscript`, `superscript`, `code`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
-`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `findReplace`,
-`clearFormatting`, `'|'`.
+`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `specialChars`,
+`findReplace`, `clearFormatting`, `'|'`.
+
+`textColor` and `highlight` open a palette bar: the `colors` swatches, **Custom colour…** (the
+browser's colour picker), **Remove colour**, and up to 8 recently used colours (per editor, not
+stored). `specialChars` opens a character bar; a click inserts the character at the cursor and the
+bar stays open for more. Esc closes either bar while the editor has focus.
 
 `media` embeds a YouTube or Vimeo video from a page, share or embed link (`youtube.com/watch?v=…`,
 `youtu.be/…`, `/shorts/…`, `vimeo.com/123…`). Output is an `<iframe>` with the canonical player URL
@@ -125,7 +132,7 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorInsertEmbed(url)`, `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
+image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
 (highlight / clear a query), `weEditorSearchCount(state)` (`{ current, total }`, capped at
 `WE_EDITOR_MAX_SEARCH_COUNT` = 1000; `findNext`, `findPrev`, `replaceNext`, `replaceAll` come from
 `prosemirror-search`), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,

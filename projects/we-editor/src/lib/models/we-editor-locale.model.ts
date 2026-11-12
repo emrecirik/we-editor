@@ -98,6 +98,10 @@ export interface WeEditorLocale {
   mediaInsert: string;
   mediaCancel: string;
   mediaInvalid: string;
+  colorRemove: string;
+  colorCustom: string;
+  colorRecent: string;
+  specialChars: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -194,7 +198,11 @@ export const weEditorLocaleEn: WeEditorLocale = {
   mediaUrlPlaceholder: 'YouTube or Vimeo link',
   mediaInsert: 'Insert',
   mediaCancel: 'Cancel',
-  mediaInvalid: 'Only YouTube and Vimeo links can be embedded.'
+  mediaInvalid: 'Only YouTube and Vimeo links can be embedded.',
+  colorRemove: 'Remove colour',
+  colorCustom: 'Custom colour…',
+  colorRecent: 'Recent',
+  specialChars: 'Special characters'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -291,7 +299,11 @@ export const weEditorLocaleTr: WeEditorLocale = {
   mediaUrlPlaceholder: 'YouTube veya Vimeo bağlantısı',
   mediaInsert: 'Ekle',
   mediaCancel: 'Vazgeç',
-  mediaInvalid: 'Yalnızca YouTube ve Vimeo bağlantıları eklenebilir.'
+  mediaInvalid: 'Yalnızca YouTube ve Vimeo bağlantıları eklenebilir.',
+  colorRemove: 'Rengi kaldır',
+  colorCustom: 'Özel renk…',
+  colorRecent: 'Son kullanılanlar',
+  specialChars: 'Özel karakterler'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

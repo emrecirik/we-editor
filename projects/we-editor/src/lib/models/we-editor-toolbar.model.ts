@@ -32,6 +32,7 @@ export type WeEditorToolbarItem =
   | 'image'
   | 'media'
   | 'table'
+  | 'specialChars'
   | 'findReplace'
   | 'clearFormatting';
 
@@ -43,8 +44,22 @@ export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', '|',
   'bulletList', 'orderedList', 'taskList', 'outdent', 'indent', '|',
   'blockquote', 'codeBlock', 'horizontalRule', '|',
-  'link', 'unlink', 'image', 'media', 'table', '|',
+  'link', 'unlink', 'image', 'media', 'table', 'specialChars', '|',
   'findReplace', 'clearFormatting'
+];
+
+/** Swatches of the text colour and highlight palettes — document colours, written into the HTML as-is. */
+export const WE_EDITOR_DEFAULT_COLORS: readonly string[] = [
+  '#000000', '#495057', '#868e96', '#ced4da', '#ffffff',
+  '#c92a2a', '#e8590c', '#f08c00', '#2b8a3e', '#0b7285',
+  '#1864ab', '#5f3dc4', '#a61e4d', '#ffe066', '#b2f2bb',
+  '#a5d8ff', '#d0bfff', '#fcc2d7', '#ffd8a8', '#99e9f2'
+];
+
+/** Characters offered by the special-characters picker; each entry is inserted as typed text. */
+export const WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS: readonly string[] = [
+  ...'©®™§¶†‡•…–—‘’“”«»‹›°±×÷≠≤≥≈∞√∑∏πµ∆Ω½¼¾¹²³€£¥¢₺₹₽←→↑↓↔⇒⇔✓✗★☆♥♦♣♠αβγδελσφ',
+  '😀', '😂', '😊', '😍', '🤔', '😎', '😢', '👍', '👎', '👏', '🙏', '🎉', '❤️', '🔥', '✅', '❌', '⭐', '💡', '📌', '📎', '⚠️', '🚀'
 ];
 
 /** An entry of the font family / font size pickers. `value` is the CSS value written to the text. */

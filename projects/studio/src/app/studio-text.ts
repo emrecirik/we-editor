@@ -34,7 +34,7 @@ const en = {
   characters: 'characters',
   tryTitle: 'Things to try',
   editorTips: [
-    'Select text and use the toolbar: bold, colour, highlight, font, size, alignment, sub/superscript.',
+    'Select text and use the toolbar: bold, font, size, alignment — the colour and highlight buttons open a palette with recent colours, Ω inserts symbols and emoji.',
     'Start a line with # , - , 1. , > or ``` — Markdown shortcuts turn it into a heading, list, quote or code block.',
     'Click the picture and drag its corner to resize it; the image bar sets alt text, width and position. Paste or drop your own picture.',
     'Put the cursor in the table: add rows and columns, select two cells to merge them, drag a column border to resize.',
@@ -77,7 +77,7 @@ const tr: typeof en = {
   characters: 'karakter',
   tryTitle: 'Deneyebilecekleriniz',
   editorTips: [
-    'Metni seçip araç çubuğunu kullanın: kalın, renk, vurgu, yazı tipi, boyut, hizalama, alt/üst simge.',
+    'Metni seçip araç çubuğunu kullanın: kalın, yazı tipi, boyut, hizalama — renk ve vurgu düğmeleri son kullanılan renklerle bir palet açar, Ω sembol ve emoji ekler.',
     'Satıra # , - , 1. , > ya da ``` ile başlayın — Markdown kısayolları başlık, liste, alıntı ya da kod bloğu yapar.',
     'Resme tıklayıp köşesinden sürükleyerek boyutlandırın; resim çubuğu alternatif metin, genişlik ve konum ayarlar. Kendi resminizi yapıştırın ya da bırakın.',
     'İmleci tabloya koyun: satır ve kolon ekleyin, iki hücre seçip birleştirin, kolon kenarını sürükleyip genişletin.',

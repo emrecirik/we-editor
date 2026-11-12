@@ -83,19 +83,47 @@ we-editor {
   }
 }
 
-.we-editor__color:focus-within {
-  outline: 2px solid var(--we-editor-accent-color, #405189);
-  outline-offset: -2px;
+.we-editor__palette,
+.we-editor__chars {
+  gap: 4px;
 }
 
-// The native colour input stays focusable and clickable, stretched invisibly over the button.
-.we-editor__color-input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+// Swatch backgrounds are the palette colours themselves (document colours, set inline).
+.we-editor__swatch {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--we-editor-border-color, #dee2e6);
+  border-radius: 4px;
   cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    outline: 2px solid var(--we-editor-accent-color, #405189);
+    outline-offset: 1px;
+  }
+}
+
+.we-editor__char {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 4px;
+  border: 1px solid var(--we-editor-border-color, #dee2e6);
+  border-radius: 4px;
+  background: var(--we-editor-input-bg, #fff);
+  color: var(--we-editor-font-color, #212529);
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--we-editor-btn-hover-bg, rgba(0, 0, 0, 0.06));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--we-editor-accent-color, #405189);
+    outline-offset: 1px;
+  }
 }
 
 .we-editor__select,
