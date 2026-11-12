@@ -34,7 +34,8 @@ export type WeEditorToolbarItem =
   | 'table'
   | 'specialChars'
   | 'findReplace'
-  | 'clearFormatting';
+  | 'clearFormatting'
+  | 'source';
 
 export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'undo', 'redo', '|',
@@ -45,7 +46,8 @@ export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'bulletList', 'orderedList', 'taskList', 'outdent', 'indent', '|',
   'blockquote', 'codeBlock', 'horizontalRule', '|',
   'link', 'unlink', 'image', 'media', 'table', 'specialChars', '|',
-  'findReplace', 'clearFormatting'
+  'findReplace', 'clearFormatting', '|',
+  'source'
 ];
 
 /** Swatches of the text colour and highlight palettes — document colours, written into the HTML as-is. */

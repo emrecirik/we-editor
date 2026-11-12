@@ -104,6 +104,10 @@ export interface WeEditorLocale {
   specialChars: string;
   codeLanguage: string;
   codeLanguagePlain: string;
+  source: string;
+  sourceCode: string;
+  sourceSplit: string;
+  sourceFormat: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -206,7 +210,11 @@ export const weEditorLocaleEn: WeEditorLocale = {
   colorRecent: 'Recent',
   specialChars: 'Special characters',
   codeLanguage: 'Code language',
-  codeLanguagePlain: 'Plain text'
+  codeLanguagePlain: 'Plain text',
+  source: 'HTML source',
+  sourceCode: 'Code',
+  sourceSplit: 'Split',
+  sourceFormat: 'Format'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -309,7 +317,11 @@ export const weEditorLocaleTr: WeEditorLocale = {
   colorRecent: 'Son kullanılanlar',
   specialChars: 'Özel karakterler',
   codeLanguage: 'Kod dili',
-  codeLanguagePlain: 'Düz metin'
+  codeLanguagePlain: 'Düz metin',
+  source: 'HTML kaynağı',
+  sourceCode: 'Kod',
+  sourceSplit: 'Bölünmüş',
+  sourceFormat: 'Biçimlendir'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

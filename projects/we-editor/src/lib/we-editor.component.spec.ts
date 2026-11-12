@@ -323,6 +323,39 @@ describe('WeEditorComponent', () => {
     expect(el().querySelector('.we-editor__content .hljs-keyword')?.textContent).toBe('const');
   });
 
+  it('edits the HTML source, syncs both ways in split view and locks design tools in code view', async () => {
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    btn('source').click();
+    fixture.detectChanges();
+    const pane = el().querySelector('.we-editor__source') as HTMLElement;
+    for (let i = 0; i < 50 && !pane.querySelector('.cm-content'); i++) await wait(20);
+    await wait(0);
+    const { EditorView } = await import('@codemirror/view');
+    const cm = EditorView.findFromDOM(pane)!;
+    expect(cm.state.doc.toString()).toBe('<p>hello world</p>');
+    expect(btn('bold').disabled).toBeTrue();
+    expect((el().querySelector('.we-editor__content') as HTMLElement).hidden).toBeTrue();
+
+    cm.dispatch({ changes: { from: 0, to: cm.state.doc.length, insert: '<h2>Title</h2><p onclick="x()">body</p>' } });
+    await wait(300);
+    // The event handler is dropped by the schema; the user's text stays as typed until Format.
+    expect(host.control.value).toBe('<h2>Title</h2><p>body</p>');
+    expect(cm.state.doc.toString()).toContain('onclick');
+
+    (el().querySelector('[data-action="sourceSplit"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(btn('bold').disabled).toBeFalse();
+    expect((el().querySelector('.we-editor__content') as HTMLElement).hidden).toBeFalse();
+    const view = editor.editorView!;
+    view.dispatch(view.state.tr.insertText('!', view.state.doc.content.size - 1));
+    await wait(0);
+    expect(cm.state.doc.toString()).toBe('<h2>Title</h2>\n<p>body!</p>');
+
+    btn('source').click();
+    fixture.detectChanges();
+    expect((el().querySelector('.we-editor__source') as HTMLElement).hidden).toBeTrue();
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

@@ -54,7 +54,14 @@ Disabled state comes from the form control (`control.disable()`).
 `subscript`, `superscript`, `code`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
 `blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `specialChars`,
-`findReplace`, `clearFormatting`, `'|'`.
+`findReplace`, `clearFormatting`, `source`, `'|'`.
+
+`source` opens the **HTML source view** (CodeMirror 6, downloaded on first use through dynamic
+`import()`): **Code** shows only the source, **Split** shows source and design side by side (stacked
+below 720 px) and keeps them in sync both ways, **Format** re-indents the source from the current
+document. Source edits are applied 250 ms after the last keystroke, through the schema allowlist, as
+one undoable change; what you typed stays as typed until Format. Design tools are disabled in Code
+view; read-only / disabled make the source read-only.
 
 `textColor` and `highlight` open a palette bar: the `colors` swatches, **Custom colour…** (the
 browser's colour picker), **Remove colour**, and up to 8 recently used colours (per editor, not
@@ -138,7 +145,9 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorSetCodeLanguage(language | null)`, `weEditorCodeLanguageAt(state)`
+image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorFormatHtml(html, indent?)` (pretty-print for display; inert
+parse, text out), `weEditorCreateSourceEditor(element, options)` (the CodeMirror HTML editor on its
+own), `weEditorSetCodeLanguage(language | null)`, `weEditorCodeLanguageAt(state)`
 (`undefined` outside code blocks), the `weEditorCodeHighlight()` plugin (in `weEditorPlugins()`), `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
 (highlight / clear a query), `weEditorSearchCount(state)` (`{ current, total }`, capped at
 `WE_EDITOR_MAX_SEARCH_COUNT` = 1000; `findNext`, `findPrev`, `replaceNext`, `replaceAll` come from

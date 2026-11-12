@@ -8,7 +8,7 @@
           }
           @case ('blockType') {
             <select class="we-editor__select" [title]="locale.blockType" [attr.aria-label]="locale.blockType"
-                    [disabled]="disabled || readonly" (change)="setBlock($any($event.target).value)">
+                    [disabled]="toolsOff" (change)="setBlock($any($event.target).value)">
               <option value="-1" [selected]="ui.block === -1" hidden></option>
               <option value="0" [selected]="ui.block === 0">{{ locale.paragraph }}</option>
               @for (level of headingLevels; track level) {
@@ -18,7 +18,7 @@
           }
           @case ('fontFamily') {
             <select class="we-editor__select" [title]="locale.fontFamily" [attr.aria-label]="locale.fontFamily"
-                    [disabled]="disabled || readonly" (change)="setStyle('font_family', $any($event.target).value)">
+                    [disabled]="toolsOff" (change)="setStyle('font_family', $any($event.target).value)">
               <option value="" [selected]="!ui.fontFamily">{{ locale.fontFamilyDefault }}</option>
               @for (font of fontFamilies; track font.value) {
                 <option [value]="font.value" [selected]="ui.fontFamily === font.value">{{ font.label }}</option>
@@ -27,7 +27,7 @@
           }
           @case ('fontSize') {
             <select class="we-editor__select we-editor__select--narrow" [title]="locale.fontSize" [attr.aria-label]="locale.fontSize"
-                    [disabled]="disabled || readonly" (change)="setStyle('font_size', $any($event.target).value)">
+                    [disabled]="toolsOff" (change)="setStyle('font_size', $any($event.target).value)">
               <option value="" [selected]="!ui.fontSize">{{ locale.fontSizeDefault }}</option>
               @for (size of fontSizes; track size.value) {
                 <option [value]="size.value" [selected]="ui.fontSize === size.value">{{ size.label }}</option>
@@ -36,16 +36,23 @@
           }
           @case ('textColor') {
             <button type="button" class="we-editor__btn" data-item="textColor" [class.we-editor__btn--active]="colorOpen === 'text_color'"
-                    [disabled]="disabled || readonly" [title]="locale.textColor" [attr.aria-label]="locale.textColor"
+                    [disabled]="toolsOff" [title]="locale.textColor" [attr.aria-label]="locale.textColor"
                     [attr.aria-expanded]="colorOpen === 'text_color'" (click)="colorOpen === 'text_color' ? (colorOpen = null) : openColor('text_color')">
               <span aria-hidden="true" [innerHTML]="icon('textColor')" [style.--we-editor-swatch]="ui.textColor"></span>
             </button>
           }
           @case ('highlight') {
             <button type="button" class="we-editor__btn" data-item="highlight" [class.we-editor__btn--active]="colorOpen === 'highlight'"
-                    [disabled]="disabled || readonly" [title]="locale.highlight" [attr.aria-label]="locale.highlight"
+                    [disabled]="toolsOff" [title]="locale.highlight" [attr.aria-label]="locale.highlight"
                     [attr.aria-expanded]="colorOpen === 'highlight'" (click)="colorOpen === 'highlight' ? (colorOpen = null) : openColor('highlight')">
               <span aria-hidden="true" [innerHTML]="icon('highlight')" [style.--we-editor-swatch]="ui.highlight"></span>
+            </button>
+          }
+          @case ('source') {
+            <button type="button" class="we-editor__btn" data-item="source" [class.we-editor__btn--active]="sourceMode !== 'off'"
+                    [disabled]="!ui.enabled.source" [title]="locale.source" [attr.aria-label]="locale.source"
+                    [attr.aria-pressed]="sourceMode !== 'off'" (click)="toggleSource()">
+              <span aria-hidden="true" [innerHTML]="icon('source')"></span>
             </button>
           }
           @case ('specialChars') {
@@ -85,7 +92,7 @@
           }
           @case ('findReplace') {
             <button type="button" class="we-editor__btn" data-item="findReplace" [class.we-editor__btn--active]="findOpen"
-                    [disabled]="disabled" [title]="locale.findReplace" [attr.aria-label]="locale.findReplace"
+                    [disabled]="!ui.enabled.findReplace" [title]="locale.findReplace" [attr.aria-label]="locale.findReplace"
                     [attr.aria-expanded]="findOpen" (click)="findOpen ? closeFind() : openFind()">
               <span aria-hidden="true" [innerHTML]="icon('findReplace')"></span>
             </button>
@@ -278,5 +285,19 @@
     </div>
   }
 
-  <div #content class="we-editor__content"></div>
+  @if (sourceMode !== 'off') {
+    <div class="we-editor__linkbar we-editor__tablebar" role="toolbar" data-bar="source" [attr.aria-label]="locale.source"
+         (mousedown)="onToolbarMouseDown($event)">
+      <button type="button" class="we-editor__text-btn" data-action="sourceCode" [class.we-editor__text-btn--primary]="sourceMode === 'code'"
+              [attr.aria-pressed]="sourceMode === 'code'" (click)="setSourceMode('code')">{{ locale.sourceCode }}</button>
+      <button type="button" class="we-editor__text-btn" data-action="sourceSplit" [class.we-editor__text-btn--primary]="sourceMode === 'split'"
+              [attr.aria-pressed]="sourceMode === 'split'" (click)="setSourceMode('split')">{{ locale.sourceSplit }}</button>
+      <button type="button" class="we-editor__text-btn" data-action="sourceFormat" (click)="formatSource()">{{ locale.sourceFormat }}</button>
+    </div>
+  }
+
+  <div class="we-editor__body" [class.we-editor__body--split]="sourceMode === 'split'">
+    <div #source class="we-editor__source" [hidden]="sourceMode === 'off'"></div>
+    <div #content class="we-editor__content" [hidden]="sourceMode === 'code'"></div>
+  </div>
 </div>

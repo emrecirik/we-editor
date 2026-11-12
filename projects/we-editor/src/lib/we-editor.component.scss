@@ -568,3 +568,39 @@ we-editor {
 .we-editor--disabled .we-editor__prosemirror {
   cursor: default;
 }
+
+.we-editor__body--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  > .we-editor__source {
+    border-right: 1px solid var(--we-editor-border-color, #dee2e6);
+  }
+
+  @media (max-width: 720px) {
+    grid-template-columns: minmax(0, 1fr);
+
+    > .we-editor__source {
+      border-right: 0;
+      border-bottom: 1px solid var(--we-editor-border-color, #dee2e6);
+    }
+  }
+}
+
+.we-editor__source {
+  display: flex;
+  min-height: var(--we-editor-min-height, 180px);
+
+  &[hidden] {
+    display: none;
+  }
+
+  > .cm-editor {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.we-editor__content[hidden] {
+  display: none;
+}

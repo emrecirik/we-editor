@@ -67,7 +67,9 @@ import {
   weEditorToggleWrap
 } from './core/we-editor-commands';
 import { WE_EDITOR_DEFAULT_CODE_LANGUAGES, weEditorCodeLanguageAt, weEditorSetCodeLanguage } from './core/we-editor-code';
-import { weEditorSerializeHtml } from './core/we-editor-html';
+import { weEditorFormatHtml } from './core/we-editor-format';
+import { weEditorParseHtml, weEditorSerializeHtml } from './core/we-editor-html';
+import { WeEditorSourceEditor, weEditorCreateSourceEditor } from './core/we-editor-source';
 import { WeEditorEmbedView, WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
 import { weEditorSchema } from './core/we-editor-schema';
 import { WE_EDITOR_ICONS } from './models/we-editor-icons.model';
@@ -86,6 +88,12 @@ const s = weEditorSchema;
 
 /** How many recently used colours the palette remembers (per editor). */
 const RECENT_COLORS = 8;
+
+/** Transactions coming from the HTML source view; they must not be echoed back into it. */
+const FROM_SOURCE = 'weEditorFromSource';
+
+/** Pause after the last keystroke in the source view before the design view follows. */
+const SOURCE_DELAY_MS = 250;
 
 interface ButtonDef {
   icon: string;
@@ -238,6 +246,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   @ViewChild('content', { static: true }) private readonly contentRef!: ElementRef<HTMLElement>;
+  @ViewChild('source', { static: true }) private readonly sourceRef!: ElementRef<HTMLElement>;
 
   @ViewChild('linkInput')
   private set linkInput(ref: ElementRef<HTMLInputElement> | undefined) {
@@ -285,6 +294,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected colorOpen: 'text_color' | 'highlight' | null = null;
   protected recentColors: string[] = [];
   protected charsOpen = false;
+  /** HTML source view: off, code only, or code beside the live design view. */
+  protected sourceMode: 'off' | 'code' | 'split' = 'off';
   protected find = { search: '', replace: '', caseSensitive: false, wholeWord: false };
   protected tableSize = { rows: 3, cols: 3, header: true };
   protected readonly tableActions = Object.keys(TABLE_ACTIONS) as TableAction[];
@@ -298,6 +309,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   private pendingHtml: string | null = null;
   private _readonly = false;
   private _placeholder = '';
+  private source?: Promise<WeEditorSourceEditor>;
+  private sourceTimer?: ReturnType<typeof setTimeout>;
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
@@ -364,6 +377,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.sourceTimer);
+    void this.source?.then((editor) => editor.destroy());
     this.view?.destroy();
   }
 
@@ -384,6 +399,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       return;
     }
     this.view.updateState(weEditorCreateState(html));
+    this.syncSource();
     this.refreshUi();
   }
 
@@ -622,11 +638,87 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.exec(weEditorSetCodeLanguage(value || null));
   }
 
+  /** Design tools are off while only the HTML source is shown. */
+  protected get toolsOff(): boolean {
+    return this.disabled || this._readonly || this.sourceMode === 'code';
+  }
+
+  protected toggleSource(): void {
+    this.setSourceMode(this.sourceMode === 'off' ? 'code' : 'off');
+  }
+
+  protected setSourceMode(mode: 'off' | 'code' | 'split'): void {
+    if (!this.view) return;
+    if (mode === 'off') {
+      this.flushSource();
+      this.sourceMode = 'off';
+      this.refreshUi();
+      this.view.focus();
+      return;
+    }
+    if (this.sourceMode === 'off') {
+      this.closeBars();
+      this.ensureSource().then(
+        (editor) => {
+          editor.setText(weEditorFormatHtml(this.getHtml()));
+          editor.focus();
+        },
+        (error) => console.error('we-editor: the HTML source view could not be loaded', error)
+      );
+    }
+    this.sourceMode = mode;
+    this.refreshUi();
+  }
+
+  /** Re-indents the source from the current document. */
+  protected formatSource(): void {
+    this.flushSource();
+    void this.source?.then((editor) => editor.setText(weEditorFormatHtml(this.getHtml())));
+  }
+
   protected runTable(action: TableAction): void {
     this.exec(TABLE_ACTIONS[action]);
   }
 
   // ── Internals ───────────────────────────────────────────────────────
+
+  private ensureSource(): Promise<WeEditorSourceEditor> {
+    this.source ??= weEditorCreateSourceEditor(this.sourceRef.nativeElement, {
+      text: '',
+      readOnly: !this.isEditable(),
+      label: this.locale.source,
+      onChange: (text) => {
+        clearTimeout(this.sourceTimer);
+        this.sourceTimer = setTimeout(() => this.applySource(text), SOURCE_DELAY_MS);
+      },
+      onBlur: () => this.onTouched()
+    });
+    return this.source;
+  }
+
+  /** Applies a pending source edit now (before closing the view or reformatting). */
+  private flushSource(): void {
+    if (this.sourceTimer === undefined) return;
+    clearTimeout(this.sourceTimer);
+    this.sourceTimer = undefined;
+    void this.source?.then((editor) => this.applySource(editor.getText()));
+  }
+
+  /** Source text → document, through the schema allowlist, as one undoable change. */
+  private applySource(text: string): void {
+    this.sourceTimer = undefined;
+    if (!this.view || !this.isEditable()) return;
+    const { state } = this.view;
+    const doc = weEditorParseHtml(text);
+    if (doc.eq(state.doc)) return;
+    this.view.dispatch(state.tr.replaceWith(0, state.doc.content.size, doc.content).setMeta(FROM_SOURCE, true));
+  }
+
+  /** Design → source, while the source view is open. */
+  private syncSource(): void {
+    if (this.sourceMode === 'off') return;
+    void this.source?.then((editor) => editor.setText(weEditorFormatHtml(this.getHtml())));
+  }
 
   /** Only one bar under the toolbar at a time. */
   private closeBars(): void {
@@ -693,6 +785,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.view.updateState(this.view.state.apply(tr));
     // shortcut: serializes the whole document on every change; debounce if very large documents get slow.
     if (tr.docChanged) {
+      if (!tr.getMeta(FROM_SOURCE)) this.syncSource();
       this.onChange(this.getHtml());
       this.stats.emit(this.getStats());
     }
@@ -706,6 +799,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   private updateEditable(): void {
     // Re-evaluates the `editable` prop function.
     this.view?.setProps({});
+    void this.source?.then((editor) => editor.setReadOnly(!this.isEditable()));
     this.refreshUi();
   }
 
@@ -719,7 +813,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     const view = this.view;
     if (!view) return;
     const state = view.state;
-    const editable = this.isEditable();
+    const editable = this.isEditable() && this.sourceMode !== 'code';
     const active: WeEditorUiState['active'] = {};
     const enabled: WeEditorUiState['enabled'] = {};
     for (const item of this.toolbar) {
@@ -739,7 +833,9 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     enabled.media = editable;
     active.specialChars = this.charsOpen;
     enabled.specialChars = editable;
-    enabled.findReplace = !!view;
+    enabled.findReplace = this.sourceMode !== 'code';
+    active.source = this.sourceMode !== 'off';
+    enabled.source = !this.disabled;
     enabled.table = editable;
     const image = weEditorImageAt(state);
     active.image = !!image;

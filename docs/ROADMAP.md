@@ -58,8 +58,8 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 
 | # | Item | AC |
 |---|---|---|
-| F3.1 | Design / Code / Split views | Toggle; code view edits HTML; switching back re-parses through the schema; split view syncs both ways (debounced) |
-| F3.2 | Code editor | Syntax highlighting + pretty-print for HTML; dependency decision (e.g. CodeMirror 6, MIT) recorded first |
+| F3.1 ✅ | Design / Code / Split views | Toggle; code view edits HTML; switching back re-parses through the schema; split view syncs both ways (debounced) |
+| F3.2 ✅ | Code editor | Syntax highlighting + pretty-print for HTML; dependency decision (e.g. CodeMirror 6, MIT) recorded first |
 | F3.3 | Live preview | `sandbox` iframe without scripts; device widths (mobile / tablet / desktop) |
 | F3.4 | Element inspector | Panel for the selected node's attributes/styles; edits limited to the allowlist |
 | F3.5 | DOM path bar | Breadcrumb `table > tr > td > p`; click selects that ancestor |
@@ -89,7 +89,7 @@ Froala / Quill / Lexical first. Everything here ships free in the MIT package.
 | P3 ✅ | Media embed | YouTube / Vimeo iframe node, provider allowlist on the parsed `src` |
 | P4 ✅ | Colour palette + special characters + emoji | Palette popover with "remove colour" (F0.4), character picker |
 | P5 ✅ | Code block language + syntax highlighting | decorations; highlighter licence check first |
-| P6 | Source HTML view + preview | F3.1–F3.3; code-editor dependency decision first |
+| P6 ✅ | Source HTML view + preview | F3.1–F3.3; code-editor dependency decision first |
 | P7 | Line height, case change, format painter, styles | small marks/commands (F1.11–F1.13) |
 | P8 | Full screen, autosave hook, status bar with counts | F1.9, F1.10 |
 | P9 | Paste from Word / Google Docs | F1.6 |

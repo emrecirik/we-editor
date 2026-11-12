@@ -100,7 +100,11 @@ export const weEditorLocaleDe: WeEditorLocale = {
   colorRecent: 'Zuletzt verwendet',
   specialChars: 'Sonderzeichen',
   codeLanguage: 'Programmiersprache',
-  codeLanguagePlain: 'Nur Text'
+  codeLanguagePlain: 'Nur Text',
+  source: 'HTML-Quelltext',
+  sourceCode: 'Code',
+  sourceSplit: 'Geteilt',
+  sourceFormat: 'Formatieren'
 };
 
 export const weEditorLocaleFr: WeEditorLocale = {
@@ -203,7 +207,11 @@ export const weEditorLocaleFr: WeEditorLocale = {
   colorRecent: 'Récentes',
   specialChars: 'Caractères spéciaux',
   codeLanguage: 'Langage du code',
-  codeLanguagePlain: 'Texte brut'
+  codeLanguagePlain: 'Texte brut',
+  source: 'Source HTML',
+  sourceCode: 'Code',
+  sourceSplit: 'Partagé',
+  sourceFormat: 'Mettre en forme'
 };
 
 export const weEditorLocaleEs: WeEditorLocale = {
@@ -306,5 +314,9 @@ export const weEditorLocaleEs: WeEditorLocale = {
   colorRecent: 'Recientes',
   specialChars: 'Caracteres especiales',
   codeLanguage: 'Lenguaje del código',
-  codeLanguagePlain: 'Texto sin formato'
+  codeLanguagePlain: 'Texto sin formato',
+  source: 'Código HTML',
+  sourceCode: 'Código',
+  sourceSplit: 'Dividida',
+  sourceFormat: 'Formatear'
 };

@@ -10,6 +10,8 @@ projects/we-editor/src/lib/
 ├── core/                         framework-free, unit-tested ProseMirror code
 │   ├── we-editor-schema.ts       nodes + marks = the HTML allowlist; URL/CSS value validators
 │   ├── we-editor-code.ts         code block language, lowlight highlighting plugin
+│   ├── we-editor-format.ts       HTML pretty-printer for the source view
+│   ├── we-editor-source.ts       CodeMirror 6 source editor (dynamic import)
 │   ├── we-editor-html.ts         parse (HTML → doc), serialize (doc → HTML), sanitize (both)
 │   ├── we-editor-commands.ts     every toolbar action as a ProseMirror Command
 │   └── we-editor-plugins.ts      history, keymap, state factory, task-item node view
@@ -46,6 +48,8 @@ Rules of thumb:
 - A code block's `language` (from `class="language-x"`, `lang-x` or `data-language`) passes
   `weEditorSafeCodeLanguage` (letters, digits, `+ # . _ -`, max 32) before it is written into `class`.
   Highlighting only adds ProseMirror decorations (classes); it never produces HTML strings.
+- HTML source view text is never rendered: it is parsed by `weEditorParseHtml` (inert document +
+  schema) and replaces the document; `weEditorFormatHtml` also parses inertly and returns text only.
 - Image `src` passes `weEditorSafeImageSrc`: http/https/relative, or a base64 raster
   `data:image/(png|jpeg|gif|webp|avif)` URL. SVG and other `data:` types are dropped (on parse, on
   command, in the node view, on serialize). Uploads accept the same raster types only.

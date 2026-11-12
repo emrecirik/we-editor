@@ -77,7 +77,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | Page layout / pagination | CK-P, TT-P | ⬜ |
 | **Source / HTML** | | |
 | HTML in/out with allowlist sanitizer | all | ✅ |
-| Source view with highlighting | CK, Ty, Fr | ⬜ (planned F3) |
+| Source view with highlighting | CK, Ty, Fr | ✅ CodeMirror 6, code + split view, two-way sync, format (P6) — the others offer a textarea or code-only view |
 | Preview | Ty | ⬜ (planned F3.3) |
 | E-mail output (inline CSS) | Ty-P, CK-P | ⬜ (planned F3.8) |
 | **Collaboration** (needs a backend) | | |

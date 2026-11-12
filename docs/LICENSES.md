@@ -18,6 +18,23 @@ Runtime dependencies of the published package `we-editor-angular`, verified from
 | prosemirror-schema-list | 1.6.0 | MIT | List commands |
 | lowlight | 3.3.0 | MIT | Code block syntax highlighting (token tree from highlight.js) |
 | highlight.js | 11.11.2 | BSD-3-Clause | Language grammars for code highlighting (23 ids, 22 grammars; `html` uses the XML grammar) |
+| @codemirror/state | 6.7.6 | MIT | HTML source view: editor state (loaded on first use via dynamic import) |
+| @codemirror/view | 6.43.15 | MIT | HTML source view: editor view, line numbers |
+| @codemirror/commands | 6.11.1 | MIT | HTML source view: keymap, history |
+| @codemirror/language | 6.13.1 | MIT | HTML source view: syntax highlighting |
+| @codemirror/lang-html | 6.4.12 | MIT | HTML source view: HTML language, auto-close tags |
+| @lezer/highlight | 1.2.5 | MIT | HTML source view: highlight tags |
+| @codemirror/autocomplete (transitive) | 6.20.4 | MIT | |
+| @codemirror/lang-css (transitive) | 6.3.1 | MIT | |
+| @codemirror/lang-javascript (transitive) | 6.2.5 | MIT | |
+| @codemirror/lint (transitive) | 6.9.7 | MIT | |
+| @lezer/common (transitive) | 1.5.5 | MIT | |
+| @lezer/css (transitive) | 1.3.9 | MIT | |
+| @lezer/html (transitive) | 1.3.13 | MIT | |
+| @lezer/javascript (transitive) | 1.5.6 | MIT | |
+| @lezer/lr (transitive) | 1.4.12 | MIT | |
+| style-mod (transitive) | 4.1.4 | MIT | |
+| crelt (transitive) | 1.0.7 | MIT | |
 | devlop (transitive) | 1.1.0 | MIT | |
 | @types/hast (transitive, types only) | 3.0.5 | MIT | |
 | orderedmap (transitive) | 2.1.1 | MIT | |

@@ -41,6 +41,7 @@ const en = {
     'Press Ctrl+F (⌘F) to find and replace — with match case, whole words and replace all.',
     'Paste a YouTube or Vimeo link on an empty line to embed the player; typed and pasted URLs become links.',
     'Put the cursor in the code block and pick a language in the bar under the toolbar — the code is coloured.',
+    'Press </> at the end of the toolbar for the HTML source; Split shows code and design side by side, kept in sync.',
     'Ctrl+Z undoes everything; Tab and Shift+Tab nest lists and move between table cells.'
   ],
   htmlTitle: 'HTML in, safe HTML out',
@@ -85,6 +86,7 @@ const tr: typeof en = {
     'Ctrl+F (⌘F) ile bulun ve değiştirin — büyük/küçük harf, tam kelime ve tümünü değiştir ile.',
     'Boş bir satıra YouTube ya da Vimeo bağlantısı yapıştırınca oynatıcı gömülür; yazılan ve yapıştırılan adresler bağlantı olur.',
     'İmleci kod bloğuna koyup araç çubuğunun altındaki bardan bir dil seçin — kod renklenir.',
+    'Araç çubuğunun sonundaki </> ile HTML kaynağını açın; Bölünmüş görünüm kodu ve tasarımı yan yana, eşzamanlı gösterir.',
     'Ctrl+Z her şeyi geri alır; Tab ve Shift+Tab listeleri iç içe alır, tablo hücreleri arasında gezer.'
   ],
   htmlTitle: 'HTML girer, güvenli HTML çıkar',

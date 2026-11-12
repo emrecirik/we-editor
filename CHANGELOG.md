@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- HTML source view (P6, F3.1/F3.2): new `source` toolbar item with **Code** and **Split** views
+  (two-way sync, debounced 250 ms, through the schema) and **Format**; CodeMirror 6 loaded on demand
+  via dynamic `import()`; `weEditorFormatHtml`, `weEditorCreateSourceEditor`; locale keys `source`,
+  `sourceCode`, `sourceSplit`, `sourceFormat`; DOM baseline re-recorded (button + `we-editor__body`
+  wrapper around the content). New dependencies `@codemirror/state`, `view`, `commands`, `language`,
+  `lang-html`, `@lezer/highlight` (all MIT); decision note `docs/decisions/0003-source-view-codemirror.md`.
+
 - Code block language + syntax highlighting (P5): a code bar with a language picker appears inside code
   blocks; 23 languages coloured through lowlight / highlight.js; output `<pre><code class="language-x">`
   (also read from `lang-x` and `data-language`, validated by `weEditorSafeCodeLanguage`). New
