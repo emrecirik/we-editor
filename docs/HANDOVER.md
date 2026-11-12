@@ -7,7 +7,8 @@ Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
 - Angular 18.2 workspace (mirrors `C:\Projects\we-grid`): library `projects/we-editor` (npm name
   `we-editor-angular`, **0.1.0 on npm since 2026-11-12** — published by hand from `dist/we-editor`;
   npm put the first version through *staged publishing* (a `0.0.0-stage` placeholder version stays in
-  the version list, harmless). Trusted Publishing still to be bound — see manual steps), `projects/playground` (feature sandbox), `projects/studio` (the live demo, mirrors we-grid Studio:
+  the version list, harmless). Trusted Publishing bound by Emre on 2026-11-12 (not yet exercised by a
+  tag-driven release), `projects/playground` (feature sandbox), `projects/studio` (the live demo, mirrors we-grid Studio:
   EN/TR, light/dark, Editor / Safe HTML / Get started tabs),
   CI / compat / release / pages workflows, `.claude/` agent + rule + skills (local only, gitignored).
 - Core decision: **ProseMirror used directly** — `docs/decisions/0001-editor-core.md`.
@@ -67,8 +68,8 @@ excluded locally (`.git/info/exclude`), as in we-grid.
 
 ## Next tasks (in order)
 
-0. ~~First npm publish~~ — done. **Bind Trusted Publishing** (manual steps below); later releases go
-   through the `editor-release` skill (tag-driven). No `v0.1.0` tag / GitHub release exists yet.
+0. ~~First npm publish~~, ~~Trusted Publishing~~ — done 2026-11-12. Later releases go through the
+   `editor-release` skill (tag-driven); the first one proves the OIDC binding. No `v0.1.0` tag / GitHub release exists yet.
 1. **P5…P18** in `docs/ROADMAP.md`
    order: code-block language + highlighting, source HTML view + preview (decision note on the
    code-editor dependency first), line height / case change / format painter / styles, full screen +
