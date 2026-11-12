@@ -187,6 +187,31 @@ describe('WeEditorComponent', () => {
     expect(host.control.value).toBe('<p><img src="https://cdn.test/p.png">hello world</p>');
   });
 
+  it('inserts a table from the table bar and edits it with the table tools', () => {
+    select(1, 1);
+    btn('table').click();
+    fixture.detectChanges();
+    const bar = el().querySelector('form[data-bar="table"]') as HTMLFormElement;
+    const [rows, cols] = Array.from(bar.querySelectorAll('input[type="number"]')) as HTMLInputElement[];
+    rows.value = '2';
+    rows.dispatchEvent(new Event('input'));
+    cols.value = '1';
+    cols.dispatchEvent(new Event('input'));
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    expect(host.control.value).toContain('<table><tbody><tr><th><p></p></th></tr><tr><td><p></p></td></tr></tbody></table>');
+
+    const tools = el().querySelector('[data-bar="table-tools"]') as HTMLElement;
+    expect(tools).not.toBeNull();
+    (tools.querySelector('[data-action="tableAddColumnAfter"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(host.control.value).toContain('<tr><th><p></p></th><th><p></p></th></tr>');
+    (el().querySelector('[data-action="tableDelete"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(host.control.value).not.toContain('<table');
+    expect(el().querySelector('[data-bar="table-tools"]')).toBeNull();
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

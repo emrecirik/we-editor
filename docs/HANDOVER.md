@@ -34,7 +34,10 @@ Last updated: 2026-11-12 (session 2: F0.12, F1.2 images, first push). Owner: Emr
 
 ## Next tasks (in order)
 
-1. **F1.1 Tables** (in progress next) with `prosemirror-tables`.
+1. **Competitor matrix + GitHub Pages** (Emre, 2026-11-12): compare CKEditor 5, TinyMCE, TipTap,
+   Froala, Quill feature by feature into `docs/ROADMAP.md`; build a landing page + live demo like
+   we-grid's (`docs/` + Pages workflow). Goal: no feature they have that we lack, then publish free on
+   npm.
 2. Run the compat workflow for 19–22 on GitHub (`compat.yml`); fix what it finds.
 3. **F0.13** — keyboard/a11y: toolbar roving tabindex, `Mod-k` opens the link bar, focus return,
    Escape handling; check with NVDA. Then cut **0.1.0** (`editor-release` skill).

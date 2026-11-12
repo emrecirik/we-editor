@@ -8,6 +8,7 @@ import {
   weEditorRemoveLink,
   weEditorSetAlign,
   weEditorSetBlock,
+  weEditorInsertTable,
   weEditorSetImage,
   weEditorSetLink,
   weEditorSetStyle,
@@ -100,6 +101,23 @@ describe('we-editor commands', () => {
     const state = weEditorCreateState('<p>a<img src="a.png">b</p>');
     const selected = state.apply(state.tr.setSelection(NodeSelection.create(state.doc, 2)));
     expect(run(selected, weEditorSetImage({ src: 'b.png', width: 50 }))).toBe('<p>a<img src="b.png" width="50">b</p>');
+  });
+
+  it('inserts a table with a header row and puts the cursor in its first cell', () => {
+    const state = stateOf('<p>ab</p>', 3);
+    let next = state;
+    expect(weEditorInsertTable(2, 2)(state, (tr) => (next = state.apply(tr)))).toBeTrue();
+    expect(weEditorSerializeHtml(next.doc)).toBe(
+      '<p>ab</p><table><tbody><tr><th><p></p></th><th><p></p></th></tr><tr><td><p></p></td><td><p></p></td></tr></tbody></table>'
+    );
+    expect(next.selection.$from.node(-1).type.name).toBe('table_header');
+    expect(run(stateOf('<p>a</p>', 2), weEditorInsertTable(1, 2, false))).toBe('<p>a</p><table><tbody><tr><td><p></p></td><td><p></p></td></tr></tbody></table>');
+  });
+
+  it('refuses empty, oversized or code-block tables', () => {
+    expect(run(stateOf('<p>a</p>', 1), weEditorInsertTable(0, 3))).toBeNull();
+    expect(run(stateOf('<p>a</p>', 1), weEditorInsertTable(51, 3))).toBeNull();
+    expect(run(stateOf('<pre><code>a</code></pre>', 1), weEditorInsertTable(2, 2))).toBeNull();
   });
 
   it('clears marks and block styles', () => {

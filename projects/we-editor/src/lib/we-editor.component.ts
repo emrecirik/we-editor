@@ -19,6 +19,20 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { redo, undo } from 'prosemirror-history';
 import { Node as PmNode } from 'prosemirror-model';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import {
+  addColumnAfter,
+  addColumnBefore,
+  addRowAfter,
+  addRowBefore,
+  deleteColumn,
+  deleteRow,
+  deleteTable,
+  isInTable,
+  mergeCells,
+  splitCell,
+  toggleHeaderColumn,
+  toggleHeaderRow
+} from 'prosemirror-tables';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 import {
@@ -27,6 +41,7 @@ import {
   WeEditorImageAttrs,
   weEditorBlockLevel,
   weEditorImageAt,
+  weEditorInsertTable,
   weEditorClearFormatting,
   weEditorIndent,
   weEditorInsertHorizontalRule,
@@ -95,6 +110,22 @@ const readAsDataUrl = (file: File): Promise<string> =>
     reader.readAsDataURL(file);
   });
 
+/** Actions of the table tools bar, shown while the cursor is in a table. */
+const TABLE_ACTIONS = {
+  tableAddRowBefore: addRowBefore,
+  tableAddRowAfter: addRowAfter,
+  tableDeleteRow: deleteRow,
+  tableAddColumnBefore: addColumnBefore,
+  tableAddColumnAfter: addColumnAfter,
+  tableDeleteColumn: deleteColumn,
+  tableMergeCells: mergeCells,
+  tableSplitCell: splitCell,
+  tableToggleHeaderRow: toggleHeaderRow,
+  tableToggleHeaderColumn: toggleHeaderColumn,
+  tableDelete: deleteTable
+} satisfies Partial<Record<keyof WeEditorLocale, Command>>;
+type TableAction = keyof typeof TABLE_ACTIONS;
+
 const BUTTONS: Partial<Record<WeEditorToolbarItem, ButtonDef>> = {
   undo: { icon: 'undo', label: 'undo', run: undo },
   redo: { icon: 'redo', label: 'redo', run: redo },
@@ -132,6 +163,8 @@ interface WeEditorUiState {
   highlight: string | null;
   link: string | null;
   image: WeEditorImageAttrs | null;
+  inTable: boolean;
+  table: Partial<Record<TableAction, boolean>>;
 }
 
 /**
@@ -191,6 +224,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     ref?.nativeElement.focus();
   }
 
+  @ViewChild('tableInput')
+  private set tableInput(ref: ElementRef<HTMLInputElement> | undefined) {
+    ref?.nativeElement.focus();
+  }
+
   @ViewChild('imageInput')
   private set imageInput(ref: ElementRef<HTMLInputElement> | undefined) {
     ref?.nativeElement.focus();
@@ -208,7 +246,10 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected imageBusy = false;
   protected imageError: '' | 'invalid' | 'upload' = '';
   protected image: { url: string; alt: string; width: string; align: string } = { url: '', alt: '', width: '', align: '' };
-  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', textColor: null, highlight: null, link: null, image: null };
+  protected tableOpen = false;
+  protected tableSize = { rows: 3, cols: 3, header: true };
+  protected readonly tableActions = Object.keys(TABLE_ACTIONS) as TableAction[];
+  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', textColor: null, highlight: null, link: null, image: null, inTable: false, table: {} };
 
   private readonly icons = inject(WE_EDITOR_ICONS);
   private readonly sanitizer = inject(DomSanitizer);
@@ -351,7 +392,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.linkUrl = this.ui.link ?? '';
     this.linkNewTab = false;
     this.linkError = false;
-    this.imageOpen = false;
+    this.imageOpen = this.tableOpen = false;
     this.linkOpen = true;
   }
 
@@ -381,7 +422,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     const img = this.ui.image;
     this.image = { url: img?.src ?? '', alt: img?.alt ?? '', width: img?.width ? String(img.width) : '', align: img?.align ?? '' };
     this.imageError = '';
-    this.linkOpen = false;
+    this.linkOpen = this.tableOpen = false;
     this.imageOpen = true;
   }
 
@@ -410,6 +451,27 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     const url = await this.storeImage(file);
     if (url) this.image = { ...this.image, url };
     this.cdr.markForCheck();
+  }
+
+  protected openTable(): void {
+    if (!this.view || !this.isEditable()) return;
+    this.linkOpen = this.imageOpen = false;
+    this.tableOpen = true;
+  }
+
+  protected insertTable(event?: Event): void {
+    event?.preventDefault();
+    const { rows, cols, header } = this.tableSize;
+    if (this.exec(weEditorInsertTable(rows, cols, header))) this.tableOpen = false;
+  }
+
+  protected closeTable(): void {
+    this.tableOpen = false;
+    this.view?.focus();
+  }
+
+  protected runTable(action: TableAction): void {
+    this.exec(TABLE_ACTIONS[action]);
   }
 
   // ── Internals ───────────────────────────────────────────────────────
@@ -505,6 +567,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     }
     active.link = weEditorMarkActive(state, s.marks['link']);
     enabled.link = editable;
+    const inTable = isInTable(state);
+    const table: WeEditorUiState['table'] = {};
+    if (inTable) for (const a of this.tableActions) table[a] = editable && TABLE_ACTIONS[a](state);
+    active.table = inTable;
+    enabled.table = editable;
     const image = weEditorImageAt(state);
     active.image = !!image;
     enabled.image = editable;
@@ -517,7 +584,9 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       textColor: weEditorMarkAt(state, s.marks['text_color'])?.attrs['value'] ?? null,
       highlight: weEditorMarkAt(state, s.marks['highlight'])?.attrs['value'] ?? null,
       link: weEditorLinkAt(state),
-      image
+      image,
+      inTable,
+      table
     };
     this.cdr.markForCheck();
   }

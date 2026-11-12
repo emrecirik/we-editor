@@ -61,6 +61,24 @@ export interface WeEditorLocale {
   imageCancel: string;
   imageInvalid: string;
   imageUploadFailed: string;
+  table: string;
+  tableRows: string;
+  tableColumns: string;
+  tableHeaderRow: string;
+  tableInsert: string;
+  tableCancel: string;
+  tableTools: string;
+  tableAddRowBefore: string;
+  tableAddRowAfter: string;
+  tableDeleteRow: string;
+  tableAddColumnBefore: string;
+  tableAddColumnAfter: string;
+  tableDeleteColumn: string;
+  tableMergeCells: string;
+  tableSplitCell: string;
+  tableToggleHeaderRow: string;
+  tableToggleHeaderColumn: string;
+  tableDelete: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -121,7 +139,25 @@ export const weEditorLocaleEn: WeEditorLocale = {
   imageApply: 'Apply',
   imageCancel: 'Cancel',
   imageInvalid: 'This image address is not allowed.',
-  imageUploadFailed: 'The image could not be added.'
+  imageUploadFailed: 'The image could not be added.',
+  table: 'Insert table',
+  tableRows: 'Rows',
+  tableColumns: 'Columns',
+  tableHeaderRow: 'Header row',
+  tableInsert: 'Insert',
+  tableCancel: 'Cancel',
+  tableTools: 'Table tools',
+  tableAddRowBefore: 'Row above',
+  tableAddRowAfter: 'Row below',
+  tableDeleteRow: 'Delete row',
+  tableAddColumnBefore: 'Column left',
+  tableAddColumnAfter: 'Column right',
+  tableDeleteColumn: 'Delete column',
+  tableMergeCells: 'Merge cells',
+  tableSplitCell: 'Split cell',
+  tableToggleHeaderRow: 'Header row',
+  tableToggleHeaderColumn: 'Header column',
+  tableDelete: 'Delete table'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -182,7 +218,25 @@ export const weEditorLocaleTr: WeEditorLocale = {
   imageApply: 'Uygula',
   imageCancel: 'Vazgeç',
   imageInvalid: 'Bu resim adresine izin verilmiyor.',
-  imageUploadFailed: 'Resim eklenemedi.'
+  imageUploadFailed: 'Resim eklenemedi.',
+  table: 'Tablo ekle',
+  tableRows: 'Satır',
+  tableColumns: 'Sütun',
+  tableHeaderRow: 'Başlık satırı',
+  tableInsert: 'Ekle',
+  tableCancel: 'Vazgeç',
+  tableTools: 'Tablo araçları',
+  tableAddRowBefore: 'Üste satır',
+  tableAddRowAfter: 'Alta satır',
+  tableDeleteRow: 'Satırı sil',
+  tableAddColumnBefore: 'Sola sütun',
+  tableAddColumnAfter: 'Sağa sütun',
+  tableDeleteColumn: 'Sütunu sil',
+  tableMergeCells: 'Hücreleri birleştir',
+  tableSplitCell: 'Hücreyi böl',
+  tableToggleHeaderRow: 'Başlık satırı',
+  tableToggleHeaderColumn: 'Başlık sütunu',
+  tableDelete: 'Tabloyu sil'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

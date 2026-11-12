@@ -12,6 +12,7 @@ Runtime dependencies of the published package `we-editor-angular`, verified from
 | prosemirror-commands | 1.7.2 | MIT | Base editing commands |
 | prosemirror-history | 1.5.1 | MIT | Undo/redo |
 | prosemirror-inputrules | 1.5.1 | MIT | Markdown-style input rules |
+| prosemirror-tables | 1.8.5 | MIT | Tables: cell selection, merge/split, column resize |
 | prosemirror-keymap | 1.2.3 | MIT | Keyboard shortcuts |
 | prosemirror-schema-list | 1.6.0 | MIT | List commands |
 | orderedmap (transitive) | 2.1.1 | MIT | |
@@ -22,6 +23,6 @@ Runtime dependencies of the published package `we-editor-angular`, verified from
 Rules: only MIT/BSD/ISC/Apache-2.0-class licences ship. CKEditor (GPL/commercial) and TipTap "Pro"
 extensions are never added. A new dependency gets a row here in the same change.
 
-Candidates for later phases (not installed): `prosemirror-tables` 1.8.5 (MIT, F1 tables),
+Candidates for later phases (not installed):
 `prosemirror-dropcursor`, `prosemirror-gapcursor` (MIT). The HTML code
 view (F3) needs a code editor — CodeMirror 6 is MIT; decide in a `decisions/` note before adding.

@@ -56,6 +56,18 @@ describe('we-editor input rules', () => {
   });
 });
 
+describe('we-editor table keymap', () => {
+  it('Tab moves to the next cell', () => {
+    const state = weEditorCreateState('<table><tr><td><p>a</p></td><td><p>b</p></td></tr></table>');
+    const view = new EditorView(document.createElement('div'), {
+      state: state.apply(state.tr.setSelection(TextSelection.create(state.doc, 4)))
+    });
+    view.someProp('handleKeyDown', (f) => f(view, new KeyboardEvent('keydown', { key: 'Tab' })));
+    expect(view.state.selection.$from.parent.textContent).toBe('b');
+    view.destroy();
+  });
+});
+
 describe('weEditorStats', () => {
   it('counts words and characters across blocks', () => {
     const doc = weEditorCreateState('<p>Merhaba dünya</p><ul><li><p>bir</p></li></ul>').doc;

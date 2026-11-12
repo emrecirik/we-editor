@@ -24,7 +24,10 @@ wrapping component).
 `clearFormatting`, `image`, `imageUrl`, `imageUrlPlaceholder`, `imageUpload`, `imageAlt`,
 `imageAltPlaceholder`, `imageWidth`, `imageAlign`, `imageAlignInline`, `imageAlignLeft`,
 `imageAlignCenter`, `imageAlignRight`, `imageApply`, `imageCancel`, `imageInvalid`,
-`imageUploadFailed`.
+`imageUploadFailed`, `table`, `tableRows`, `tableColumns`, `tableHeaderRow`, `tableInsert`,
+`tableCancel`, `tableTools`, `tableAddRowBefore`, `tableAddRowAfter`, `tableDeleteRow`,
+`tableAddColumnBefore`, `tableAddColumnAfter`, `tableDeleteColumn`, `tableMergeCells`,
+`tableSplitCell`, `tableToggleHeaderRow`, `tableToggleHeaderColumn`, `tableDelete`.
 
 Adding a key: interface + `weEditorLocaleEn` + `weEditorLocaleTr` in the same change (a spec fails
 when the two shipped locales differ in keys), and a line here. A new key is a breaking change for

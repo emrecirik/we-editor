@@ -23,6 +23,11 @@ Target: 0.1.0 — first public release (roadmap phase F0).
   `image` schema node, `weEditorSetImage`, `weEditorImageAt`, `weEditorSafeImageSrc`,
   `WeEditorImageView`. New locale keys `image*` (breaking for hand-written full locale objects). DOM
   baseline re-recorded for the new toolbar button.
+- Tables (F1.1): `table` toolbar item with an insert bar (rows, columns, header row) and a table
+  tools bar (add/delete rows and columns, merge/split cells, header row/column, delete table);
+  column resize by drag, cell selection, Tab / Shift+Tab between cells; `weEditorInsertTable`,
+  `WE_EDITOR_MAX_CELL_SPAN`, `WE_EDITOR_MAX_TABLE_SIZE`; new locale keys `table*`; DOM baseline
+  re-recorded. New dependency `prosemirror-tables` (MIT).
 - Keyboard shortcuts (Ctrl/Cmd+B/I/U/E, Ctrl/Cmd+Shift+X, Ctrl/Cmd+,/., undo/redo, Shift+Enter,
   Tab/Shift+Tab in lists).
 - Schema-based HTML allowlist: `weEditorSanitizeHtml`, `weEditorParseHtml`,

@@ -348,3 +348,36 @@ export function weEditorSetImage(attrs: WeEditorImageAttrs): Command {
     return true;
   };
 }
+
+/** Largest table the insert command builds. */
+export const WE_EDITOR_MAX_TABLE_SIZE = 50;
+
+/** Inserts a `rows` × `cols` table (first row as header cells when `header`) and puts the cursor in it. */
+export function weEditorInsertTable(rows: number, cols: number, header = true): Command {
+  return (state, dispatch) => {
+    const r = Math.floor(rows);
+    const c = Math.floor(cols);
+    if (!(r >= 1 && c >= 1 && r <= WE_EDITOR_MAX_TABLE_SIZE && c <= WE_EDITOR_MAX_TABLE_SIZE)) return false;
+    const { $from } = state.selection;
+    for (let d = $from.depth; d > 0; d--) if ($from.node(d).type.spec.code) return false;
+    if (dispatch) {
+      const cell = (type: string) => s.nodes[type].createAndFill()!;
+      const table = s.nodes['table'].create(
+        null,
+        Array.from({ length: r }, (_, i) =>
+          s.nodes['table_row'].create(null, Array.from({ length: c }, () => cell(header && i === 0 ? 'table_header' : 'table_cell')))
+        )
+      );
+      const tr = state.tr.replaceSelectionWith(table);
+      // Cursor into the first cell: find the inserted node by identity (ProseMirror keeps the instance).
+      let at = -1;
+      tr.doc.descendants((node, pos) => {
+        if (node === table) at = pos;
+        return at < 0;
+      });
+      if (at >= 0) tr.setSelection(TextSelection.near(tr.doc.resolve(at + 4)));
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };
+}

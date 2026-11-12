@@ -45,6 +45,8 @@ Rules of thumb:
 - Image `src` passes `weEditorSafeImageSrc`: http/https/relative, or a base64 raster
   `data:image/(png|jpeg|gif|webp|avif)` URL. SVG and other `data:` types are dropped (on parse, on
   command, in the node view, on serialize). Uploads accept the same raster types only.
+- Table cells: `colspan`/`rowspan` are clamped to 1–100 and `data-colwidth` to whole pixels ≤ 4000 on
+  parse, so hostile HTML cannot build a huge table map.
 - The page's live DOM is never written with `innerHTML` from document content. The only
   `[innerHTML]` binding renders the developer-provided SVG icons (`WE_EDITOR_ICONS`), the same
   pattern as we-grid.

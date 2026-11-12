@@ -2,6 +2,7 @@ import { baseKeymap, chainCommands, toggleMark } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, textblockTypeInputRule, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
+import { columnResizing, goToNextCell, tableEditing } from 'prosemirror-tables';
 import { Node as PmNode } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
 import { EditorState, NodeSelection, Plugin } from 'prosemirror-state';
@@ -35,6 +36,8 @@ export function weEditorPlugins(): Plugin[] {
   return [
     history(),
     inputRules({ rules: weEditorInputRules() }),
+    columnResizing(),
+    tableEditing(),
     keymap({
       // Backspace right after an input rule fired restores the typed characters.
       Backspace: undoInputRule,
@@ -50,9 +53,9 @@ export function weEditorPlugins(): Plugin[] {
       'Mod-.': toggleMark(s.marks['superscript']),
       'Shift-Enter': weEditorInsertHardBreak,
       Enter: chainCommands(...listItems.map((t) => splitListItem(t))),
-      // Tab only nests list items; elsewhere it keeps moving focus, so keyboard users are not trapped.
-      Tab: chainCommands(...listItems.map((t) => sinkListItem(t))),
-      'Shift-Tab': chainCommands(...listItems.map((t) => liftListItem(t)))
+      // Tab nests list items and moves between table cells; elsewhere it keeps moving focus (no keyboard trap).
+      Tab: chainCommands(...listItems.map((t) => sinkListItem(t)), goToNextCell(1)),
+      'Shift-Tab': chainCommands(...listItems.map((t) => liftListItem(t)), goToNextCell(-1))
     }),
     keymap(baseKeymap)
   ];

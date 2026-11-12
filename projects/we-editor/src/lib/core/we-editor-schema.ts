@@ -1,4 +1,5 @@
-import { DOMOutputSpec, Mark, MarkSpec, Node as PmNode, NodeSpec, Schema } from 'prosemirror-model';
+import { DOMOutputSpec, Mark, MarkSpec, Node as PmNode, NodeSpec, Schema, TagParseRule } from 'prosemirror-model';
+import { tableNodes } from 'prosemirror-tables';
 
 /** Paragraph/heading alignment. `null` means "inherit" (no inline style is written). */
 export type WeEditorAlign = 'left' | 'center' | 'right' | 'justify';
@@ -117,6 +118,39 @@ function blockStyle(node: PmNode): Record<string, string> {
 
 const blockAttrs = { align: { default: null }, indent: { default: 0 } };
 
+/** Largest `colspan` / `rowspan` read from HTML; bigger values would blow up the table map. */
+export const WE_EDITOR_MAX_CELL_SPAN = 100;
+
+const clampInt = (v: unknown, max: number): number => {
+  const n = Math.floor(Number(v));
+  return Number.isFinite(n) && n >= 1 ? Math.min(n, max) : 1;
+};
+
+/** prosemirror-tables' cell specs, with spans and column widths clamped on parse. */
+function tableSpecs(): Record<string, NodeSpec> {
+  const specs: Record<string, NodeSpec> = tableNodes({ tableGroup: 'block', cellContent: 'block+', cellAttributes: {} });
+  for (const name of ['table_cell', 'table_header']) {
+    const rules = specs[name].parseDOM as readonly TagParseRule[];
+    specs[name] = {
+      ...specs[name],
+      parseDOM: rules.map((rule): TagParseRule => ({
+        ...rule,
+        getAttrs: (dom) => {
+          const attrs = rule.getAttrs!(dom as HTMLElement) as Record<string, unknown>;
+          const colspan = clampInt(attrs['colspan'], WE_EDITOR_MAX_CELL_SPAN);
+          const widths = attrs['colwidth'] as number[] | null;
+          return {
+            colspan,
+            rowspan: clampInt(attrs['rowspan'], WE_EDITOR_MAX_CELL_SPAN),
+            colwidth: widths && widths.length === colspan ? widths.map((w) => clampInt(w, WE_EDITOR_MAX_IMAGE_WIDTH)) : null
+          };
+        }
+      }))
+    };
+  }
+  return specs;
+}
+
 const nodes: Record<string, NodeSpec> = {
   doc: { content: 'block+' },
 
@@ -221,6 +255,8 @@ const nodes: Record<string, NodeSpec> = {
       ['div', 0]
     ]
   },
+
+  ...tableSpecs(),
 
   text: { group: 'inline' },
 

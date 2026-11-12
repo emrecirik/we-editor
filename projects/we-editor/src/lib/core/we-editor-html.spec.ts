@@ -83,6 +83,18 @@ describe('weEditorSanitizeHtml', () => {
     expect(weEditorSanitizeHtml('<p><img src="x.png" onerror="alert(1)"></p>')).toBe('<p><img src="x.png"></p>');
   });
 
+  it('keeps tables with header cells, spans and column widths', () => {
+    const html = '<table><tbody><tr><th><p>H</p></th><th><p>I</p></th></tr><tr><td colspan="2" data-colwidth="80,120"><p>x</p></td></tr></tbody></table>';
+    expect(weEditorSanitizeHtml(html)).toBe(html);
+  });
+
+  it('clamps hostile cell spans', () => {
+    expect(weEditorSanitizeHtml('<table><tr><td colspan="abc" rowspan="-3"><p>a</p></td></tr></table>')).toBe(
+      '<table><tbody><tr><td><p>a</p></td></tr></tbody></table>'
+    );
+    expect(weEditorSanitizeHtml('<table><tr><td colspan="99999"><p>a</p></td></tr></table>')).toContain('colspan="100"');
+  });
+
   it('wraps bare text in a paragraph', () => {
     expect(weEditorSanitizeHtml('hello')).toBe('<p>hello</p>');
   });

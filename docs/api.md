@@ -50,7 +50,12 @@ Disabled state comes from the form control (`control.disable()`).
 `undo`, `redo`, `blockType`, `fontFamily`, `fontSize`, `bold`, `italic`, `underline`, `strike`,
 `subscript`, `superscript`, `code`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
-`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `clearFormatting`, `'|'`.
+`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `table`, `clearFormatting`, `'|'`.
+
+`table` opens the insert bar (rows, columns up to 50, header row). While the cursor is in a table a
+**table tools** bar appears: row above/below, delete row, column left/right, delete column, merge
+cells, split cell, header row, header column, delete table. Drag a column border to resize it
+(written as `data-colwidth`); Shift+click or drag across cells to select several.
 
 `image` opens the image bar: address, upload from computer, alternative text, width in px, and
 position (in line with text / left or right with text wrapping / centred). With an image selected
@@ -67,7 +72,7 @@ image files (PNG, JPEG, GIF, WebP, AVIF) are inserted too.
 | Ctrl/Cmd+, / . | Subscript / superscript |
 | Ctrl/Cmd+Z, Ctrl/Cmd+Y, Ctrl/Cmd+Shift+Z | Undo / redo |
 | Shift+Enter | Line break (`<br>`) |
-| Tab / Shift+Tab | Nest / lift a list item (outside lists Tab moves focus) |
+| Tab / Shift+Tab | Nest / lift a list item; next / previous table cell (elsewhere Tab moves focus) |
 
 Input rules, typed at the start of a block (not inside code blocks): `# ` … `###### ` heading,
 `- ` / `* ` bulleted list, `1. ` numbered list (the number becomes `start`), `> ` quote, ```` ``` ````
@@ -90,7 +95,8 @@ and declarations end with `;` (`<span style="color: rgb(255, 0, 0);">`).
 ## Schema and commands
 
 `weEditorSchema` (nodes: `paragraph`, `heading`, `blockquote`, `code_block`, `horizontal_rule`,
-`bullet_list`, `ordered_list`, `list_item`, `task_list`, `task_item`, `hard_break`, `image` (inline;
+`bullet_list`, `ordered_list`, `list_item`, `task_list`, `task_item`, `hard_break`, `table`, `table_row`, `table_cell`, `table_header` (`colspan`, `rowspan`,
+`colwidth`; spans clamped to `WE_EDITOR_MAX_CELL_SPAN` = 100 on parse), `image` (inline;
 `src`, `alt`, `title`, `width`, `align`); marks: `link`,
 `bold`, `italic`, `underline`, `strike`, `subscript`, `superscript`, `code`, `font_family`,
 `font_size`, `text_color`, `highlight`).
@@ -100,7 +106,9 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image); queries `weEditorImageAt`, `weEditorMarkActive`, `weEditorMarkAt`,
+image), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,
+column, merge and header commands come from `prosemirror-tables` (`addRowAfter`, `mergeCells`, …) and
+work on `editorView` directly; queries `weEditorImageAt`, `weEditorMarkActive`, `weEditorMarkAt`,
 `weEditorBlockLevel`, `weEditorAlignAt`, `weEditorListAt`, `weEditorLinkAt`.
 
 Node views: `WeEditorImageView` (resize handle).

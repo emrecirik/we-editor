@@ -62,6 +62,13 @@
               <span aria-hidden="true" [innerHTML]="icon('image')"></span>
             </button>
           }
+          @case ('table') {
+            <button type="button" class="we-editor__btn" data-item="table" [class.we-editor__btn--active]="ui.active.table || tableOpen"
+                    [disabled]="!ui.enabled.table" [title]="locale.table" [attr.aria-label]="locale.table"
+                    [attr.aria-expanded]="tableOpen" (click)="tableOpen ? closeTable() : openTable()">
+              <span aria-hidden="true" [innerHTML]="icon('table')"></span>
+            </button>
+          }
           @default {
             @if (button(item); as def) {
               <button type="button" class="we-editor__btn" [attr.data-item]="item" [class.we-editor__btn--active]="!!ui.active[item]"
@@ -120,6 +127,37 @@
         <span class="we-editor__error" role="alert">{{ imageError === 'invalid' ? locale.imageInvalid : locale.imageUploadFailed }}</span>
       }
     </form>
+  }
+
+  @if (tableOpen) {
+    <form class="we-editor__linkbar" data-bar="table" (submit)="insertTable($event)" (keydown.escape)="closeTable()">
+      <label class="we-editor__check">
+        {{ locale.tableRows }}
+        <input #tableInput class="we-editor__input we-editor__input--tiny" type="number" min="1" max="50" [value]="tableSize.rows"
+               (input)="tableSize.rows = +$any($event.target).value" />
+      </label>
+      <label class="we-editor__check">
+        {{ locale.tableColumns }}
+        <input class="we-editor__input we-editor__input--tiny" type="number" min="1" max="50" [value]="tableSize.cols"
+               (input)="tableSize.cols = +$any($event.target).value" />
+      </label>
+      <label class="we-editor__check">
+        <input type="checkbox" [checked]="tableSize.header" (change)="tableSize.header = $any($event.target).checked" />
+        {{ locale.tableHeaderRow }}
+      </label>
+      <button type="submit" class="we-editor__text-btn we-editor__text-btn--primary">{{ locale.tableInsert }}</button>
+      <button type="button" class="we-editor__text-btn" (click)="closeTable()">{{ locale.tableCancel }}</button>
+    </form>
+  }
+
+  @if (ui.inTable && !readonly && !disabled) {
+    <div class="we-editor__linkbar we-editor__tablebar" role="toolbar" data-bar="table-tools" [attr.aria-label]="locale.tableTools"
+         (mousedown)="onToolbarMouseDown($event)">
+      @for (action of tableActions; track action) {
+        <button type="button" class="we-editor__text-btn" [attr.data-action]="action" [disabled]="!ui.table[action]"
+                (click)="runTable(action)">{{ locale[action] }}</button>
+      }
+    </div>
   }
 
   <div #content class="we-editor__content"></div>
