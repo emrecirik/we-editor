@@ -246,6 +246,26 @@ describe('WeEditorComponent', () => {
     expect(bar.querySelectorAll('input[type="text"]').length).toBe(1);
   });
 
+  it('embeds a video from the media bar and explains unsupported addresses', () => {
+    select(12, 12);
+    btn('media').click();
+    fixture.detectChanges();
+    const bar = el().querySelector('form[data-bar="media"]') as HTMLFormElement;
+    const input = bar.querySelector('input') as HTMLInputElement;
+    input.value = 'https://example.com/video';
+    input.dispatchEvent(new Event('input'));
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    expect(el().querySelector('.we-editor__error')?.textContent).toContain(weEditorLocaleEn.mediaInvalid);
+
+    input.value = 'https://vimeo.com/76979871';
+    input.dispatchEvent(new Event('input'));
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    expect(host.control.value).toContain('<iframe src="https://player.vimeo.com/video/76979871"');
+    expect(el().querySelector('.we-editor__embed iframe')?.getAttribute('sandbox')).toBe('allow-scripts allow-presentation');
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

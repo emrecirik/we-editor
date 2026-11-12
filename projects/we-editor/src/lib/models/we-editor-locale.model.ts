@@ -92,6 +92,12 @@ export interface WeEditorLocale {
   /** `{current}` and `{total}` are replaced with numbers. */
   findCount: string;
   findNoResults: string;
+  media: string;
+  mediaUrl: string;
+  mediaUrlPlaceholder: string;
+  mediaInsert: string;
+  mediaCancel: string;
+  mediaInvalid: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -182,7 +188,13 @@ export const weEditorLocaleEn: WeEditorLocale = {
   replaceAll: 'Replace all',
   findClose: 'Close',
   findCount: '{current} of {total}',
-  findNoResults: 'No results'
+  findNoResults: 'No results',
+  media: 'Insert video',
+  mediaUrl: 'Video address',
+  mediaUrlPlaceholder: 'YouTube or Vimeo link',
+  mediaInsert: 'Insert',
+  mediaCancel: 'Cancel',
+  mediaInvalid: 'Only YouTube and Vimeo links can be embedded.'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -273,7 +285,13 @@ export const weEditorLocaleTr: WeEditorLocale = {
   replaceAll: 'Tümünü değiştir',
   findClose: 'Kapat',
   findCount: '{current} / {total}',
-  findNoResults: 'Sonuç yok'
+  findNoResults: 'Sonuç yok',
+  media: 'Video ekle',
+  mediaUrl: 'Video adresi',
+  mediaUrlPlaceholder: 'YouTube veya Vimeo bağlantısı',
+  mediaInsert: 'Ekle',
+  mediaCancel: 'Vazgeç',
+  mediaInvalid: 'Yalnızca YouTube ve Vimeo bağlantıları eklenebilir.'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

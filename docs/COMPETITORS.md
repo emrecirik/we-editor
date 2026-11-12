@@ -47,7 +47,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | Images: URL, upload, paste, drop, resize, position, alt | all | ✅ |
 | Image caption, link on image | CK, Ty | ⬜ |
 | Image editing (crop/rotate) | Ty-P, Fr | ⬜ |
-| Video / media embed | CK, Ty, TT, Fr, Q | ⬜ |
+| Video / media embed | CK, Ty, TT, Fr, Q | ✅ YouTube, Vimeo |
 | File attachments | CK-P, Ty-P, Fr | ⬜ |
 | Mentions | CK, Ty-P, TT, Fr, Lx | ⬜ |
 | **Tables** | | |

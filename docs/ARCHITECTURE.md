@@ -45,6 +45,12 @@ Rules of thumb:
 - Image `src` passes `weEditorSafeImageSrc`: http/https/relative, or a base64 raster
   `data:image/(png|jpeg|gif|webp|avif)` URL. SVG and other `data:` types are dropped (on parse, on
   command, in the node view, on serialize). Uploads accept the same raster types only.
+- `<iframe>` is allowed only for YouTube / Vimeo: `weEditorEmbedUrl` takes the video id from the
+  parsed `src` (strict id patterns, exact host match) and rebuilds the player URL; every other attribute
+  (`srcdoc`, `onload`, `sandbox`, …) is dropped and fixed ones are written. In the editor the iframe sits
+  behind a click shield with `sandbox="allow-scripts allow-presentation"` (Vimeo); YouTube's player
+  needs `allow-same-origin` too (it stays black without it, checked 2026-11-12) — safe because the frame
+  is always cross-origin to the host page.
 - Table cells: `colspan`/`rowspan` are clamped to 1–100 and `data-colwidth` to whole pixels ≤ 4000 on
   parse, so hostile HTML cannot build a huge table map.
 - The page's live DOM is never written with `innerHTML` from document content. The only

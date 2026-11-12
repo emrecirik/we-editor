@@ -35,6 +35,9 @@ Target: 0.1.0 — first public release (roadmap phase F0).
   dependency `prosemirror-search` (MIT).
 - Autolink (P2): URLs become links after a space or Enter and in pasted content; a URL pasted over
   a selection links it; `weEditorAutolink`, `weEditorAutolinkHref`.
+- Video embeds (P3): `media` toolbar item for YouTube / Vimeo links, `embed` schema node (iframe
+  allowlist, canonical player URL rebuilt from the video id), `weEditorEmbedUrl`, `weEditorInsertEmbed`,
+  `WeEditorEmbedView`; locale keys `media*`; DOM baseline re-recorded.
 - Keyboard shortcuts (Ctrl/Cmd+B/I/U/E, Ctrl/Cmd+Shift+X, Ctrl/Cmd+,/., undo/redo, Shift+Enter,
   Tab/Shift+Tab in lists).
 - Schema-based HTML allowlist: `weEditorSanitizeHtml`, `weEditorParseHtml`,

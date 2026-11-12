@@ -11,7 +11,7 @@ import { EditorView, NodeView } from 'prosemirror-view';
 
 import { weEditorInsertHardBreak } from './we-editor-commands';
 import { weEditorParseHtml } from './we-editor-html';
-import { WE_EDITOR_MAX_IMAGE_WIDTH, weEditorSafeImageSrc, weEditorSafeUrl, weEditorSchema } from './we-editor-schema';
+import { WE_EDITOR_MAX_IMAGE_WIDTH, weEditorEmbedUrl, weEditorSafeImageSrc, weEditorSafeUrl, weEditorSchema } from './we-editor-schema';
 
 const s = weEditorSchema;
 
@@ -308,5 +308,48 @@ export class WeEditorImageView implements NodeView {
     handle.addEventListener('pointermove', move);
     handle.addEventListener('pointerup', end);
     handle.addEventListener('pointercancel', end);
+  }
+}
+
+/**
+ * Renders an embedded video in the editor: a sandboxed iframe under a transparent shield, so a click
+ * selects the block (to move or delete it) instead of starting the video.
+ */
+export class WeEditorEmbedView implements NodeView {
+  readonly dom: HTMLDivElement;
+  private readonly frame: HTMLIFrameElement;
+
+  constructor(private node: PmNode) {
+    this.dom = document.createElement('div');
+    this.dom.className = 'we-editor__embed';
+    this.frame = document.createElement('iframe');
+    this.frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    this.frame.setAttribute('loading', 'lazy');
+    this.frame.tabIndex = -1;
+    const shield = document.createElement('div');
+    shield.className = 'we-editor__embed-shield';
+    this.dom.append(this.frame, shield);
+    this.render();
+  }
+
+  update(node: PmNode): boolean {
+    if (node.type !== this.node.type) return false;
+    this.node = node;
+    this.render();
+    return true;
+  }
+
+  ignoreMutation(): boolean {
+    return true;
+  }
+
+  private render(): void {
+    const src = weEditorEmbedUrl(this.node.attrs['src']) ?? 'about:blank';
+    // YouTube's player stays black without allow-same-origin; the frame is cross-origin, so that flag
+    // only gives it its own origin's storage, never ours. Vimeo works with the stricter set.
+    const sandbox = src.startsWith('https://www.youtube-nocookie.com/') ? 'allow-scripts allow-same-origin allow-presentation' : 'allow-scripts allow-presentation';
+    if (this.frame.getAttribute('sandbox') !== sandbox) this.frame.setAttribute('sandbox', sandbox);
+    if (this.frame.getAttribute('src') !== src) this.frame.src = src;
+    this.frame.title = this.node.attrs['title'] ?? '';
   }
 }

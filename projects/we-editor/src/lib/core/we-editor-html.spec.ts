@@ -1,5 +1,5 @@
 import { weEditorParseHtml, weEditorSanitizeHtml, weEditorSerializeHtml } from './we-editor-html';
-import { weEditorSafeColor, weEditorSafeFontSize, weEditorSafeUrl } from './we-editor-schema';
+import { weEditorEmbedUrl, weEditorSafeColor, weEditorSafeFontSize, weEditorSafeUrl } from './we-editor-schema';
 
 describe('weEditorSafeUrl', () => {
   it('allows http(s), mailto, tel and relative URLs', () => {
@@ -93,6 +93,26 @@ describe('weEditorSanitizeHtml', () => {
       '<table><tbody><tr><td><p>a</p></td></tr></tbody></table>'
     );
     expect(weEditorSanitizeHtml('<table><tr><td colspan="99999"><p>a</p></td></tr></table>')).toContain('colspan="100"');
+  });
+
+  it('maps YouTube and Vimeo URLs to canonical embed URLs and rejects everything else', () => {
+    for (const url of ['https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10', 'https://youtu.be/dQw4w9WgXcQ', 'https://youtube.com/shorts/dQw4w9WgXcQ',
+      'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1', 'https://m.youtube.com/watch?v=dQw4w9WgXcQ']) {
+      expect(weEditorEmbedUrl(url)).withContext(url).toBe('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    }
+    expect(weEditorEmbedUrl('https://vimeo.com/76979871')).toBe('https://player.vimeo.com/video/76979871');
+    expect(weEditorEmbedUrl('https://player.vimeo.com/video/76979871?h=x')).toBe('https://player.vimeo.com/video/76979871');
+    for (const bad of ['javascript:alert(1)', 'https://youtube.com.evil.com/watch?v=dQw4w9WgXcQ', 'https://evil.com/embed/dQw4w9WgXcQ',
+      'https://www.youtube.com/watch?v="onload=x', 'https://www.youtube.com/watch?v=short', 'data:text/html,x', 'https://vimeo.com/abc', '']) {
+      expect(weEditorEmbedUrl(bad)).withContext(bad).toBeNull();
+    }
+  });
+
+  it('keeps only allowlisted video iframes, rebuilt from scratch', () => {
+    expect(weEditorSanitizeHtml('<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" onload="alert(1)" sandbox=""></iframe>')).toBe(
+      '<iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" width="560" height="315" frameborder="0" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
+    );
+    expect(weEditorSanitizeHtml('<p>a</p><iframe src="https://evil.com/x"></iframe><iframe srcdoc="<script>x</script>"></iframe>')).toBe('<p>a</p>');
   });
 
   it('wraps bare text in a paragraph', () => {

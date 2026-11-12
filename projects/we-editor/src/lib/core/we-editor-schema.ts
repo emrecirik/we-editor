@@ -79,6 +79,31 @@ function imageStyle(align: WeEditorImageAlign | null): string | null {
   }
 }
 
+/**
+ * Turns a YouTube or Vimeo page/share/embed URL into the canonical embed URL, or `null` for anything
+ * else. Only the video id is taken from the input; the iframe URL is always rebuilt from scratch.
+ */
+export function weEditorEmbedUrl(url: string | null | undefined): string | null {
+  let u: URL;
+  try {
+    u = new URL((url ?? '').trim());
+  } catch {
+    return null;
+  }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  const host = u.hostname.replace(/^(www\.|m\.)/, '');
+  const path = u.pathname;
+  let id: string | null | undefined = null;
+  if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
+    id = path === '/watch' ? u.searchParams.get('v') : /^\/(?:embed|shorts|live)\/([^/]+)/.exec(path)?.[1];
+  } else if (host === 'youtu.be') {
+    id = path.slice(1);
+  }
+  if (id) return /^[\w-]{11}$/.test(id) ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+  const vimeo = host === 'vimeo.com' ? /^\/(\d{1,12})$/.exec(path) : host === 'player.vimeo.com' ? /^\/video\/(\d{1,12})$/.exec(path) : null;
+  return vimeo ? `https://player.vimeo.com/video/${vimeo[1]}` : null;
+}
+
 const COLOR_RE = /^(#[0-9a-f]{3,8}|rgba?\(\s*[\d.]+%?\s*,\s*[\d.]+%?\s*,\s*[\d.]+%?\s*(,\s*[\d.]+%?\s*)?\)|[a-z]{3,20})$/i;
 const FONT_SIZE_RE = /^\d{1,3}(\.\d{1,2})?(px|pt|em|rem|%)$/;
 const FONT_FAMILY_RE = /^[\w\s,'"-]{1,120}$/;
@@ -257,6 +282,36 @@ const nodes: Record<string, NodeSpec> = {
   },
 
   ...tableSpecs(),
+
+  // A video from an allowlisted provider (see weEditorEmbedUrl); any other iframe is dropped.
+  embed: {
+    group: 'block',
+    atom: true,
+    draggable: true,
+    attrs: { src: {}, title: { default: null } },
+    parseDOM: [
+      {
+        tag: 'iframe[src]',
+        getAttrs: (dom) => {
+          const src = weEditorEmbedUrl((dom as HTMLElement).getAttribute('src'));
+          return src ? { src, title: (dom as HTMLElement).getAttribute('title') || null } : false;
+        }
+      }
+    ],
+    toDOM: (node): DOMOutputSpec => [
+      'iframe',
+      {
+        src: weEditorEmbedUrl(node.attrs['src']) ?? 'about:blank',
+        width: '560',
+        height: '315',
+        ...(node.attrs['title'] ? { title: node.attrs['title'] } : {}),
+        frameborder: '0',
+        allow: 'encrypted-media; picture-in-picture; fullscreen',
+        allowfullscreen: 'true',
+        referrerpolicy: 'strict-origin-when-cross-origin'
+      }
+    ]
+  },
 
   text: { group: 'inline' },
 

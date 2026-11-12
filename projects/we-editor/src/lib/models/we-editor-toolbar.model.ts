@@ -30,6 +30,7 @@ export type WeEditorToolbarItem =
   | 'link'
   | 'unlink'
   | 'image'
+  | 'media'
   | 'table'
   | 'findReplace'
   | 'clearFormatting';
@@ -42,7 +43,7 @@ export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', '|',
   'bulletList', 'orderedList', 'taskList', 'outdent', 'indent', '|',
   'blockquote', 'codeBlock', 'horizontalRule', '|',
-  'link', 'unlink', 'image', 'table', '|',
+  'link', 'unlink', 'image', 'media', 'table', '|',
   'findReplace', 'clearFormatting'
 ];
 

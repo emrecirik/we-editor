@@ -50,8 +50,14 @@ Disabled state comes from the form control (`control.disable()`).
 `undo`, `redo`, `blockType`, `fontFamily`, `fontSize`, `bold`, `italic`, `underline`, `strike`,
 `subscript`, `superscript`, `code`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
-`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `table`, `findReplace`,
+`blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `findReplace`,
 `clearFormatting`, `'|'`.
+
+`media` embeds a YouTube or Vimeo video from a page, share or embed link (`youtube.com/watch?v=…`,
+`youtu.be/…`, `/shorts/…`, `vimeo.com/123…`). Output is an `<iframe>` with the canonical player URL
+(`youtube-nocookie.com` for YouTube) — consumers who render it need `frame-src
+https://www.youtube-nocookie.com https://player.vimeo.com` in their CSP. In the editor the video sits
+under a click shield: a click selects the block.
 
 `findReplace` (also **Ctrl/Cmd+F** while the editor has focus) opens the find bar: search text (a short
 selection is taken over), match count, previous/next (Shift+Enter / Enter), match case, whole words,
@@ -98,6 +104,7 @@ space undoes the link. Code is never linked; every `href` passes `weEditorSafeUr
 | `weEditorParseHtml(html, schema?)` | HTML → ProseMirror document |
 | `weEditorSerializeHtml(doc, schema?)` | ProseMirror document → HTML (`''` for an empty doc) |
 | `weEditorSafeUrl(url)` | URL if http/https/mailto/tel/relative, else `null` |
+| `weEditorEmbedUrl(url)` | Canonical YouTube / Vimeo player URL for a page or embed link, else `null` |
 | `weEditorSafeImageSrc(src)` | Image URL if http/https/relative or a base64 raster `data:image/…`, else `null` |
 | `weEditorSafeColor`, `weEditorSafeFontSize`, `weEditorSafeFontFamily` | CSS value validators |
 
@@ -107,7 +114,7 @@ and declarations end with `;` (`<span style="color: rgb(255, 0, 0);">`).
 ## Schema and commands
 
 `weEditorSchema` (nodes: `paragraph`, `heading`, `blockquote`, `code_block`, `horizontal_rule`,
-`bullet_list`, `ordered_list`, `list_item`, `task_list`, `task_item`, `hard_break`, `table`, `table_row`, `table_cell`, `table_header` (`colspan`, `rowspan`,
+`bullet_list`, `ordered_list`, `list_item`, `task_list`, `task_item`, `hard_break`, `embed` (`src`, `title`; only `weEditorEmbedUrl` URLs), `table`, `table_row`, `table_cell`, `table_header` (`colspan`, `rowspan`,
 `colwidth`; spans clamped to `WE_EDITOR_MAX_CELL_SPAN` = 100 on parse), `image` (inline;
 `src`, `alt`, `title`, `width`, `align`); marks: `link`,
 `bold`, `italic`, `underline`, `strike`, `subscript`, `superscript`, `code`, `font_family`,
@@ -118,7 +125,7 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
+image), `weEditorInsertEmbed(url)`, `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
 (highlight / clear a query), `weEditorSearchCount(state)` (`{ current, total }`, capped at
 `WE_EDITOR_MAX_SEARCH_COUNT` = 1000; `findNext`, `findPrev`, `replaceNext`, `replaceAll` come from
 `prosemirror-search`), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,
@@ -126,7 +133,7 @@ column, merge and header commands come from `prosemirror-tables` (`addRowAfter`,
 work on `editorView` directly; queries `weEditorImageAt`, `weEditorMarkActive`, `weEditorMarkAt`,
 `weEditorBlockLevel`, `weEditorAlignAt`, `weEditorListAt`, `weEditorLinkAt`.
 
-Node views: `WeEditorImageView` (resize handle).
+Node views: `WeEditorImageView` (resize handle), `WeEditorEmbedView` (sandboxed video under a click shield).
 
 State: `weEditorCreateState(html)`, `weEditorPlugins()`, `weEditorInputRules()`, `weEditorAutolink()`,
 `weEditorAutolinkHref(text)`, `weEditorStats(doc)`,

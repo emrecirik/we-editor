@@ -10,6 +10,7 @@ import {
   WeEditorAlign,
   WeEditorImageAlign,
   weEditorSafeColor,
+  weEditorEmbedUrl,
   weEditorSafeImageSrc,
   weEditorSafeFontFamily,
   weEditorSafeFontSize,
@@ -415,4 +416,16 @@ export function weEditorSearchCount(state: EditorState): { current: number; tota
     pos = hit.to > hit.from ? hit.to : hit.to + 1;
   }
   return { current, total };
+}
+
+/** Inserts a YouTube / Vimeo video for `url`; refuses any other address. */
+export function weEditorInsertEmbed(url: string): Command {
+  return (state, dispatch) => {
+    const src = weEditorEmbedUrl(url);
+    if (!src) return false;
+    const { $from } = state.selection;
+    for (let d = $from.depth; d > 0; d--) if ($from.node(d).type.spec.code) return false;
+    if (dispatch) dispatch(state.tr.replaceSelectionWith(s.nodes['embed'].create({ src })).scrollIntoView());
+    return true;
+  };
 }

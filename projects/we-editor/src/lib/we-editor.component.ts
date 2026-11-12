@@ -42,6 +42,7 @@ import {
   WeEditorImageAttrs,
   weEditorBlockLevel,
   weEditorImageAt,
+  weEditorInsertEmbed,
   weEditorInsertTable,
   weEditorClearFormatting,
   weEditorIndent,
@@ -65,7 +66,7 @@ import {
   weEditorToggleWrap
 } from './core/we-editor-commands';
 import { weEditorSerializeHtml } from './core/we-editor-html';
-import { WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
+import { WeEditorEmbedView, WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
 import { weEditorSchema } from './core/we-editor-schema';
 import { WE_EDITOR_ICONS } from './models/we-editor-icons.model';
 import { WE_EDITOR_LOCALE, WeEditorLocale } from './models/we-editor-locale.model';
@@ -233,6 +234,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     ref?.nativeElement.select();
   }
 
+  @ViewChild('mediaInput')
+  private set mediaInput(ref: ElementRef<HTMLInputElement> | undefined) {
+    ref?.nativeElement.focus();
+  }
+
   @ViewChild('tableInput')
   private set tableInput(ref: ElementRef<HTMLInputElement> | undefined) {
     ref?.nativeElement.focus();
@@ -256,6 +262,9 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected imageError: '' | 'invalid' | 'upload' = '';
   protected image: { url: string; alt: string; width: string; align: string } = { url: '', alt: '', width: '', align: '' };
   protected tableOpen = false;
+  protected mediaOpen = false;
+  protected mediaUrl = '';
+  protected mediaError = false;
   protected findOpen = false;
   protected find = { search: '', replace: '', caseSensitive: false, wholeWord: false };
   protected tableSize = { rows: 3, cols: 3, header: true };
@@ -294,7 +303,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
           : null,
       nodeViews: {
         task_item: (node, view, getPos) => new WeEditorTaskItemView(node, view, getPos, this.locale.taskItemToggle),
-        image: (node, view, getPos) => new WeEditorImageView(node, view, getPos)
+        image: (node, view, getPos) => new WeEditorImageView(node, view, getPos),
+        embed: (node) => new WeEditorEmbedView(node)
       },
       handlePaste: (_view, event) => this.insertImageFiles(event.clipboardData?.files),
       handleDrop: (view, event) => {
@@ -412,7 +422,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.linkUrl = this.ui.link ?? '';
     this.linkNewTab = false;
     this.linkError = false;
-    this.imageOpen = this.tableOpen = this.findOpen = false;
+    this.closeBars();
     this.linkOpen = true;
   }
 
@@ -442,7 +452,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     const img = this.ui.image;
     this.image = { url: img?.src ?? '', alt: img?.alt ?? '', width: img?.width ? String(img.width) : '', align: img?.align ?? '' };
     this.imageError = '';
-    this.linkOpen = this.tableOpen = this.findOpen = false;
+    this.closeBars();
     this.imageOpen = true;
   }
 
@@ -475,7 +485,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
 
   protected openTable(): void {
     if (!this.view || !this.isEditable()) return;
-    this.linkOpen = this.imageOpen = this.findOpen = false;
+    this.closeBars();
     this.tableOpen = true;
   }
 
@@ -490,13 +500,32 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.view?.focus();
   }
 
+  protected openMedia(): void {
+    if (!this.view || !this.isEditable()) return;
+    this.closeBars();
+    this.mediaUrl = '';
+    this.mediaError = false;
+    this.mediaOpen = true;
+  }
+
+  protected insertMedia(event?: Event): void {
+    event?.preventDefault();
+    if (this.exec(weEditorInsertEmbed(this.mediaUrl))) this.mediaOpen = false;
+    else this.mediaError = true;
+  }
+
+  protected closeMedia(): void {
+    this.mediaOpen = false;
+    this.view?.focus();
+  }
+
   protected openFind(): void {
     if (!this.view) return;
     const { from, to, empty } = this.view.state.selection;
     // Like most editors: a short single-line selection becomes the search text.
     const selected = empty ? '' : this.view.state.doc.textBetween(from, to, ' ');
     if (selected && selected.length <= 100 && !selected.includes('\n')) this.find = { ...this.find, search: selected };
-    this.linkOpen = this.imageOpen = this.tableOpen = false;
+    this.closeBars();
     this.findOpen = true;
     this.updateSearch();
   }
@@ -534,6 +563,12 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   // ── Internals ───────────────────────────────────────────────────────
+
+  /** Only one bar under the toolbar at a time. */
+  private closeBars(): void {
+    if (this.findOpen && this.view) weEditorSetSearch({ search: '' })(this.view.state, this.view.dispatch);
+    this.linkOpen = this.imageOpen = this.tableOpen = this.findOpen = this.mediaOpen = false;
+  }
 
   private updateSearch(): void {
     if (this.view) weEditorSetSearch(this.find)(this.view.state, this.view.dispatch);
@@ -635,6 +670,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     if (inTable) for (const a of this.tableActions) table[a] = editable && TABLE_ACTIONS[a](state);
     active.table = inTable;
     active.findReplace = this.findOpen;
+    active.media = this.mediaOpen;
+    enabled.media = editable;
     enabled.findReplace = !!view;
     enabled.table = editable;
     const image = weEditorImageAt(state);

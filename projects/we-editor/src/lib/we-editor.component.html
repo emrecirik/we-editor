@@ -62,6 +62,13 @@
               <span aria-hidden="true" [innerHTML]="icon('image')"></span>
             </button>
           }
+          @case ('media') {
+            <button type="button" class="we-editor__btn" data-item="media" [class.we-editor__btn--active]="mediaOpen"
+                    [disabled]="!ui.enabled.media" [title]="locale.media" [attr.aria-label]="locale.media"
+                    [attr.aria-expanded]="mediaOpen" (click)="mediaOpen ? closeMedia() : openMedia()">
+              <span aria-hidden="true" [innerHTML]="icon('media')"></span>
+            </button>
+          }
           @case ('table') {
             <button type="button" class="we-editor__btn" data-item="table" [class.we-editor__btn--active]="ui.active.table || tableOpen"
                     [disabled]="!ui.enabled.table" [title]="locale.table" [attr.aria-label]="locale.table"
@@ -169,6 +176,19 @@
       <button type="button" class="we-editor__btn" [title]="locale.findClose" [attr.aria-label]="locale.findClose" (click)="closeFind()">
         <span aria-hidden="true" [innerHTML]="icon('close')"></span>
       </button>
+    </form>
+  }
+
+  @if (mediaOpen) {
+    <form class="we-editor__linkbar" data-bar="media" (submit)="insertMedia($event)" (keydown.escape)="closeMedia()">
+      <input #mediaInput class="we-editor__input" type="text" inputmode="url" autocomplete="off" [attr.aria-label]="locale.mediaUrl"
+             [placeholder]="locale.mediaUrlPlaceholder" [value]="mediaUrl" [attr.aria-invalid]="mediaError"
+             (input)="mediaUrl = $any($event.target).value; mediaError = false" />
+      <button type="submit" class="we-editor__text-btn we-editor__text-btn--primary">{{ locale.mediaInsert }}</button>
+      <button type="button" class="we-editor__text-btn" (click)="closeMedia()">{{ locale.mediaCancel }}</button>
+      @if (mediaError) {
+        <span class="we-editor__error" role="alert">{{ locale.mediaInvalid }}</span>
+      }
     </form>
   }
 

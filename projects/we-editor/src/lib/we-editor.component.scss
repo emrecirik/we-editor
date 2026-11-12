@@ -259,6 +259,32 @@ we-editor {
     background: var(--we-editor-search-active-bg, rgba(253, 126, 20, 0.55));
   }
 
+  .we-editor__embed {
+    position: relative;
+    clear: both;
+    max-width: 640px;
+    margin: 0 auto 0.6em;
+    aspect-ratio: 16 / 9;
+
+    iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  }
+
+  .we-editor__embed-shield {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+  }
+
+  .we-editor__embed.ProseMirror-selectednode {
+    outline: 2px solid var(--we-editor-accent-color, #405189);
+  }
+
   .tableWrapper {
     overflow-x: auto;
     margin: 0 0 0.6em;

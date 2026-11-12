@@ -9,6 +9,7 @@ import {
   weEditorRemoveLink,
   weEditorSetAlign,
   weEditorSetBlock,
+  weEditorInsertEmbed,
   weEditorInsertTable,
   weEditorSearchCount,
   weEditorSetSearch,
@@ -142,6 +143,11 @@ describe('we-editor commands', () => {
     let state = weEditorCreateState('<p>a.c abc</p>');
     weEditorSetSearch({ search: 'a.c' })(state, (tr) => (state = state.apply(tr)));
     expect(weEditorSearchCount(state).total).toBe(1);
+  });
+
+  it('inserts a video embed only for supported addresses', () => {
+    expect(run(stateOf('<p>a</p>', 2), weEditorInsertEmbed('https://youtu.be/dQw4w9WgXcQ'))).toBe('<p>a</p><iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" width="560" height="315" frameborder="0" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin"></iframe>');
+    expect(run(stateOf('<p>a</p>', 2), weEditorInsertEmbed('https://evil.com/v.mp4'))).toBeNull();
   });
 
   it('clears marks and block styles', () => {
