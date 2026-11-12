@@ -14,6 +14,7 @@ import {
   weEditorSafeImageSrc,
   weEditorSafeFontFamily,
   weEditorSafeFontSize,
+  weEditorSafeLineHeight,
   weEditorSafeUrl,
   weEditorSchema
 } from './we-editor-schema';
@@ -144,6 +145,100 @@ export function weEditorSetAlign(align: WeEditorAlign | null): Command {
 
 export function weEditorAlignAt(state: EditorState): WeEditorAlign {
   return (textBlocksInSelection(state)[0]?.node.attrs['align'] as WeEditorAlign | null) ?? 'left';
+}
+
+/** Sets (or with `null` clears) the line height of the paragraphs and headings in the selection. */
+export function weEditorSetLineHeight(value: string | null): Command {
+  return (state, dispatch) => {
+    const safe = value ? weEditorSafeLineHeight(value) : null;
+    if (value && !safe) return false;
+    const blocks = textBlocksInSelection(state);
+    if (!blocks.length) return false;
+    if (dispatch) {
+      const tr = state.tr;
+      for (const { node, pos } of blocks) tr.setNodeMarkup(pos, undefined, { ...node.attrs, lineHeight: safe });
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+
+export function weEditorLineHeightAt(state: EditorState): string | null {
+  return (textBlocksInSelection(state)[0]?.node.attrs['lineHeight'] as string | null) ?? null;
+}
+
+export type WeEditorTextCase = 'upper' | 'lower' | 'title' | 'sentence';
+
+const WORD_CHAR = /[\p{L}\p{N}'’]/u;
+
+/**
+ * Changes the letter case of the selected text, keeping its marks. `locale` (default: the browser's)
+ * decides language rules such as Turkish dotted/dotless i.
+ */
+export function weEditorChangeCase(mode: WeEditorTextCase, locale?: string): Command {
+  return (state, dispatch) => {
+    const { from, to, empty } = state.selection;
+    if (empty) return false;
+    const segments: { from: number; to: number; text: string; marks: readonly Mark[] }[] = [];
+    // Context before the selection, so a selection starting mid-word or mid-sentence is handled right.
+    const { $from } = state.selection;
+    const before = $from.parent.textBetween(0, $from.parentOffset, ' ', ' ');
+    let lastParent: PmNode | null = $from.parent;
+    // The character before the current one, across text nodes; a new block counts as a sentence start.
+    let prev = before.slice(-1);
+    let atSentenceStart = before.trim() === '' || /[.!?]\s*$/.test(before);
+    state.doc.nodesBetween(from, to, (node, pos, parent) => {
+      if (!node.isText) return true;
+      if (parent !== lastParent) {
+        lastParent = parent;
+        prev = '';
+        atSentenceStart = true;
+      }
+      const start = Math.max(from, pos);
+      const end = Math.min(to, pos + node.nodeSize);
+      const original = node.text!.slice(start - pos, end - pos);
+      let out = '';
+      for (const ch of original) {
+        const upper = ch.toLocaleUpperCase(locale);
+        const lower = ch.toLocaleLowerCase(locale);
+        if (mode === 'upper') out += upper;
+        else if (mode === 'lower') out += lower;
+        else if (mode === 'title') out += WORD_CHAR.test(prev) ? lower : upper;
+        else {
+          out += atSentenceStart && WORD_CHAR.test(ch) ? upper : lower;
+          if (WORD_CHAR.test(ch)) atSentenceStart = false;
+          else if (/[.!?]/.test(ch)) atSentenceStart = true;
+        }
+        prev = ch;
+      }
+      if (out !== original) segments.push({ from: start, to: end, text: out, marks: node.marks });
+      return false;
+    });
+    if (!segments.length) return false;
+    if (dispatch) {
+      const tr = state.tr;
+      // Back to front, so earlier positions stay valid when a length changes (ß → SS).
+      for (const seg of segments.reverse()) tr.replaceWith(seg.from, seg.to, s.text(seg.text, seg.marks));
+      tr.setSelection(TextSelection.create(tr.doc, tr.mapping.map(from, -1), tr.mapping.map(to)));
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };
+}
+
+/** Format painter: replaces the formatting marks of the selection with `marks` (links are left alone). */
+export function weEditorPaintMarks(marks: readonly Mark[]): Command {
+  return (state, dispatch) => {
+    const { from, to, empty } = state.selection;
+    if (empty) return false;
+    if (dispatch) {
+      const tr = state.tr;
+      for (const type of Object.values(s.marks)) if (type !== s.marks['link']) tr.removeMark(from, to, type);
+      for (const mark of marks) if (mark.type !== s.marks['link']) tr.addMark(from, to, mark);
+      dispatch(tr);
+    }
+    return true;
+  };
 }
 
 function changeBlockIndent(delta: number): Command {

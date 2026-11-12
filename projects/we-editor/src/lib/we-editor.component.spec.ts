@@ -356,6 +356,41 @@ describe('WeEditorComponent', () => {
     expect((el().querySelector('.we-editor__source') as HTMLElement).hidden).toBeTrue();
   });
 
+  it('sets line height and case from the toolbar and copies formatting with the format painter', async () => {
+    (fixture.nativeElement as HTMLElement).setAttribute('lang', 'en');
+    host.control.setValue('<p><strong>bold</strong> plain</p>');
+    fixture.detectChanges();
+    select(1, 3);
+    const lineHeight = el().querySelector('select[aria-label="Line height"]') as HTMLSelectElement;
+    lineHeight.value = '2';
+    lineHeight.dispatchEvent(new Event('change'));
+    expect(host.control.value).toBe('<p style="line-height: 2;"><strong>bold</strong> plain</p>');
+
+    select(6, 11);
+    const textCase = el().querySelector('select[aria-label="Change case"]') as HTMLSelectElement;
+    textCase.value = 'upper';
+    textCase.dispatchEvent(new Event('change'));
+    expect(host.control.value).toBe('<p style="line-height: 2;"><strong>bold</strong> PLAIN</p>');
+    expect(textCase.value).toBe('');
+    // The content language decides the rules: Turkish lowercases I to dotless ı.
+    (fixture.nativeElement as HTMLElement).setAttribute('lang', 'tr');
+    select(6, 11);
+    textCase.value = 'lower';
+    textCase.dispatchEvent(new Event('change'));
+    expect(host.control.value).toBe('<p style="line-height: 2;"><strong>bold</strong> plaın</p>');
+
+    select(2, 2);
+    btn('formatPainter').click();
+    fixture.detectChanges();
+    expect(btn('formatPainter').getAttribute('aria-pressed')).toBe('true');
+    select(6, 11);
+    editor.editorView!.dom.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    await new Promise((r) => setTimeout(r));
+    fixture.detectChanges();
+    expect(host.control.value).toBe('<p style="line-height: 2;"><strong>bold</strong> <strong>plaın</strong></p>');
+    expect(btn('formatPainter').getAttribute('aria-pressed')).toBe('false');
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

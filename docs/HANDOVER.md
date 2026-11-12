@@ -18,6 +18,9 @@ Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
   page is `/features.html`; `/demo/` redirects to the Studio. Rebuilt by `.github/workflows/pages.yml` on
   every push. Repo description, homepage and topics set (2026-11-12).
 - Author name is written **`Emre CIRIK`** everywhere (no Turkish letters) — fixed 2026-11-12 at Emre's request.
+- Vision (Emre, 2026-11-12, session 3): better than every paid editor, **free (MIT) for the
+  community**; we-editor is one of a growing family — we-grid, we-report, and soon **we-charts**
+  (dashboards, KPI tools). Keep the family look (Studio pages, EN/TR, light/dark, `Emre CIRIK`).
 - Goal set by Emre (2026-11-12): **no feature CKEditor 5 / TinyMCE / TipTap / Froala / Quill /
   Lexical have that we lack, plus features they do not have**; then publish free (MIT) on npm. Gap
   matrix with sources: `docs/COMPETITORS.md`; ordered work list: section **P** of `docs/ROADMAP.md`.
@@ -94,7 +97,10 @@ editor dependency for the HTML view).
 - Permissive (MIT/BSD/ISC/Apache) official or widely used packages may be added for parity items
   without asking: verify the licence in `node_modules`, add to `docs/LICENSES.md`, both
   `package.json` files and `ng-package.json` `allowedNonPeerDependencies`; mention it in the report.
-- Still ask for: destructive git operations, tags / releases, npm publish.
+- Session 3 (2026-11-12): Emre said "don't ask me, follow your recommendation" — work through
+  ROADMAP P in order, choose dependencies by the decision-note pattern, and cut minor releases with
+  a `v*` tag when a batch of features is green (npm publish is automatic via OIDC since 0.2.0).
+- Still ask for: destructive git operations, anything that changes licence/naming/ownership.
 - DOM baseline (`testing/we-editor-dom-baseline.ts`) changes with every new default toolbar button;
   re-record from the failing spec's "actual" value (the file has CRLF line endings) and say so in the
   changelog.

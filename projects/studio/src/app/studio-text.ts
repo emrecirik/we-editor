@@ -42,6 +42,7 @@ const en = {
     'Paste a YouTube or Vimeo link on an empty line to embed the player; typed and pasted URLs become links.',
     'Put the cursor in the code block and pick a language in the bar under the toolbar — the code is coloured.',
     'Press </> at the end of the toolbar for the HTML source; Split shows code and design side by side, kept in sync.',
+    'Format painter: click inside formatted text, press the roller, then select other text. Aa changes case; the line height picker sits next to the font size.',
     'Ctrl+Z undoes everything; Tab and Shift+Tab nest lists and move between table cells.'
   ],
   htmlTitle: 'HTML in, safe HTML out',
@@ -87,6 +88,7 @@ const tr: typeof en = {
     'Boş bir satıra YouTube ya da Vimeo bağlantısı yapıştırınca oynatıcı gömülür; yazılan ve yapıştırılan adresler bağlantı olur.',
     'İmleci kod bloğuna koyup araç çubuğunun altındaki bardan bir dil seçin — kod renklenir.',
     'Araç çubuğunun sonundaki </> ile HTML kaynağını açın; Bölünmüş görünüm kodu ve tasarımı yan yana, eşzamanlı gösterir.',
+    'Biçim boyacısı: biçimli metne tıklayın, rulo düğmesine basın, sonra başka bir metni seçin. Aa büyük/küçük harfi değiştirir; satır aralığı yazı boyutunun yanında.',
     'Ctrl+Z her şeyi geri alır; Tab ve Shift+Tab listeleri iç içe alır, tablo hücreleri arasında gezer.'
   ],
   htmlTitle: 'HTML girer, güvenli HTML çıkar',

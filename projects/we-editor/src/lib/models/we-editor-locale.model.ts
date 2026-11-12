@@ -108,6 +108,14 @@ export interface WeEditorLocale {
   sourceCode: string;
   sourceSplit: string;
   sourceFormat: string;
+  lineHeight: string;
+  lineHeightDefault: string;
+  textCase: string;
+  caseUpper: string;
+  caseLower: string;
+  caseTitle: string;
+  caseSentence: string;
+  formatPainter: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -214,7 +222,15 @@ export const weEditorLocaleEn: WeEditorLocale = {
   source: 'HTML source',
   sourceCode: 'Code',
   sourceSplit: 'Split',
-  sourceFormat: 'Format'
+  sourceFormat: 'Format',
+  lineHeight: 'Line height',
+  lineHeightDefault: 'Default line height',
+  textCase: 'Change case',
+  caseUpper: 'UPPERCASE',
+  caseLower: 'lowercase',
+  caseTitle: 'Title Case',
+  caseSentence: 'Sentence case',
+  formatPainter: 'Format painter'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -321,7 +337,15 @@ export const weEditorLocaleTr: WeEditorLocale = {
   source: 'HTML kaynağı',
   sourceCode: 'Kod',
   sourceSplit: 'Bölünmüş',
-  sourceFormat: 'Biçimlendir'
+  sourceFormat: 'Biçimlendir',
+  lineHeight: 'Satır aralığı',
+  lineHeightDefault: 'Varsayılan aralık',
+  textCase: 'Büyük/küçük harf',
+  caseUpper: 'BÜYÜK HARF',
+  caseLower: 'küçük harf',
+  caseTitle: 'Her Kelime Büyük',
+  caseSentence: 'Cümle düzeni',
+  formatPainter: 'Biçim boyacısı'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

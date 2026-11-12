@@ -40,9 +40,9 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 | F1.8 | Spell-check hook | Native `spellcheck` on by default; `WeEditorSpellChecker` interface for a server checker with decorations |
 | F1.9 | Word / character counter | Status bar + `(stats)` output |
 | F1.10 | Full screen | Toggle; Esc exits; focus kept |
-| F1.11 | Format painter | Copy marks + block attrs; single use, sticky on double click |
+| F1.11 ✅ | Format painter | Copy marks + block attrs; single use, sticky on double click |
 | F1.12 | Styles | Consumer-defined paragraph/character styles (class-based, allowlisted class names) |
-| F1.13 | Special characters, line height, letter case | Pickers with locale strings |
+| F1.13 ✅ | Special characters, line height, letter case | Pickers with locale strings |
 
 ## F2 — Excel level
 
@@ -90,7 +90,7 @@ Froala / Quill / Lexical first. Everything here ships free in the MIT package.
 | P4 ✅ | Colour palette + special characters + emoji | Palette popover with "remove colour" (F0.4), character picker |
 | P5 ✅ | Code block language + syntax highlighting | decorations; highlighter licence check first |
 | P6 ✅ | Source HTML view + preview | F3.1–F3.3; code-editor dependency decision first |
-| P7 | Line height, case change, format painter, styles | small marks/commands (F1.11–F1.13) |
+| P7 🟡 | Line height, case change, format painter, styles | small marks/commands (F1.11–F1.13) |
 | P8 | Full screen, autosave hook, status bar with counts | F1.9, F1.10 |
 | P9 | Paste from Word / Google Docs | F1.6 |
 | P10 | Image caption, link on image; table caption and cell properties | |

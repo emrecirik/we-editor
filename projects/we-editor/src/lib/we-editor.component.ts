@@ -17,7 +17,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { redo, undo } from 'prosemirror-history';
-import { Node as PmNode } from 'prosemirror-model';
+import { Mark, Node as PmNode } from 'prosemirror-model';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { findNext, findPrev, replaceAll, replaceNext } from 'prosemirror-search';
 import {
@@ -41,6 +41,11 @@ import {
   weEditorAlignAt,
   WeEditorImageAttrs,
   weEditorBlockLevel,
+  weEditorChangeCase,
+  weEditorLineHeightAt,
+  weEditorPaintMarks,
+  weEditorSetLineHeight,
+  WeEditorTextCase,
   weEditorImageAt,
   weEditorInsertEmbed,
   weEditorInsertText,
@@ -79,6 +84,7 @@ import {
   WE_EDITOR_DEFAULT_FONT_FAMILIES,
   WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS,
   WE_EDITOR_DEFAULT_FONT_SIZES,
+  WE_EDITOR_DEFAULT_LINE_HEIGHTS,
   WE_EDITOR_DEFAULT_TOOLBAR,
   WeEditorOption,
   WeEditorToolbarItem
@@ -178,6 +184,7 @@ interface WeEditorUiState {
   block: number;
   fontFamily: string;
   fontSize: string;
+  lineHeight: string;
   textColor: string | null;
   highlight: string | null;
   link: string | null;
@@ -210,6 +217,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() toolbar: readonly WeEditorToolbarItem[] = WE_EDITOR_DEFAULT_TOOLBAR;
   @Input() fontFamilies: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_FONT_FAMILIES;
   @Input() fontSizes: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_FONT_SIZES;
+  /** Entries of the line height picker; `value` is a unitless `line-height` (0.5–5). */
+  @Input() lineHeights: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_LINE_HEIGHTS;
   /** Swatches of the text colour and highlight palettes (any CSS colour the editor accepts). */
   @Input() colors: readonly string[] = WE_EDITOR_DEFAULT_COLORS;
   /** Languages offered in the code block bar; `value` becomes `class="language-<value>"`. */
@@ -294,12 +303,16 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected colorOpen: 'text_color' | 'highlight' | null = null;
   protected recentColors: string[] = [];
   protected charsOpen = false;
+  protected readonly textCases: readonly WeEditorTextCase[] = ['upper', 'lower', 'title', 'sentence'];
+  protected readonly caseLabels: Record<WeEditorTextCase, keyof WeEditorLocale> = { upper: 'caseUpper', lower: 'caseLower', title: 'caseTitle', sentence: 'caseSentence' };
+  /** Marks picked up by the format painter, waiting for the next selection. */
+  protected painter: readonly Mark[] | null = null;
   /** HTML source view: off, code only, or code beside the live design view. */
   protected sourceMode: 'off' | 'code' | 'split' = 'off';
   protected find = { search: '', replace: '', caseSensitive: false, wholeWord: false };
   protected tableSize = { rows: 3, cols: 3, header: true };
   protected readonly tableActions = Object.keys(TABLE_ACTIONS) as TableAction[];
-  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', textColor: null, highlight: null, link: null, image: null, inTable: false, codeLanguage: undefined, table: {}, matches: { current: 0, total: 0 } };
+  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', lineHeight: '', textColor: null, highlight: null, link: null, image: null, inTable: false, codeLanguage: undefined, table: {}, matches: { current: 0, total: 0 } };
 
   private readonly icons = inject(WE_EDITOR_ICONS);
   private readonly sanitizer = inject(DomSanitizer);
@@ -346,7 +359,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       dispatchTransaction: (tr) => this.apply(tr),
       handleKeyDown: (_view, event) => {
         // The palette and character bars keep focus in the editor, so Escape is handled here.
-        if (event.key === 'Escape' && (this.colorOpen || this.charsOpen)) {
+        if (event.key === 'Escape' && (this.colorOpen || this.charsOpen || this.painter)) {
+          this.painter = null;
           this.closeBars();
           this.cdr.markForCheck();
           return true;
@@ -361,6 +375,9 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       },
       handleDOMEvents: {
         focus: () => this.setFocused(true),
+        // The format painter applies once the next selection is made, by mouse or keyboard.
+        mouseup: () => this.paintSoon(),
+        keyup: () => this.paintSoon(),
         blur: () => {
           this.setFocused(false);
           this.onTouched();
@@ -634,6 +651,31 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     return this.codeLanguages.some((l) => l.value === value);
   }
 
+  protected setLineHeight(value: string): void {
+    this.exec(weEditorSetLineHeight(value || null));
+  }
+
+  protected changeCase(select: HTMLSelectElement): void {
+    const mode = select.value as WeEditorTextCase;
+    select.value = '';
+    // Case rules follow the content's language (closest `lang`), e.g. Turkish i → İ; else the browser's.
+    const lang = this.contentRef.nativeElement.closest('[lang]')?.getAttribute('lang') || undefined;
+    if (mode) this.exec(weEditorChangeCase(mode, lang));
+  }
+
+  /** First click picks up the selection's formatting; the next selection receives it. */
+  protected toggleFormatPainter(): void {
+    if (this.painter || !this.view) {
+      this.painter = null;
+      this.refreshUi();
+      return;
+    }
+    const { state } = this.view;
+    this.painter = state.storedMarks ?? state.selection.$from.marks();
+    this.refreshUi();
+    this.view.focus();
+  }
+
   protected setCodeLanguage(value: string): void {
     this.exec(weEditorSetCodeLanguage(value || null));
   }
@@ -773,6 +815,19 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.cdr.markForCheck();
   }
 
+  private paintSoon(): boolean {
+    if (this.painter) setTimeout(() => this.paint());
+    return false;
+  }
+
+  private paint(): void {
+    if (!this.painter || !this.view || this.view.state.selection.empty) return;
+    const marks = this.painter;
+    this.painter = null;
+    this.exec(weEditorPaintMarks(marks));
+    this.refreshUi();
+  }
+
   private exec(command: Command): boolean {
     if (!this.view || !this.isEditable()) return false;
     const done = command(this.view.state, this.view.dispatch, this.view);
@@ -835,6 +890,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     enabled.specialChars = editable;
     enabled.findReplace = this.sourceMode !== 'code';
     active.source = this.sourceMode !== 'off';
+    active.formatPainter = !!this.painter;
+    enabled.formatPainter = editable;
     enabled.source = !this.disabled;
     enabled.table = editable;
     const image = weEditorImageAt(state);
@@ -846,6 +903,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       block: weEditorBlockLevel(state),
       fontFamily: weEditorMarkAt(state, s.marks['font_family'])?.attrs['value'] ?? '',
       fontSize: weEditorMarkAt(state, s.marks['font_size'])?.attrs['value'] ?? '',
+      lineHeight: weEditorLineHeightAt(state) ?? '',
       textColor: weEditorMarkAt(state, s.marks['text_color'])?.attrs['value'] ?? null,
       highlight: weEditorMarkAt(state, s.marks['highlight'])?.attrs['value'] ?? null,
       link: weEditorLinkAt(state),

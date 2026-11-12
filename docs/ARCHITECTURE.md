@@ -45,6 +45,7 @@ Rules of thumb:
 - `href` passes `weEditorSafeUrl` (http/https/mailto/tel/relative) on parse, on command, and again on
   serialize. CSS values (`color`, `font-size`, `font-family`, `background-color`) pass regex
   validators; anything else is dropped.
+- `line-height` on paragraphs and headings passes `weEditorSafeLineHeight` (unitless 0.5–5).
 - A code block's `language` (from `class="language-x"`, `lang-x` or `data-language`) passes
   `weEditorSafeCodeLanguage` (letters, digits, `+ # . _ -`, max 32) before it is written into `class`.
   Highlighting only adds ProseMirror decorations (classes); it never produces HTML strings.

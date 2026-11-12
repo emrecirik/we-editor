@@ -21,9 +21,9 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | **Text formatting** | | |
 | Bold/italic/underline/strike, sub/sup, inline code | all | ✅ |
 | Font family/size, text colour, highlight | CK, Ty, TT, Fr, Q | ✅ palette, custom colour, remove, recent colours (P4) |
-| Line height | CK-P, Ty, TT, Fr | ⬜ |
-| Format painter | CK-P, Ty-P | ⬜ |
-| Case change | CK-P, Ty-P | ⬜ |
+| Line height | CK-P, Ty, TT, Fr | ✅ (P7) |
+| Format painter | CK-P, Ty-P | ✅ free (P7) |
+| Case change | CK-P, Ty-P | ✅ free, language-aware (P7) |
 | Styles / CSS classes | CK, Ty, Fr | ⬜ |
 | Typography (smart quotes, dashes) | CK, Ty-P, TT | ⬜ |
 | Special characters, emoji | CK, Ty, TT, Fr, Lx | ✅ configurable symbol + emoji picker (P4) |

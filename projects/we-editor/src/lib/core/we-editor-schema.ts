@@ -130,13 +130,22 @@ export function weEditorSafeFontFamily(value: string | null | undefined): string
   return v && FONT_FAMILY_RE.test(v) && !/^(inherit|initial|unset|revert)$/i.test(v) ? v : null;
 }
 
-function blockAttrsFromDom(dom: HTMLElement): { align: string | null; indent: number } {
+/** Validates a unitless `line-height` between 0.5 and 5 (e.g. `1.5`); units and keywords are refused. */
+export function weEditorSafeLineHeight(value: string | null | undefined): string | null {
+  const v = value?.trim();
+  if (!v || !/^\d(\.\d{1,2})?$/.test(v)) return null;
+  const n = Number(v);
+  return n >= 0.5 && n <= 5 ? String(n) : null;
+}
+
+function blockAttrsFromDom(dom: HTMLElement): { align: string | null; indent: number; lineHeight: string | null } {
   const align = dom.style.textAlign || dom.getAttribute('align') || '';
   const margin = parseFloat(dom.style.marginLeft || '0');
   const indent = Number.isFinite(margin) ? Math.round(margin / WE_EDITOR_INDENT_PX) : 0;
   return {
     align: ALIGNS.includes(align) ? align : null,
-    indent: Math.max(0, Math.min(WE_EDITOR_MAX_INDENT, indent))
+    indent: Math.max(0, Math.min(WE_EDITOR_MAX_INDENT, indent)),
+    lineHeight: weEditorSafeLineHeight(dom.style.lineHeight)
   };
 }
 
@@ -144,10 +153,11 @@ function blockStyle(node: PmNode): Record<string, string> {
   const parts: string[] = [];
   if (node.attrs['align']) parts.push(`text-align: ${node.attrs['align']}`);
   if (node.attrs['indent'] > 0) parts.push(`margin-left: ${node.attrs['indent'] * WE_EDITOR_INDENT_PX}px`);
+  if (node.attrs['lineHeight']) parts.push(`line-height: ${node.attrs['lineHeight']}`);
   return parts.length ? { style: parts.join('; ') } : {};
 }
 
-const blockAttrs = { align: { default: null }, indent: { default: 0 } };
+const blockAttrs = { align: { default: null }, indent: { default: 0 }, lineHeight: { default: null } };
 
 /** Largest `colspan` / `rowspan` read from HTML; bigger values would blow up the table map. */
 export const WE_EDITOR_MAX_CELL_SPAN = 100;

@@ -104,7 +104,15 @@ export const weEditorLocaleDe: WeEditorLocale = {
   source: 'HTML-Quelltext',
   sourceCode: 'Code',
   sourceSplit: 'Geteilt',
-  sourceFormat: 'Formatieren'
+  sourceFormat: 'Formatieren',
+  lineHeight: 'Zeilenabstand',
+  lineHeightDefault: 'Standardabstand',
+  textCase: 'Groß-/Kleinschreibung',
+  caseUpper: 'GROSSBUCHSTABEN',
+  caseLower: 'kleinbuchstaben',
+  caseTitle: 'Jedes Wort Groß',
+  caseSentence: 'Satzanfang groß',
+  formatPainter: 'Format übertragen'
 };
 
 export const weEditorLocaleFr: WeEditorLocale = {
@@ -211,7 +219,15 @@ export const weEditorLocaleFr: WeEditorLocale = {
   source: 'Source HTML',
   sourceCode: 'Code',
   sourceSplit: 'Partagé',
-  sourceFormat: 'Mettre en forme'
+  sourceFormat: 'Mettre en forme',
+  lineHeight: 'Interligne',
+  lineHeightDefault: 'Interligne par défaut',
+  textCase: 'Changer la casse',
+  caseUpper: 'MAJUSCULES',
+  caseLower: 'minuscules',
+  caseTitle: 'Chaque Mot En Majuscule',
+  caseSentence: 'Majuscule en début de phrase',
+  formatPainter: 'Reproduire la mise en forme'
 };
 
 export const weEditorLocaleEs: WeEditorLocale = {
@@ -318,5 +334,13 @@ export const weEditorLocaleEs: WeEditorLocale = {
   source: 'Código HTML',
   sourceCode: 'Código',
   sourceSplit: 'Dividida',
-  sourceFormat: 'Formatear'
+  sourceFormat: 'Formatear',
+  lineHeight: 'Interlineado',
+  lineHeightDefault: 'Interlineado predeterminado',
+  textCase: 'Cambiar mayúsculas',
+  caseUpper: 'MAYÚSCULAS',
+  caseLower: 'minúsculas',
+  caseTitle: 'Tipo Título',
+  caseSentence: 'Tipo oración',
+  formatPainter: 'Copiar formato'
 };

@@ -47,6 +47,8 @@ providers: [{ provide: WE_EDITOR_LOCALE, useValue: weEditorLocaleTr }]`;
   }
 
   ngOnInit(): void {
+    // Screen readers and the editor's case rules (Turkish İ/ı) follow the page language.
+    document.documentElement.lang = this.lang;
     const hash = location.hash.replace('#', '') as Tab;
     if (TABS.includes(hash)) this.tab = hash;
     const saved = this.read(THEME_KEY);

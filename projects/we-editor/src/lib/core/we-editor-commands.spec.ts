@@ -18,9 +18,13 @@ import {
   weEditorSetLink,
   weEditorSetStyle,
   weEditorToggleList,
-  weEditorToggleMark
+  weEditorToggleMark,
+  weEditorChangeCase,
+  weEditorLineHeightAt,
+  weEditorPaintMarks,
+  weEditorSetLineHeight
 } from './we-editor-commands';
-import { weEditorSerializeHtml } from './we-editor-html';
+import { weEditorSanitizeHtml, weEditorSerializeHtml } from './we-editor-html';
 import { weEditorCreateState } from './we-editor-plugins';
 import { weEditorSchema } from './we-editor-schema';
 
@@ -159,5 +163,44 @@ describe('we-editor commands', () => {
 
   it('clears marks and block styles', () => {
     expect(run(stateOf('<p style="text-align: center"><strong>a</strong></p>', 1, 2), weEditorClearFormatting)).toBe('<p>a</p>');
+  });
+
+  it('sets, reads and clears the line height; refuses units and out-of-range values', () => {
+    const html = run(stateOf('<p>a</p><h2>b</h2>', 1, 5), weEditorSetLineHeight('1.5'));
+    expect(html).toBe('<p style="line-height: 1.5;">a</p><h2 style="line-height: 1.5;">b</h2>');
+    expect(weEditorLineHeightAt(stateOf(html!, 1))).toBe('1.5');
+    expect(run(stateOf(html!, 1), weEditorSetLineHeight(null))).toBe('<p>a</p><h2 style="line-height: 1.5;">b</h2>');
+    expect(weEditorSetLineHeight('20px')(stateOf('<p>a</p>', 1))).toBeFalse();
+    expect(weEditorSetLineHeight('9')(stateOf('<p>a</p>', 1))).toBeFalse();
+    expect(weEditorSanitizeHtml('<p style="line-height: expression(alert(1))">a</p><p style="line-height: 2">b</p>')).toBe(
+      '<p>a</p><p style="line-height: 2;">b</p>'
+    );
+  });
+
+  it('changes case across marks, with title and sentence rules', () => {
+    const doc = '<p>hello <strong>big</strong> world. new start</p>';
+    expect(run(stateOf(doc, 1, 27), weEditorChangeCase('upper', 'en'))).toBe('<p>HELLO <strong>BIG</strong> WORLD. NEW START</p>');
+    expect(run(stateOf(doc, 1, 27), weEditorChangeCase('title', 'en'))).toBe('<p>Hello <strong>Big</strong> World. New Start</p>');
+    expect(run(stateOf('<p>HELLO BIG. NEW ONE</p>', 1, 19), weEditorChangeCase('sentence', 'en'))).toBe('<p>Hello big. New one</p>');
+    // Mid-word selection: no capital in the middle of a word.
+    expect(run(stateOf('<p>heLLO</p>', 3, 6), weEditorChangeCase('title', 'en'))).toBe('<p>hello</p>');
+    expect(weEditorChangeCase('upper')(stateOf('<p>a</p>', 1))).toBeFalse();
+  });
+
+  it('follows language rules and length changes when changing case', () => {
+    expect(run(stateOf('<p>istanbul ılık</p>', 1, 14), weEditorChangeCase('upper', 'tr'))).toBe('<p>İSTANBUL ILIK</p>');
+    let state = stateOf('<p>straße x</p>', 1, 7);
+    weEditorChangeCase('upper', 'de')(state, (tr) => (state = state.apply(tr)));
+    expect(weEditorSerializeHtml(state.doc)).toBe('<p>STRASSE x</p>');
+    expect(state.doc.textBetween(state.selection.from, state.selection.to)).toBe('STRASSE');
+  });
+
+  it('paints copied marks over the selection, leaving links alone', () => {
+    const bold = weEditorSchema.marks['bold'].create();
+    const link = weEditorSchema.marks['link'].create({ href: 'https://x.test' });
+    expect(run(stateOf('<p><em>ab</em> <a href="https://a.test">cd</a></p>', 1, 6), weEditorPaintMarks([bold, link]))).toBe(
+      '<p><strong>ab </strong><a href="https://a.test"><strong>cd</strong></a></p>'
+    );
+    expect(weEditorPaintMarks([bold])(stateOf('<p>a</p>', 1))).toBeFalse();
   });
 });

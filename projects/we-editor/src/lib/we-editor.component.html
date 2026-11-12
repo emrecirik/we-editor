@@ -1,4 +1,4 @@
-<div class="we-editor" [class.we-editor--focused]="focused" [class.we-editor--disabled]="disabled" [class.we-editor--readonly]="readonly">
+<div class="we-editor" [class.we-editor--focused]="focused" [class.we-editor--disabled]="disabled" [class.we-editor--readonly]="readonly" [class.we-editor--painting]="!!painter">
   @if (toolbar.length) {
     <div class="we-editor__toolbar" role="toolbar" [attr.aria-label]="locale.toolbar" (mousedown)="onToolbarMouseDown($event)">
       @for (item of toolbar; track $index) {
@@ -33,6 +33,31 @@
                 <option [value]="size.value" [selected]="ui.fontSize === size.value">{{ size.label }}</option>
               }
             </select>
+          }
+          @case ('lineHeight') {
+            <select class="we-editor__select we-editor__select--narrow" [title]="locale.lineHeight" [attr.aria-label]="locale.lineHeight"
+                    [disabled]="toolsOff" (change)="setLineHeight($any($event.target).value)">
+              <option value="" [selected]="!ui.lineHeight">{{ locale.lineHeightDefault }}</option>
+              @for (lh of lineHeights; track lh.value) {
+                <option [value]="lh.value" [selected]="ui.lineHeight === lh.value">{{ lh.label }}</option>
+              }
+            </select>
+          }
+          @case ('textCase') {
+            <select class="we-editor__select we-editor__select--narrow" [title]="locale.textCase" [attr.aria-label]="locale.textCase"
+                    [disabled]="toolsOff" (change)="changeCase($any($event.target))">
+              <option value="" selected>Aa</option>
+              @for (mode of textCases; track mode) {
+                <option [value]="mode">{{ locale[caseLabels[mode]] }}</option>
+              }
+            </select>
+          }
+          @case ('formatPainter') {
+            <button type="button" class="we-editor__btn" data-item="formatPainter" [class.we-editor__btn--active]="!!painter"
+                    [disabled]="!ui.enabled.formatPainter" [title]="locale.formatPainter" [attr.aria-label]="locale.formatPainter"
+                    [attr.aria-pressed]="!!painter" (click)="toggleFormatPainter()">
+              <span aria-hidden="true" [innerHTML]="icon('formatPainter')"></span>
+            </button>
           }
           @case ('textColor') {
             <button type="button" class="we-editor__btn" data-item="textColor" [class.we-editor__btn--active]="colorOpen === 'text_color'"

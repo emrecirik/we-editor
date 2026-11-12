@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Line height, change case and format painter (P7, F1.11/F1.13): toolbar items `lineHeight`,
+  `textCase`, `formatPainter`; `lineHeights` input, `WE_EDITOR_DEFAULT_LINE_HEIGHTS`,
+  `weEditorSafeLineHeight`, `weEditorSetLineHeight`, `weEditorLineHeightAt`, `weEditorChangeCase`
+  (follows the content `lang`), `weEditorPaintMarks`; paragraphs and headings keep `line-height`;
+  8 locale keys; DOM baseline re-recorded.
+
 ## 0.2.0 — 2026-11-12
 
 HTML source view and code block highlighting. Minor version: new

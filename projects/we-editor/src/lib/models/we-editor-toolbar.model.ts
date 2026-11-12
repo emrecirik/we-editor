@@ -6,6 +6,9 @@ export type WeEditorToolbarItem =
   | 'blockType'
   | 'fontFamily'
   | 'fontSize'
+  | 'lineHeight'
+  | 'textCase'
+  | 'formatPainter'
   | 'bold'
   | 'italic'
   | 'underline'
@@ -39,16 +42,19 @@ export type WeEditorToolbarItem =
 
 export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'undo', 'redo', '|',
-  'blockType', 'fontFamily', 'fontSize', '|',
+  'blockType', 'fontFamily', 'fontSize', 'lineHeight', '|',
   'bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'code', '|',
   'textColor', 'highlight', '|',
   'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', '|',
   'bulletList', 'orderedList', 'taskList', 'outdent', 'indent', '|',
   'blockquote', 'codeBlock', 'horizontalRule', '|',
   'link', 'unlink', 'image', 'media', 'table', 'specialChars', '|',
-  'findReplace', 'clearFormatting', '|',
+  'findReplace', 'formatPainter', 'textCase', 'clearFormatting', '|',
   'source'
 ];
+
+/** Entries of the line height picker: unitless CSS `line-height` values (0.5–5). */
+export const WE_EDITOR_DEFAULT_LINE_HEIGHTS: readonly WeEditorOption[] = ['1', '1.15', '1.5', '1.75', '2', '2.5', '3'].map((v) => ({ label: v, value: v }));
 
 /** Swatches of the text colour and highlight palettes — document colours, written into the HTML as-is. */
 export const WE_EDITOR_DEFAULT_COLORS: readonly string[] = [

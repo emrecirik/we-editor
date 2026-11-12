@@ -604,3 +604,8 @@ we-editor {
 .we-editor__content[hidden] {
   display: none;
 }
+
+// Format painter armed: the next selection receives the copied formatting.
+.we-editor--painting .we-editor__prosemirror {
+  cursor: copy;
+}

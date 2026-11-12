@@ -23,6 +23,7 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `toolbar` | `readonly WeEditorToolbarItem[]` | `WE_EDITOR_DEFAULT_TOOLBAR` | Order of toolbar entries; `'|'` is a separator; `[]` hides the toolbar |
 | `fontFamilies` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_FAMILIES` | `value` is the CSS `font-family` written to the text (must pass `weEditorSafeFontFamily`) |
 | `fontSizes` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_SIZES` | `value` is a CSS size (`px`, `pt`, `em`, `rem`, `%`) |
+| `lineHeights` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_LINE_HEIGHTS` | Line height picker; `value` is a unitless `line-height` between 0.5 and 5 (`weEditorSafeLineHeight`) |
 | `colors` | `readonly string[]` | `WE_EDITOR_DEFAULT_COLORS` | Swatches of the text colour and highlight palettes; each must pass `weEditorSafeColor` |
 | `codeLanguages` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_CODE_LANGUAGES` | Languages of the code block bar; `value` is written as `class="language-<value>"` and must pass `weEditorSafeCodeLanguage`. Only the 23 default ids are coloured |
 | `specialCharacters` | `readonly string[]` | `WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS` | Entries of the special-characters picker (symbols and emoji); each is inserted as text |
@@ -51,10 +52,16 @@ Disabled state comes from the form control (`control.disable()`).
 ### Toolbar items (`WeEditorToolbarItem`)
 
 `undo`, `redo`, `blockType`, `fontFamily`, `fontSize`, `bold`, `italic`, `underline`, `strike`,
-`subscript`, `superscript`, `code`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
+`subscript`, `superscript`, `code`, `lineHeight`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
 `blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `specialChars`,
-`findReplace`, `clearFormatting`, `source`, `'|'`.
+`findReplace`, `formatPainter`, `textCase`, `clearFormatting`, `source`, `'|'`.
+
+`lineHeight` sets `line-height` on the selected paragraphs and headings. `textCase` converts the
+selection to UPPERCASE, lowercase, Title Case or Sentence case, keeping its formatting; the rules follow
+the content language (closest `lang` attribute, e.g. Turkish i → İ, ı ← I), else the browser's.
+`formatPainter` picks up the formatting at the cursor; the next selection (mouse or keyboard) receives
+it, links excluded. Esc cancels it.
 
 `source` opens the **HTML source view** (CodeMirror 6, downloaded on first use through dynamic
 `import()`): **Code** shows only the source, **Split** shows source and design side by side (stacked
@@ -145,7 +152,8 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorFormatHtml(html, indent?)` (pretty-print for display; inert
+image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorSetLineHeight(value | null)`, `weEditorLineHeightAt(state)`,
+`weEditorChangeCase('upper' | 'lower' | 'title' | 'sentence', locale?)`, `weEditorPaintMarks(marks)`, `weEditorFormatHtml(html, indent?)` (pretty-print for display; inert
 parse, text out), `weEditorCreateSourceEditor(element, options)` (the CodeMirror HTML editor on its
 own), `weEditorSetCodeLanguage(language | null)`, `weEditorCodeLanguageAt(state)`
 (`undefined` outside code blocks), the `weEditorCodeHighlight()` plugin (in `weEditorPlugins()`), `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
