@@ -5,8 +5,9 @@ Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
 ## Current state
 
 - Angular 18.2 workspace (mirrors `C:\Projects\we-grid`): library `projects/we-editor` (npm name
-  `we-editor-angular`, version `0.1.0`, **release commit ready, first npm publish pending** — see manual
-  steps), `projects/playground` (feature sandbox), `projects/studio` (the live demo, mirrors we-grid Studio:
+  `we-editor-angular`, **0.1.0 on npm since 2026-11-12** — published by hand from `dist/we-editor`;
+  npm put the first version through *staged publishing* (a `0.0.0-stage` placeholder version stays in
+  the version list, harmless). Trusted Publishing still to be bound — see manual steps), `projects/playground` (feature sandbox), `projects/studio` (the live demo, mirrors we-grid Studio:
   EN/TR, light/dark, Editor / Safe HTML / Get started tabs),
   CI / compat / release / pages workflows, `.claude/` agent + rule + skills (local only, gitignored).
 - Core decision: **ProseMirror used directly** — `docs/decisions/0001-editor-core.md`.
@@ -28,7 +29,7 @@ Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
 | Studio | `projects/studio` live demo like we-grid / we-report; CI builds it; Pages serves it at `/studio/` | `8af368e` |
 | Locales | `weEditorLocaleDe` / `Fr` / `Es` (UI languages now as in we-grid) | `b5d12d9` |
 | P4 | Colour palette bar (swatches, custom, remove, recent) + special characters / emoji picker | `41008d9` |
-| 0.1.0 | Changelog section, READMEs (npm badge, feature list, status) | release commit |
+| 0.1.0 | Changelog section, READMEs (npm badge, feature list, status); published to npm by hand, smoke-installed in a clean folder | `d934fab` |
 
 ### Done in session 2 (each one commit, pushed, CI green)
 
@@ -66,8 +67,8 @@ excluded locally (`.git/info/exclude`), as in we-grid.
 
 ## Next tasks (in order)
 
-0. **First npm publish of 0.1.0** (manual steps below), then bind Trusted Publishing; later
-   releases go through the `editor-release` skill (tag-driven).
+0. ~~First npm publish~~ — done. **Bind Trusted Publishing** (manual steps below); later releases go
+   through the `editor-release` skill (tag-driven). No `v0.1.0` tag / GitHub release exists yet.
 1. **P5…P18** in `docs/ROADMAP.md`
    order: code-block language + highlighting, source HTML view + preview (decision note on the
    code-editor dependency first), line height / case change / format painter / styles, full screen +
