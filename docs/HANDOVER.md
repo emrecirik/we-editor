@@ -34,10 +34,10 @@ Last updated: 2026-11-12 (session 2: F0.12, F1.2 images, first push). Owner: Emr
 
 ## Next tasks (in order)
 
-1. **Competitor matrix + GitHub Pages** (Emre, 2026-11-12): compare CKEditor 5, TinyMCE, TipTap,
-   Froala, Quill feature by feature into `docs/ROADMAP.md`; build a landing page + live demo like
-   we-grid's (`docs/` + Pages workflow). Goal: no feature they have that we lack, then publish free on
-   npm.
+1. **Competitor parity, section P of `docs/ROADMAP.md`** (P1 find & replace next). Matrix and sources:
+   `docs/COMPETITORS.md`. Landing page `docs/index.html` + live demo `/demo/` via
+   `.github/workflows/pages.yml` (https://emrecirik.github.io/we-editor/). When P is done: first npm
+   release, free.
 2. Run the compat workflow for 19–22 on GitHub (`compat.yml`); fix what it finds.
 3. **F0.13** — keyboard/a11y: toolbar roving tabindex, `Mod-k` opens the link bar, focus return,
    Escape handling; check with NVDA. Then cut **0.1.0** (`editor-release` skill).

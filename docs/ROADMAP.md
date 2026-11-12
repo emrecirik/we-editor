@@ -76,3 +76,32 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 | F4.3 | Collaboration hooks (later) | Expose steps / `prosemirror-collab` hooks; no backend shipped |
 | F4.4 | we-report document templates | Template authored in we-editor rendered by we-report; contract note in `docs/` |
 | F4.5 | Comments / track changes (later) | Design note only |
+
+## P — Competitor parity (before the first npm release)
+
+Gap list from [COMPETITORS.md](COMPETITORS.md), most common across CKEditor 5 / TinyMCE / TipTap /
+Froala / Quill / Lexical first. Everything here ships free in the MIT package.
+
+| # | Item | Notes |
+|---|---|---|
+| P1 | Find & replace | `prosemirror-search` (MIT) or own decorations; Ctrl+F panel, match case / whole word (= F1.7) |
+| P2 | Autolink | URLs become links while typing and on paste; same `weEditorSafeUrl` check |
+| P3 | Media embed | YouTube / Vimeo iframe node, provider allowlist on the parsed `src` |
+| P4 | Colour palette + special characters + emoji | Palette popover with "remove colour" (F0.4), character picker |
+| P5 | Code block language + syntax highlighting | decorations; highlighter licence check first |
+| P6 | Source HTML view + preview | F3.1–F3.3; code-editor dependency decision first |
+| P7 | Line height, case change, format painter, styles | small marks/commands (F1.11–F1.13) |
+| P8 | Full screen, autosave hook, status bar with counts | F1.9, F1.10 |
+| P9 | Paste from Word / Google Docs | F1.6 |
+| P10 | Image caption, link on image; table caption and cell properties | |
+| P11 | Mentions + slash commands | one suggestion plugin |
+| P12 | Markdown in/out | `prosemirror-markdown` (MIT) |
+| P13 | Bubble toolbar, drag handle, show blocks, shortcut help | |
+| P14 | Page break, details/accordion, footnotes, TOC, anchors | |
+| P15 | Math (LaTeX) | KaTeX (MIT) |
+| P16 | Keyboard / screen-reader pass | F0.13 |
+| P17 | RTL + more shipped locales | |
+| P18 | DOCX import/export, print-to-PDF | client-side; licences checked first |
+
+Server-backed features (real-time collaboration, AI) get adapter interfaces, never a bundled
+service.
