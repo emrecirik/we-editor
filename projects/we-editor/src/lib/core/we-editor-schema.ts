@@ -108,6 +108,12 @@ const COLOR_RE = /^(#[0-9a-f]{3,8}|rgba?\(\s*[\d.]+%?\s*,\s*[\d.]+%?\s*,\s*[\d.]
 const FONT_SIZE_RE = /^\d{1,3}(\.\d{1,2})?(px|pt|em|rem|%)$/;
 const FONT_FAMILY_RE = /^[\w\s,'"-]{1,120}$/;
 
+/** Validates a code block language id (written as `class="language-<id>"`): lowercase letters, digits, `+ # . _ -`. */
+export function weEditorSafeCodeLanguage(value: string | null | undefined): string | null {
+  const v = value?.trim().toLowerCase();
+  return v && /^[a-z0-9][a-z0-9+#._-]{0,31}$/.test(v) ? v : null;
+}
+
 /** Validates a CSS colour value the editor is willing to write into a `style` attribute. */
 export function weEditorSafeColor(value: string | null | undefined): string | null {
   const v = value?.trim();
@@ -208,13 +214,27 @@ const nodes: Record<string, NodeSpec> = {
   },
 
   code_block: {
+    attrs: { language: { default: null } },
     content: 'text*',
     marks: '',
     group: 'block',
     code: true,
     defining: true,
-    parseDOM: [{ tag: 'pre', preserveWhitespace: 'full' }],
-    toDOM: (): DOMOutputSpec => ['pre', ['code', 0]]
+    parseDOM: [
+      {
+        tag: 'pre',
+        preserveWhitespace: 'full',
+        getAttrs: (dom) => {
+          const pre = dom as HTMLElement;
+          const cls = pre.querySelector('code')?.className ?? pre.className;
+          return { language: weEditorSafeCodeLanguage(/(?:^|\s)(?:language|lang)-(\S+)/.exec(cls)?.[1] ?? pre.getAttribute('data-language')) };
+        }
+      }
+    ],
+    toDOM: (node: PmNode): DOMOutputSpec => {
+      const language = node.attrs['language'] as string | null;
+      return ['pre', ['code', language ? { class: `language-${language}` } : {}, 0]];
+    }
   },
 
   horizontal_rule: {

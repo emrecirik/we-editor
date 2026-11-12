@@ -102,6 +102,8 @@ export interface WeEditorLocale {
   colorCustom: string;
   colorRecent: string;
   specialChars: string;
+  codeLanguage: string;
+  codeLanguagePlain: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -202,7 +204,9 @@ export const weEditorLocaleEn: WeEditorLocale = {
   colorRemove: 'Remove colour',
   colorCustom: 'Custom colour…',
   colorRecent: 'Recent',
-  specialChars: 'Special characters'
+  specialChars: 'Special characters',
+  codeLanguage: 'Code language',
+  codeLanguagePlain: 'Plain text'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -303,7 +307,9 @@ export const weEditorLocaleTr: WeEditorLocale = {
   colorRemove: 'Rengi kaldır',
   colorCustom: 'Özel renk…',
   colorRecent: 'Son kullanılanlar',
-  specialChars: 'Özel karakterler'
+  specialChars: 'Özel karakterler',
+  codeLanguage: 'Kod dili',
+  codeLanguagePlain: 'Düz metin'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

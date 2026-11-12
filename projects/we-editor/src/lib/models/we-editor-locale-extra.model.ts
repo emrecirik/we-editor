@@ -98,7 +98,9 @@ export const weEditorLocaleDe: WeEditorLocale = {
   colorRemove: 'Farbe entfernen',
   colorCustom: 'Eigene Farbe…',
   colorRecent: 'Zuletzt verwendet',
-  specialChars: 'Sonderzeichen'
+  specialChars: 'Sonderzeichen',
+  codeLanguage: 'Programmiersprache',
+  codeLanguagePlain: 'Nur Text'
 };
 
 export const weEditorLocaleFr: WeEditorLocale = {
@@ -199,7 +201,9 @@ export const weEditorLocaleFr: WeEditorLocale = {
   colorRemove: 'Retirer la couleur',
   colorCustom: 'Couleur personnalisée…',
   colorRecent: 'Récentes',
-  specialChars: 'Caractères spéciaux'
+  specialChars: 'Caractères spéciaux',
+  codeLanguage: 'Langage du code',
+  codeLanguagePlain: 'Texte brut'
 };
 
 export const weEditorLocaleEs: WeEditorLocale = {
@@ -300,5 +304,7 @@ export const weEditorLocaleEs: WeEditorLocale = {
   colorRemove: 'Quitar color',
   colorCustom: 'Color personalizado…',
   colorRecent: 'Recientes',
-  specialChars: 'Caracteres especiales'
+  specialChars: 'Caracteres especiales',
+  codeLanguage: 'Lenguaje del código',
+  codeLanguagePlain: 'Texto sin formato'
 };

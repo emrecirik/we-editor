@@ -32,7 +32,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | Paragraph, H1–H6, quote, rule, alignment, indent | all | ✅ |
 | Bulleted / numbered / task lists, nesting | all (task: CK, Ty-P, TT, Lx) | ✅ |
 | Markdown-style input rules | CK, TT, Lx | ✅ |
-| Code block language + syntax highlighting | CK, Ty, TT, Fr, Q, Lx | 🟡 no language/highlight |
+| Code block language + syntax highlighting | CK, Ty, TT, Fr, Q, Lx | ✅ 23 languages, lowlight (P5) |
 | List styles (roman, start, reversed) | CK, Ty | 🟡 start number only |
 | Multi-level legal numbering (1.1.1) | CK-P | ⬜ |
 | Collapsible details / accordion | Ty, TT | ⬜ |

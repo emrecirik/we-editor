@@ -16,6 +16,10 @@ Runtime dependencies of the published package `we-editor-angular`, verified from
 | prosemirror-search | 1.1.1 | MIT | Find & replace: query, match highlights, replace |
 | prosemirror-keymap | 1.2.3 | MIT | Keyboard shortcuts |
 | prosemirror-schema-list | 1.6.0 | MIT | List commands |
+| lowlight | 3.3.0 | MIT | Code block syntax highlighting (token tree from highlight.js) |
+| highlight.js | 11.11.2 | BSD-3-Clause | Language grammars for code highlighting (23 ids, 22 grammars; `html` uses the XML grammar) |
+| devlop (transitive) | 1.1.0 | MIT | |
+| @types/hast (transitive, types only) | 3.0.5 | MIT | |
 | orderedmap (transitive) | 2.1.1 | MIT | |
 | rope-sequence (transitive) | 1.3.4 | MIT | |
 | w3c-keyname (transitive) | 2.2.8 | MIT | |

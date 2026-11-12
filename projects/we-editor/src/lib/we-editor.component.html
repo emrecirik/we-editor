@@ -261,5 +261,22 @@
     </div>
   }
 
+  @if (ui.codeLanguage !== undefined && !readonly && !disabled) {
+    <div class="we-editor__linkbar we-editor__tablebar" data-bar="code">
+      <label class="we-editor__check">
+        {{ locale.codeLanguage }}
+        <select class="we-editor__select" [attr.aria-label]="locale.codeLanguage" (change)="setCodeLanguage($any($event.target).value)">
+          <option value="" [selected]="!ui.codeLanguage">{{ locale.codeLanguagePlain }}</option>
+          @for (lang of codeLanguages; track lang.value) {
+            <option [value]="lang.value" [selected]="ui.codeLanguage === lang.value">{{ lang.label }}</option>
+          }
+          @if (ui.codeLanguage && !knownLanguage(ui.codeLanguage)) {
+            <option [value]="ui.codeLanguage" selected>{{ ui.codeLanguage }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  }
+
   <div #content class="we-editor__content"></div>
 </div>

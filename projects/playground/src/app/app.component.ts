@@ -16,7 +16,7 @@ Click the picture and drag its corner to resize it.</p>
 <h3 style="text-align: center">Notes</h3>
 <ol><li><p>Leave at 8:00</p><ul><li><p>Meet at the main gate</p></li></ul></li><li><p>Back by 17:00</p></li></ol>
 <blockquote><p>Type <code># </code>, <code>- </code>, <code>1. </code> or <code>&gt; </code> at the start of a line.</p></blockquote>
-<pre><code>const total = 240 + 196; // 436</code></pre>
+<pre><code class="language-javascript">const total = 240 + 196; // 436</code></pre>
 <hr>
 <p>Unsafe input is dropped: <a href="javascript:alert(1)">this link</a> has no href, and the script below never ran.</p>
 <script>alert('xss')</script>

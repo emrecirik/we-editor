@@ -24,6 +24,7 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `fontFamilies` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_FAMILIES` | `value` is the CSS `font-family` written to the text (must pass `weEditorSafeFontFamily`) |
 | `fontSizes` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_SIZES` | `value` is a CSS size (`px`, `pt`, `em`, `rem`, `%`) |
 | `colors` | `readonly string[]` | `WE_EDITOR_DEFAULT_COLORS` | Swatches of the text colour and highlight palettes; each must pass `weEditorSafeColor` |
+| `codeLanguages` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_CODE_LANGUAGES` | Languages of the code block bar; `value` is written as `class="language-<value>"` and must pass `weEditorSafeCodeLanguage`. Only the 23 default ids are coloured |
 | `specialCharacters` | `readonly string[]` | `WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS` | Entries of the special-characters picker (symbols and emoji); each is inserted as text |
 | `readonly` | `boolean` | `false` | Content not editable, toolbar disabled; the value is still readable |
 | `imageUpload` | `(file: File) => Promise<string>` \| `null` | `null` | Stores an image file (upload button, paste, drop) and resolves to its URL. When `null`, files are embedded as base64 `data:` URLs |
@@ -59,6 +60,11 @@ Disabled state comes from the form control (`control.disable()`).
 browser's colour picker), **Remove colour**, and up to 8 recently used colours (per editor, not
 stored). `specialChars` opens a character bar; a click inserts the character at the cursor and the
 bar stays open for more. Esc closes either bar while the editor has focus.
+
+While the cursor is in a code block (and the editor is editable) a **code bar** appears with a language
+picker. A block with a language is syntax-highlighted (lowlight / highlight.js; `hljs-*` classes coloured
+by the `--we-editor-code-*` theme variables) and serialized as `<pre><code class="language-x">`. Pasted
+`language-x` / `lang-x` classes and `data-language` are kept when they pass `weEditorSafeCodeLanguage`.
 
 `media` embeds a YouTube or Vimeo video from a page, share or embed link (`youtube.com/watch?v=…`,
 `youtu.be/…`, `/shorts/…`, `vimeo.com/123…`). Output is an `<iframe>` with the canonical player URL
@@ -132,7 +138,8 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
+image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorSetCodeLanguage(language | null)`, `weEditorCodeLanguageAt(state)`
+(`undefined` outside code blocks), the `weEditorCodeHighlight()` plugin (in `weEditorPlugins()`), `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
 (highlight / clear a query), `weEditorSearchCount(state)` (`{ current, total }`, capped at
 `WE_EDITOR_MAX_SEARCH_COUNT` = 1000; `findNext`, `findPrev`, `replaceNext`, `replaceAll` come from
 `prosemirror-search`), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,

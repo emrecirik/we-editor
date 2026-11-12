@@ -9,6 +9,7 @@ import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-li
 import { Command, EditorState, NodeSelection, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 
+import { weEditorCodeHighlight } from './we-editor-code';
 import { weEditorInsertHardBreak } from './we-editor-commands';
 import { weEditorParseHtml } from './we-editor-html';
 import { WE_EDITOR_MAX_IMAGE_WIDTH, weEditorEmbedUrl, weEditorSafeImageSrc, weEditorSafeUrl, weEditorSchema } from './we-editor-schema';
@@ -129,6 +130,7 @@ export function weEditorPlugins(): Plugin[] {
     inputRules({ rules: weEditorInputRules() }),
     ...weEditorAutolink(),
     search(),
+    weEditorCodeHighlight(),
     columnResizing(),
     tableEditing(),
     keymap({

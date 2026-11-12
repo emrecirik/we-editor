@@ -465,6 +465,52 @@ we-editor {
       background: none;
       color: inherit;
     }
+
+    // Syntax tokens (`hljs-*` decorations from the code highlighter).
+    .hljs-keyword,
+    .hljs-built_in,
+    .hljs-type,
+    .hljs-literal,
+    .hljs-selector-tag {
+      color: var(--we-editor-code-keyword, #a626a4);
+    }
+
+    .hljs-string,
+    .hljs-regexp,
+    .hljs-addition {
+      color: var(--we-editor-code-string, #50a14f);
+    }
+
+    .hljs-comment,
+    .hljs-quote,
+    .hljs-meta {
+      color: var(--we-editor-code-comment, #8a8c93);
+      font-style: italic;
+    }
+
+    .hljs-number,
+    .hljs-symbol {
+      color: var(--we-editor-code-number, #986801);
+    }
+
+    .hljs-title,
+    .hljs-section,
+    .hljs-name {
+      color: var(--we-editor-code-title, #4078f2);
+    }
+
+    .hljs-attr,
+    .hljs-attribute,
+    .hljs-variable,
+    .hljs-property,
+    .hljs-selector-class,
+    .hljs-selector-id {
+      color: var(--we-editor-code-attr, #b76b01);
+    }
+
+    .hljs-deletion {
+      color: var(--we-editor-code-color, #c2255c);
+    }
   }
 
   blockquote {

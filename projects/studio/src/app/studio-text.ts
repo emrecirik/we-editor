@@ -40,6 +40,7 @@ const en = {
     'Put the cursor in the table: add rows and columns, select two cells to merge them, drag a column border to resize.',
     'Press Ctrl+F (⌘F) to find and replace — with match case, whole words and replace all.',
     'Paste a YouTube or Vimeo link on an empty line to embed the player; typed and pasted URLs become links.',
+    'Put the cursor in the code block and pick a language in the bar under the toolbar — the code is coloured.',
     'Ctrl+Z undoes everything; Tab and Shift+Tab nest lists and move between table cells.'
   ],
   htmlTitle: 'HTML in, safe HTML out',
@@ -83,6 +84,7 @@ const tr: typeof en = {
     'İmleci tabloya koyun: satır ve kolon ekleyin, iki hücre seçip birleştirin, kolon kenarını sürükleyip genişletin.',
     'Ctrl+F (⌘F) ile bulun ve değiştirin — büyük/küçük harf, tam kelime ve tümünü değiştir ile.',
     'Boş bir satıra YouTube ya da Vimeo bağlantısı yapıştırınca oynatıcı gömülür; yazılan ve yapıştırılan adresler bağlantı olur.',
+    'İmleci kod bloğuna koyup araç çubuğunun altındaki bardan bir dil seçin — kod renklenir.',
     'Ctrl+Z her şeyi geri alır; Tab ve Shift+Tab listeleri iç içe alır, tablo hücreleri arasında gezer.'
   ],
   htmlTitle: 'HTML girer, güvenli HTML çıkar',
@@ -125,7 +127,8 @@ Click the picture and drag its corner to resize it.</p>
 <h3 style="text-align: center">Notes</h3>
 <ol><li><p>Leave at 8:00</p><ul><li><p>Meet at the main gate</p></li></ul></li><li><p>Back by 17:00</p></li></ol>
 <blockquote><p>Type <code># </code>, <code>- </code>, <code>1. </code> or <code>&gt; </code> at the start of a line.</p></blockquote>
-<pre><code>const total = 240 + 196; // 436</code></pre>
+<pre><code class="language-javascript">const total = 240 + 196; // 436
+console.log('Total:', total);</code></pre>
 `;
 
 const SAMPLE_TR = `
@@ -142,7 +145,8 @@ Resme tıklayıp köşesinden sürükleyerek boyutlandırın.</p>
 <h3 style="text-align: center">Notlar</h3>
 <ol><li><p>8:00’de yola çık</p><ul><li><p>Ana kapıda buluş</p></li></ul></li><li><p>17:00’de dönüş</p></li></ol>
 <blockquote><p>Satır başında <code># </code>, <code>- </code>, <code>1. </code> ya da <code>&gt; </code> yazın.</p></blockquote>
-<pre><code>const toplam = 240 + 196; // 436</code></pre>
+<pre><code class="language-javascript">const toplam = 240 + 196; // 436
+console.log('Toplam:', toplam);</code></pre>
 `;
 
 export const STUDIO_SAMPLE: Record<StudioLanguage, string> = { en: SAMPLE_EN, tr: SAMPLE_TR };

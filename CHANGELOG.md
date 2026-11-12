@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Code block language + syntax highlighting (P5): a code bar with a language picker appears inside code
+  blocks; 23 languages coloured through lowlight / highlight.js; output `<pre><code class="language-x">`
+  (also read from `lang-x` and `data-language`, validated by `weEditorSafeCodeLanguage`). New
+  `codeLanguages` input, `WE_EDITOR_DEFAULT_CODE_LANGUAGES`, `weEditorSetCodeLanguage`,
+  `weEditorCodeLanguageAt`, `weEditorCodeHighlight`; theme variables `--we-editor-code-keyword`,
+  `-string`, `-comment`, `-number`, `-title`, `-attr`; locale keys `codeLanguage`, `codeLanguagePlain`
+  (breaking for hand-written full locale objects). New dependencies `lowlight` (MIT) and
+  `highlight.js` (BSD-3-Clause); decision note `docs/decisions/0002-code-highlighting.md`.
+
 ## 0.1.0 — 2026-11-12
 
 First public release.

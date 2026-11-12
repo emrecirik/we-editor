@@ -13,3 +13,4 @@ export * from './lib/core/we-editor-schema';
 export * from './lib/core/we-editor-html';
 export * from './lib/core/we-editor-commands';
 export * from './lib/core/we-editor-plugins';
+export * from './lib/core/we-editor-code';

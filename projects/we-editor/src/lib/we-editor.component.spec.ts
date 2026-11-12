@@ -310,6 +310,19 @@ describe('WeEditorComponent', () => {
     expect(el().querySelector('[data-bar="chars"]')).not.toBeNull();
   });
 
+  it('shows the code language bar inside a code block and highlights the chosen language', () => {
+    host.control.setValue('<p>x</p><pre><code>const a = 1;</code></pre>');
+    fixture.detectChanges();
+    expect(el().querySelector('[data-bar="code"]')).toBeNull();
+    select(5, 5);
+    const picker = el().querySelector('[data-bar="code"] select') as HTMLSelectElement;
+    picker.value = 'javascript';
+    picker.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(host.control.value).toBe('<p>x</p><pre><code class="language-javascript">const a = 1;</code></pre>');
+    expect(el().querySelector('.we-editor__content .hljs-keyword')?.textContent).toBe('const');
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

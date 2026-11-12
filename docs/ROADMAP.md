@@ -88,7 +88,7 @@ Froala / Quill / Lexical first. Everything here ships free in the MIT package.
 | P2 ✅ | Autolink | URLs become links while typing and on paste; same `weEditorSafeUrl` check |
 | P3 ✅ | Media embed | YouTube / Vimeo iframe node, provider allowlist on the parsed `src` |
 | P4 ✅ | Colour palette + special characters + emoji | Palette popover with "remove colour" (F0.4), character picker |
-| P5 | Code block language + syntax highlighting | decorations; highlighter licence check first |
+| P5 ✅ | Code block language + syntax highlighting | decorations; highlighter licence check first |
 | P6 | Source HTML view + preview | F3.1–F3.3; code-editor dependency decision first |
 | P7 | Line height, case change, format painter, styles | small marks/commands (F1.11–F1.13) |
 | P8 | Full screen, autosave hook, status bar with counts | F1.9, F1.10 |

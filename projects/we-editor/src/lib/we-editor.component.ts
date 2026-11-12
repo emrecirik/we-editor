@@ -66,6 +66,7 @@ import {
   weEditorToggleMark,
   weEditorToggleWrap
 } from './core/we-editor-commands';
+import { WE_EDITOR_DEFAULT_CODE_LANGUAGES, weEditorCodeLanguageAt, weEditorSetCodeLanguage } from './core/we-editor-code';
 import { weEditorSerializeHtml } from './core/we-editor-html';
 import { WeEditorEmbedView, WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
 import { weEditorSchema } from './core/we-editor-schema';
@@ -174,6 +175,8 @@ interface WeEditorUiState {
   link: string | null;
   image: WeEditorImageAttrs | null;
   inTable: boolean;
+  /** Language of the code block holding the selection; `undefined` outside code blocks. */
+  codeLanguage: string | null | undefined;
   matches: { current: number; total: number };
   table: Partial<Record<TableAction, boolean>>;
 }
@@ -201,6 +204,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() fontSizes: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_FONT_SIZES;
   /** Swatches of the text colour and highlight palettes (any CSS colour the editor accepts). */
   @Input() colors: readonly string[] = WE_EDITOR_DEFAULT_COLORS;
+  /** Languages offered in the code block bar; `value` becomes `class="language-<value>"`. */
+  @Input() codeLanguages: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_CODE_LANGUAGES;
   /** Characters of the special-characters picker. */
   @Input() specialCharacters: readonly string[] = WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS;
 
@@ -283,7 +288,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected find = { search: '', replace: '', caseSensitive: false, wholeWord: false };
   protected tableSize = { rows: 3, cols: 3, header: true };
   protected readonly tableActions = Object.keys(TABLE_ACTIONS) as TableAction[];
-  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', textColor: null, highlight: null, link: null, image: null, inTable: false, table: {}, matches: { current: 0, total: 0 } };
+  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', textColor: null, highlight: null, link: null, image: null, inTable: false, codeLanguage: undefined, table: {}, matches: { current: 0, total: 0 } };
 
   private readonly icons = inject(WE_EDITOR_ICONS);
   private readonly sanitizer = inject(DomSanitizer);
@@ -608,6 +613,15 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.exec(weEditorInsertText(char));
   }
 
+  /** A language loaded from HTML but missing from `codeLanguages` still shows in the picker. */
+  protected knownLanguage(value: string): boolean {
+    return this.codeLanguages.some((l) => l.value === value);
+  }
+
+  protected setCodeLanguage(value: string): void {
+    this.exec(weEditorSetCodeLanguage(value || null));
+  }
+
   protected runTable(action: TableAction): void {
     this.exec(TABLE_ACTIONS[action]);
   }
@@ -741,6 +755,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       link: weEditorLinkAt(state),
       image,
       inTable,
+      codeLanguage: weEditorCodeLanguageAt(state),
       table,
       matches: this.findOpen ? weEditorSearchCount(state) : { current: 0, total: 0 }
     };
