@@ -64,4 +64,4 @@ export class EpostaComponent {
 
 ## Lisans
 
-MIT © Emre Çırık.
+MIT © Emre CIRIK.

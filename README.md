@@ -74,4 +74,4 @@ zone.js.
 
 ## License
 
-MIT © Emre Çırık. Third-party licences: [docs/LICENSES.md](docs/LICENSES.md).
+MIT © Emre CIRIK. Third-party licences: [docs/LICENSES.md](docs/LICENSES.md).

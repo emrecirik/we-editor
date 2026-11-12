@@ -1,6 +1,6 @@
 # Handover — read this first
 
-Last updated: 2026-11-12 (end of session 2). Owner: Emre Çırık (`emrecirik`).
+Last updated: 2026-11-12 (end of session 2). Owner: Emre CIRIK (`emrecirik`).
 
 ## Current state
 

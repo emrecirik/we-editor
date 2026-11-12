@@ -1,7 +1,7 @@
 # 0001 — Editor core: ProseMirror, used directly
 
 - **Status:** accepted (2026-11-11)
-- **Deciders:** Emre Çırık
+- **Deciders:** Emre CIRIK
 
 ## Context
 
