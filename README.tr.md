@@ -37,6 +37,11 @@ Angular için ücretsiz, temalanabilir zengin metin editörü; [ProseMirror](htt
 - İzin listeli **YouTube / Vimeo** gömme
 - **Bul ve değiştir** (Ctrl/Cmd+F): büyük/küçük harf, tam kelime, tümünü değiştir
 - **Özel karakter ve emoji** seçici
+- **HTML kaynak görünümü** (CodeMirror 6, ihtiyaç anında yüklenir): kod ya da canlı, iki yönlü eşzamanlı bölünmüş görünüm, biçimlendir düğmesi
+- 23 dilde **sözdizimi renklendirmeli kod blokları**
+- **Word / Google Docs'tan yapıştırma:** Word listeleri gerçek iç içe listelere dönüşür, Office stil gürültüsü temizlenir
+- **Biçim boyacısı**, **büyük/küçük harf dönüştürme** (dile duyarlı: Türkçe İ/ı), **satır aralığı** — başka editörlerde ücretli
+- Tıklanabilir öğe yolu (`table › tr › td › p`) ve sayılarla **durum çubuğu**; **tam ekran**; **otomatik kaydetme** kancası
 - Markdown kısayolları (`# `, `- `, `1. `, `> `, ```` ``` ````), yazılan ve yapıştırılan adresler için otomatik bağlantı
 - Yer tutucu metin, kelime ve karakter sayısı (`stats` çıktısı), geri al / yinele, klavye kısayolları
 - **Güvenli HTML giriş ve çıkışı:** belge şeması izin listesidir — script'ler, olay işleyicileri,

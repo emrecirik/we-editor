@@ -34,6 +34,12 @@ Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
 | Locales | `weEditorLocaleDe` / `Fr` / `Es` (UI languages now as in we-grid) | `b5d12d9` |
 | P4 | Colour palette bar (swatches, custom, remove, recent) + special characters / emoji picker | `41008d9` |
 | 0.1.0 | Changelog section, READMEs (npm badge, feature list, status); published to npm by hand, smoke-installed in a clean folder; tag `v0.1.0` → GitHub release (npm step skipped, already published) | `d934fab` |
+| P6 | HTML source view: CodeMirror 6 lazy-loaded, code + split two-way sync, format (decision 0003) | `dbd5438` |
+| 0.2.0 | First tag-driven release; npm publish via OIDC with provenance verified | `3e82dbe` |
+| P7 | Line height, language-aware change case, format painter | `a5a62e8` |
+| P8 | Full screen, status bar (clickable element path, counts, save state), autosave hook | `ebc1fb9` |
+| P9 | Paste from Word / Outlook / Google Docs: nested lists, style noise removed | `cc6aa68` |
+| 0.3.0 | Release of P7–P9 | `da4538f` |
 | P5 | Code block language picker + highlighting (lowlight / highlight.js, decision 0002); +~34 kB gzip in the Studio bundle | `c0190e5` |
 
 ### Done in session 2 (each one commit, pushed, CI green)
@@ -74,8 +80,8 @@ excluded locally (`.git/info/exclude`), as in we-grid.
 
 0. ~~First npm publish~~, ~~Trusted Publishing~~ — done 2026-11-12. Later releases go through the
    `editor-release` skill (tag-driven); the first one proves the OIDC binding. No `v0.1.0` tag / GitHub release exists yet.
-1. **P6…P18** in `docs/ROADMAP.md`
-   order: source HTML view + preview (decision note on the
+1. **P10…P18** in `docs/ROADMAP.md` (P7 "styles" still open — consumer-defined class allowlist);
+   F3.3 device-width preview also open. Earlier list for reference: source HTML view + preview (decision note on the
    code-editor dependency first), line height / case change / format painter / styles, full screen +
    autosave + status bar, paste from Word / Google Docs, image & table captions + cell properties,
    mentions + slash commands, Markdown in/out, bubble toolbar / drag handle, page break / details /

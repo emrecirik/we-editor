@@ -38,6 +38,11 @@ No CSS framework, no icon font, no commercial dependency. A sibling of
 - **YouTube / Vimeo** embeds with an iframe allowlist
 - **Find & replace** (Ctrl/Cmd+F) with match case, whole words, replace all
 - **Special characters and emoji** picker
+- **HTML source view** (CodeMirror 6, loaded on demand): code view or split view with live two-way sync, format button
+- **Code blocks with syntax highlighting** in 23 languages
+- **Paste from Word / Google Docs:** Word lists become real nested lists, Office style noise is removed
+- **Format painter**, **change case** (language-aware: Turkish İ/ı), **line height** — premium-only elsewhere
+- **Status bar** with a clickable element path (`table › tr › td › p`) and counts; **full screen**; **autosave** hook
 - Markdown shortcuts (`# `, `- `, `1. `, `> `, ```` ``` ````), autolink for typed and pasted URLs
 - Placeholder, word and character counts (`stats` output), undo / redo, keyboard shortcuts
 - **Safe HTML in and out:** the document schema is the allowlist — scripts, event handlers,
