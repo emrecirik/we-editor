@@ -131,6 +131,11 @@ we-editor {
     flex: 1 1 220px;
     min-width: 0;
   }
+
+  .we-editor__input--narrow,
+  .we-editor__input--tiny {
+    flex: none;
+  }
 }
 
 .we-editor__input--tiny {
