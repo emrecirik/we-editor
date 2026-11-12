@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## 0.3.0 — 2026-11-12
+
+Paste from Word / Google Docs, status bar with element path, autosave, full screen, line height,
+language-aware change case and format painter. Minor version: new features; the new locale keys are
+breaking only for hand-written full locale objects.
+
 ### Added
 
 - Paste from Word / Outlook / Google Docs (P9, F1.6): Word list paragraphs become nested `<ul>` / `<ol>`;
