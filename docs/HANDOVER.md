@@ -30,7 +30,8 @@ Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
 | Studio | `projects/studio` live demo like we-grid / we-report; CI builds it; Pages serves it at `/studio/` | `8af368e` |
 | Locales | `weEditorLocaleDe` / `Fr` / `Es` (UI languages now as in we-grid) | `b5d12d9` |
 | P4 | Colour palette bar (swatches, custom, remove, recent) + special characters / emoji picker | `41008d9` |
-| 0.1.0 | Changelog section, READMEs (npm badge, feature list, status); published to npm by hand, smoke-installed in a clean folder | `d934fab` |
+| 0.1.0 | Changelog section, READMEs (npm badge, feature list, status); published to npm by hand, smoke-installed in a clean folder; tag `v0.1.0` → GitHub release (npm step skipped, already published) | `d934fab` |
+| P5 | Code block language picker + highlighting (lowlight / highlight.js, decision 0002); +~34 kB gzip in the Studio bundle | `c0190e5` |
 
 ### Done in session 2 (each one commit, pushed, CI green)
 
@@ -70,8 +71,8 @@ excluded locally (`.git/info/exclude`), as in we-grid.
 
 0. ~~First npm publish~~, ~~Trusted Publishing~~ — done 2026-11-12. Later releases go through the
    `editor-release` skill (tag-driven); the first one proves the OIDC binding. No `v0.1.0` tag / GitHub release exists yet.
-1. **P5…P18** in `docs/ROADMAP.md`
-   order: code-block language + highlighting, source HTML view + preview (decision note on the
+1. **P6…P18** in `docs/ROADMAP.md`
+   order: source HTML view + preview (decision note on the
    code-editor dependency first), line height / case change / format painter / styles, full screen +
    autosave + status bar, paste from Word / Google Docs, image & table captions + cell properties,
    mentions + slash commands, Markdown in/out, bubble toolbar / drag handle, page break / details /
