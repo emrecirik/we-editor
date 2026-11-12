@@ -16,7 +16,7 @@ Angular için ücretsiz, temalanabilir zengin metin editörü; [ProseMirror](htt
 üzerine kurulu. CSS framework'ü, ikon fontu veya ticari bağımlılık yok.
 [we-grid-angular](https://github.com/emrecirik/we-grid)'ın kardeş paketi.
 
-> **Durum: 0.1.0, ilk genel sürüm.** Yol haritası Word düzeyinde belgeler,
+> **Durum: 0.2.0.** Yol haritası Word düzeyinde belgeler,
 > hesap tablosu tabloları, tasarım/kod/bölünmüş HTML editörü ve mail-merge şablonlarına uzanıyor —
 > bkz. [docs/ROADMAP.md](docs/ROADMAP.md).
 

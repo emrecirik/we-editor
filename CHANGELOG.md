@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## 0.2.0 — 2026-11-12
+
+HTML source view and code block highlighting. Minor version: new
+features; the new locale keys are breaking only for hand-written full locale objects.
+
 ### Added
 
 - HTML source view (P6, F3.1/F3.2): new `source` toolbar item with **Code** and **Split** views
