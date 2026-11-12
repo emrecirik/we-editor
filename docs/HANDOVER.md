@@ -1,6 +1,6 @@
 # Handover — read this first
 
-Last updated: 2026-11-11 (session 1: scaffold + F0 core). Owner: Emre Çırık (`emrecirik`).
+Last updated: 2026-11-11 (session 2: F0.12). Owner: Emre Çırık (`emrecirik`).
 
 ## Current state
 
@@ -8,7 +8,7 @@ Last updated: 2026-11-11 (session 1: scaffold + F0 core). Owner: Emre Çırık (
   (npm name `we-editor-angular`, version `0.1.0`, unreleased), `projects/playground`, CI / release /
   compat workflows, `.claude/` agent + rule + skills (local only, gitignored like we-grid).
 - Core decision: **ProseMirror used directly** — `docs/decisions/0001-editor-core.md`.
-- F0 status per item: `docs/ROADMAP.md` (F0.1–F0.11 done, F0.4 and F0.14 partial, F0.12–F0.13 open).
+- F0 status per item: `docs/ROADMAP.md` (F0.1–F0.12 done, F0.4 and F0.14 partial, F0.13 open).
 - Git: local repository, one commit on `main`. **No remote, nothing pushed, nothing published.**
 
 ### Verified in this session
@@ -17,7 +17,7 @@ Last updated: 2026-11-11 (session 1: scaffold + F0 core). Owner: Emre Çırık (
 |---|---|
 | `npm install` | OK (Node 24.19.0 / npm 11.17.0); npm warns that `lmdb`, `msgpackr-extract`, `esbuild` install scripts were not approved (`npm approve-scripts`) — builds work regardless |
 | `npm run build:lib` | OK, FESM bundle 71 kB (unminified) |
-| `npm test` | **36 / 36 SUCCESS** (ChromeHeadless). Karma sometimes needs a while to kill Chrome on Windows at exit |
+| `npm test` | **45 / 45 SUCCESS** (ChromeHeadless, session 2). Karma sometimes needs a while to kill Chrome on Windows at exit |
 | `npx ng build playground` | OK, initial 454 kB raw / 126 kB transfer (Angular + ProseMirror + forms) |
 | Playground in a real browser (Playwright) | Renders all F0 features, light and dark theme, no console errors |
 | Compat probe Angular 22 (local run of `.github/compat/probe.sh`) | **PROBE OK: Angular 22** — packed tarball (25 files; README was added to the package afterwards → 26) installed into a fresh `ng new` v22 app and built (520 kB initial; budget warning only) |
@@ -31,18 +31,15 @@ Last updated: 2026-11-11 (session 1: scaffold + F0 core). Owner: Emre Çırık (
 - `SampleUsageProjects/*` are empty placeholders.
 - Playground link bar, colour pickers and font selects were exercised by specs, not by hand.
 
-## Next 5 tasks (in order)
+## Next tasks (in order)
 
 1. **Push + first CI run** (after Emre creates the repo, see below): fix whatever CI/compat finds;
    run compat for 19–22.
-2. **F0.12** — placeholder (`placeholder` input + decoration, `--we-editor-placeholder-color`),
-   word/character counter output, Markdown-style input rules (`prosemirror-inputrules`, MIT → add to
-   `LICENSES.md` + `allowedNonPeerDependencies`).
-3. **F0.13** — keyboard/a11y: toolbar roving tabindex, `Mod-k` opens the link bar, focus return,
+2. **F0.13** — keyboard/a11y: toolbar roving tabindex, `Mod-k` opens the link bar, focus return,
    Escape handling; check with NVDA. Then cut **0.1.0** (`editor-release` skill).
-4. **F1.1 Tables** with `prosemirror-tables` (merge/split, column resize, header row, Tab nav) —
+3. **F1.1 Tables** with `prosemirror-tables` (merge/split, column resize, header row, Tab nav) —
    biggest F1 item; design the table toolbar/context menu first.
-5. **F1.2 Images** — `imageUpload` hook (consumer returns URL), resize, align, alt text, `src`
+4. **F1.2 Images** — `imageUpload` hook (consumer returns URL), resize, align, alt text, `src`
    allowlist; then F1.7 find/replace.
 
 Before F2 and F3 start, write the decision notes they call for (`<we-sheet>` integration; code
@@ -76,6 +73,11 @@ bash .github/compat/probe.sh 22 <scratch-dir> "$PWD/.github/compat/probe.ts" "$P
    `<textarea>` + highlight overlay.
 
 ## Known risks
+
+- **Playground dev server + `build:lib`:** rebuilding the library while `npm start` runs wipes
+  `dist/we-editor` and the server fails with "Cannot find module 'we-editor-angular'"; restart it.
+- `stats` is not emitted on `writeValue`/`setHtml` (avoids ExpressionChanged errors in consumers);
+  consumers read `getStats()` for loaded content.
 
 - **Serialization on every keystroke** (`apply()` → `getHtml()`); marked `shortcut:` in
   `we-editor.component.ts`. Debounce or lazy serialize if large documents get slow.

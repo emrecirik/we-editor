@@ -10,13 +10,14 @@
 <main class="pg-main">
   <section>
     @if (lang === 'en') {
-      <we-editor [formControl]="control" [readonly]="readonly" />
+      <we-editor [formControl]="control" [readonly]="readonly" placeholder="Start typing… try # , - , 1.  or > " (stats)="stats = $event" />
     } @else {
-      <app-editor-tr [control]="control" [readonly]="readonly" />
+      <app-editor-tr [control]="control" [readonly]="readonly" (stats)="stats = $event" />
     }
     <p class="pg-status">
       valid: {{ control.valid }} · dirty: {{ control.dirty }} · touched: {{ control.touched }} ·
-      {{ control.value.length }} characters of HTML
+      {{ control.value.length }} characters of HTML ·
+      @if (stats) { {{ stats.words }} words, {{ stats.characters }} characters } @else { edit to count words }
     </p>
   </section>
 

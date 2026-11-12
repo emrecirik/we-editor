@@ -15,6 +15,9 @@ Target: 0.1.0 — first public release (roadmap phase F0).
   font size, bold, italic, underline, strikethrough, subscript, superscript, inline code, text
   colour, highlight, alignment, bulleted/numbered/task lists, indent/outdent, quote, code block,
   horizontal line, link bar (with new-tab option), unlink, clear formatting.
+- `placeholder` input; `stats` output and `getStats()` (word/character count), `weEditorStats(doc)`.
+- Markdown-style input rules (`# `, `- `, `* `, `1. `, `> `, ```` ``` ````; Backspace undoes the rule),
+  `weEditorInputRules()`. New dependency `prosemirror-inputrules` (MIT).
 - Keyboard shortcuts (Ctrl/Cmd+B/I/U/E, Ctrl/Cmd+Shift+X, Ctrl/Cmd+,/., undo/redo, Shift+Enter,
   Tab/Shift+Tab in lists).
 - Schema-based HTML allowlist: `weEditorSanitizeHtml`, `weEditorParseHtml`,

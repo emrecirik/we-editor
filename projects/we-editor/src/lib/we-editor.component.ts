@@ -3,10 +3,12 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild,
   ViewEncapsulation,
   forwardRef,
@@ -15,8 +17,9 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { redo, undo } from 'prosemirror-history';
+import { Node as PmNode } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 import {
   WeEditorStyleMark,
@@ -41,7 +44,7 @@ import {
   weEditorToggleWrap
 } from './core/we-editor-commands';
 import { weEditorSerializeHtml } from './core/we-editor-html';
-import { WeEditorTaskItemView, weEditorCreateState } from './core/we-editor-plugins';
+import { WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
 import { weEditorSchema } from './core/we-editor-schema';
 import { WE_EDITOR_ICONS } from './models/we-editor-icons.model';
 import { WE_EDITOR_LOCALE, WeEditorLocale } from './models/we-editor-locale.model';
@@ -73,6 +76,10 @@ const inside = (state: EditorState, name: string): boolean => {
   for (let d = $from.depth; d > 0; d--) if ($from.node(d).type === s.nodes[name]) return true;
   return false;
 };
+
+/** A single empty paragraph — what a cleared editor holds. */
+const isEmpty = (doc: PmNode): boolean =>
+  doc.childCount === 1 && doc.firstChild!.type === s.nodes['paragraph'] && doc.firstChild!.content.size === 0;
 
 const BUTTONS: Partial<Record<WeEditorToolbarItem, ButtonDef>> = {
   undo: { icon: 'undo', label: 'undo', run: undo },
@@ -134,6 +141,19 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() fontFamilies: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_FONT_FAMILIES;
   @Input() fontSizes: readonly WeEditorOption[] = WE_EDITOR_DEFAULT_FONT_SIZES;
 
+  /** Text shown while the document is empty. */
+  @Input()
+  set placeholder(value: string) {
+    this._placeholder = value ?? '';
+    this.view?.setProps({});
+  }
+  get placeholder(): string {
+    return this._placeholder;
+  }
+
+  /** Word and character counts after every edit (not on `writeValue`/`setHtml`; use `getStats()`). */
+  @Output() readonly stats = new EventEmitter<WeEditorStats>();
+
   @Input()
   set readonly(value: boolean) {
     this._readonly = value;
@@ -167,6 +187,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   private view?: EditorView;
   private pendingHtml: string | null = null;
   private _readonly = false;
+  private _placeholder = '';
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
@@ -179,7 +200,16 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.view = new EditorView(this.contentRef.nativeElement, {
       state: weEditorCreateState(this.pendingHtml),
       editable: () => !this.disabled && !this._readonly,
-      attributes: { class: 'we-editor__prosemirror', role: 'textbox', 'aria-multiline': 'true', 'aria-label': this.locale.content },
+      attributes: (): Record<string, string> => {
+        const attrs: Record<string, string> = { class: 'we-editor__prosemirror', role: 'textbox', 'aria-multiline': 'true', 'aria-label': this.locale.content };
+        if (this._placeholder) attrs['aria-placeholder'] = this._placeholder;
+        return attrs;
+      },
+      // On the paragraph itself: CSS `attr()` reads the pseudo-element's own element.
+      decorations: (state) =>
+        this._placeholder && isEmpty(state.doc)
+          ? DecorationSet.create(state.doc, [Decoration.node(0, state.doc.firstChild!.nodeSize, { class: 'we-editor__placeholder', 'data-placeholder': this._placeholder })])
+          : null,
       nodeViews: {
         task_item: (node, view, getPos) => new WeEditorTaskItemView(node, view, getPos, this.locale.taskItemToggle)
       },
@@ -208,6 +238,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   /** Current content as sanitized HTML (`''` when empty). */
   getHtml(): string {
     return this.view ? weEditorSerializeHtml(this.view.state.doc) : this.pendingHtml ?? '';
+  }
+
+  /** Word and character counts of the current content. */
+  getStats(): WeEditorStats {
+    return this.view ? weEditorStats(this.view.state.doc) : { words: 0, characters: 0 };
   }
 
   /** Replaces the content (and resets undo history) without emitting a change. */
@@ -317,7 +352,10 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     if (!this.view) return;
     this.view.updateState(this.view.state.apply(tr));
     // shortcut: serializes the whole document on every change; debounce if very large documents get slow.
-    if (tr.docChanged) this.onChange(this.getHtml());
+    if (tr.docChanged) {
+      this.onChange(this.getHtml());
+      this.stats.emit(this.getStats());
+    }
     this.refreshUi();
   }
 

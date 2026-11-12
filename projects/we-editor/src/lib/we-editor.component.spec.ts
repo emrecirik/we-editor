@@ -138,6 +138,30 @@ describe('WeEditorComponent', () => {
     box.click();
     expect(host.control.value).toContain('data-checked="true"');
   });
+
+  it('shows the placeholder only while the document is empty', () => {
+    const content = el().querySelector('.we-editor__prosemirror') as HTMLElement;
+    editor.placeholder = 'Write here';
+    const shown = () => content.querySelector('p.we-editor__placeholder')?.getAttribute('data-placeholder') ?? null;
+    expect(content.getAttribute('aria-placeholder')).toBe('Write here');
+    expect(shown()).toBeNull();
+    host.control.setValue('');
+    expect(shown()).toBe('Write here');
+    editor.placeholder = '';
+    expect(shown()).toBeNull();
+    expect(content.hasAttribute('aria-placeholder')).toBeFalse();
+  });
+
+  it('emits word and character counts on edits', () => {
+    const spy = jasmine.createSpy('stats');
+    editor.stats.subscribe(spy);
+    host.control.setValue('<p>a b</p>');
+    expect(spy).not.toHaveBeenCalled();
+    expect(editor.getStats()).toEqual({ words: 2, characters: 3 });
+    const view = editor.editorView!;
+    view.dispatch(view.state.tr.insertText(' cd', 4));
+    expect(spy).toHaveBeenCalledOnceWith({ words: 3, characters: 6 });
+  });
 });
 
 describe('WeEditorComponent locale', () => {

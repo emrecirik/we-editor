@@ -33,6 +33,7 @@
   "dependencies": {
     "prosemirror-commands": "^1.6.0",
     "prosemirror-history": "^1.4.0",
+    "prosemirror-inputrules": "^1.5.1",
     "prosemirror-keymap": "^1.2.2",
     "prosemirror-model": "^1.22.0",
     "prosemirror-schema-list": "^1.4.0",

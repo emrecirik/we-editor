@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { WE_EDITOR_LOCALE, WeEditorComponent, weEditorLocaleTr, weEditorSanitizeHtml } from 'we-editor-angular';
+import { WE_EDITOR_LOCALE, WeEditorComponent, WeEditorStats, weEditorLocaleTr, weEditorSanitizeHtml } from 'we-editor-angular';
 
 const SAMPLE = `
 <h1>we-editor playground</h1>
@@ -27,11 +27,12 @@ and a <a href="https://github.com/emrecirik">link</a>.</p>
   standalone: true,
   imports: [WeEditorComponent, ReactiveFormsModule],
   providers: [{ provide: WE_EDITOR_LOCALE, useValue: weEditorLocaleTr }],
-  template: `<we-editor [formControl]="control" [readonly]="readonly" />`
+  template: `<we-editor [formControl]="control" [readonly]="readonly" placeholder="Bir şeyler yazın…" (stats)="stats.emit($event)" />`
 })
 export class EditorTrComponent {
   @Input({ required: true }) control!: FormControl<string>;
   @Input() readonly = false;
+  @Output() readonly stats = new EventEmitter<WeEditorStats>();
 }
 
 @Component({
@@ -47,6 +48,7 @@ export class AppComponent {
   dark = false;
   readonly = false;
   sourceDraft = '';
+  stats: WeEditorStats | null = null;
 
   toggleTheme(): void {
     this.dark = !this.dark;

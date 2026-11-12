@@ -34,7 +34,7 @@ or copy that file and change values. Dark mode: `data-theme="dark"` on an ancest
 | `--we-editor-blockquote-border`, `--we-editor-blockquote-color` | Quotes |
 | `--we-editor-hr-color` | Horizontal rule |
 | `--we-editor-selection-bg` | Text selection |
-| `--we-editor-placeholder-color` | Reserved for the placeholder (F0.12) |
+| `--we-editor-placeholder-color` | Placeholder text in an empty editor |
 | `--we-editor-swatch` | Set by the component on the colour buttons to show the current colour |
 
 A new property is added to all three blocks of `we-editor-theme.scss`.

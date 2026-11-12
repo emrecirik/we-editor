@@ -22,7 +22,7 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 | F0.9 | Undo/redo | Buttons enable/disable with history; Ctrl+Z / Ctrl+Y | ✅ |
 | F0.10 | HTML in/out + sanitizer | `weEditorSanitizeHtml` drops script, handlers, unsafe URLs and styles (spec'd) | ✅ |
 | F0.11 | Theme (light/dark), tr/en, SVG icons | Three-block theme; every string a locale key | ✅ |
-| F0.12 | Placeholder, word/character count, Markdown-style input rules (`# `, `- `, `1. `, `> `) | Placeholder on empty doc; rules convert while typing | ⬜ |
+| F0.12 | Placeholder, word/character count, Markdown-style input rules (`# `, `- `, `1. `, `> `) | Placeholder on empty doc; rules convert while typing | ✅ (count is an output; status bar is F1.9) |
 | F0.13 | Keyboard / a11y pass | Toolbar roving tabindex, `Mod-k` opens link bar, real screen-reader check | ⬜ |
 | F0.14 | Paste cleanup basics | Google Docs / web paste maps headings and lists; plain-text paste option | 🟡 schema already drops foreign markup |
 

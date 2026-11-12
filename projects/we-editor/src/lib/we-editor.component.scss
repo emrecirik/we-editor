@@ -180,6 +180,14 @@ we-editor {
   font-variant-ligatures: none;
   box-sizing: border-box;
 
+  .we-editor__placeholder::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    color: var(--we-editor-placeholder-color, #adb5bd);
+    pointer-events: none;
+  }
+
   ::selection {
     background: var(--we-editor-selection-bg, rgba(64, 81, 137, 0.2));
   }

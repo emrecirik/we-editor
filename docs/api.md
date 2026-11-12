@@ -24,8 +24,15 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `fontFamilies` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_FAMILIES` | `value` is the CSS `font-family` written to the text (must pass `weEditorSafeFontFamily`) |
 | `fontSizes` | `readonly WeEditorOption[]` | `WE_EDITOR_DEFAULT_FONT_SIZES` | `value` is a CSS size (`px`, `pt`, `em`, `rem`, `%`) |
 | `readonly` | `boolean` | `false` | Content not editable, toolbar disabled; the value is still readable |
+| `placeholder` | `string` | `''` | Shown in an empty document (also set as `aria-placeholder`) |
 
 Disabled state comes from the form control (`control.disable()`).
+
+### Outputs
+
+| Output | Type | Description |
+|---|---|---|
+| `stats` | `WeEditorStats` (`{ words, characters }`) | After every edit. Not emitted by `writeValue`/`setHtml` — read `getStats()` for loaded content |
 
 ### Methods
 
@@ -33,6 +40,7 @@ Disabled state comes from the form control (`control.disable()`).
 |---|---|
 | `getHtml(): string` | Current content, serialized through the schema; `''` when empty |
 | `setHtml(html)` | Replace content and reset undo history, without emitting a change |
+| `getStats(): WeEditorStats` | Word and character counts (characters = Unicode code points, block breaks not counted) |
 | `focus()` | Focus the editable area |
 | `editorView` | The underlying ProseMirror `EditorView` (advanced use; undefined before init) |
 
@@ -54,6 +62,10 @@ Disabled state comes from the form control (`control.disable()`).
 | Ctrl/Cmd+Z, Ctrl/Cmd+Y, Ctrl/Cmd+Shift+Z | Undo / redo |
 | Shift+Enter | Line break (`<br>`) |
 | Tab / Shift+Tab | Nest / lift a list item (outside lists Tab moves focus) |
+
+Input rules, typed at the start of a block (not inside code blocks): `# ` … `###### ` heading,
+`- ` / `* ` bulleted list, `1. ` numbered list (the number becomes `start`), `> ` quote, ```` ``` ````
+code block. Backspace right after a rule fired restores the typed text.
 
 ## HTML helpers
 
@@ -82,7 +94,8 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorSetLink`, `weEditorRemoveLink`; queries `weEditorMarkActive`, `weEditorMarkAt`,
 `weEditorBlockLevel`, `weEditorAlignAt`, `weEditorListAt`, `weEditorLinkAt`.
 
-State: `weEditorCreateState(html)`, `weEditorPlugins()`, `WeEditorTaskItemView`.
+State: `weEditorCreateState(html)`, `weEditorPlugins()`, `weEditorInputRules()`, `weEditorStats(doc)`,
+`WeEditorTaskItemView`.
 
 ## Tokens
 

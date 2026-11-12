@@ -1,5 +1,6 @@
 import { baseKeymap, chainCommands, toggleMark } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
+import { InputRule, inputRules, textblockTypeInputRule, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { Node as PmNode } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
@@ -12,12 +13,31 @@ import { weEditorSchema } from './we-editor-schema';
 
 const s = weEditorSchema;
 
-/** The F0 plugin set: undo history and the keyboard shortcuts. */
+/** Markdown-style shortcuts typed at the start of a block: `# `…`###### `, `- `/`* `, `1. `, `> `, ```` ``` ````. */
+export function weEditorInputRules(): InputRule[] {
+  return [
+    textblockTypeInputRule(/^(#{1,6})\s$/, s.nodes['heading'], (m) => ({ level: m[1].length })),
+    wrappingInputRule(/^\s*([-*])\s$/, s.nodes['bullet_list']),
+    wrappingInputRule(
+      /^(\d+)\.\s$/,
+      s.nodes['ordered_list'],
+      (m) => ({ order: +m[1] }),
+      (m, node) => node.childCount + node.attrs['order'] === +m[1]
+    ),
+    wrappingInputRule(/^\s*>\s$/, s.nodes['blockquote']),
+    textblockTypeInputRule(/^```$/, s.nodes['code_block'])
+  ];
+}
+
+/** The F0 plugin set: undo history, input rules and the keyboard shortcuts. */
 export function weEditorPlugins(): Plugin[] {
   const listItems = [s.nodes['list_item'], s.nodes['task_item']];
   return [
     history(),
+    inputRules({ rules: weEditorInputRules() }),
     keymap({
+      // Backspace right after an input rule fired restores the typed characters.
+      Backspace: undoInputRule,
       'Mod-z': undo,
       'Mod-y': redo,
       'Shift-Mod-z': redo,
@@ -36,6 +56,19 @@ export function weEditorPlugins(): Plugin[] {
     }),
     keymap(baseKeymap)
   ];
+}
+
+/** Word and character counts of a document. */
+export interface WeEditorStats {
+  words: number;
+  /** Unicode code points, block breaks not counted. */
+  characters: number;
+}
+
+export function weEditorStats(doc: PmNode): WeEditorStats {
+  const text = doc.textBetween(0, doc.content.size, ' ', ' ');
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return { words, characters: [...doc.textContent].length };
 }
 
 /** A fresh editor state for `html` (sanitized through the schema). */
