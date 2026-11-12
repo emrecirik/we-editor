@@ -4,16 +4,100 @@ import { InputRule, inputRules, textblockTypeInputRule, undoInputRule, wrappingI
 import { keymap } from 'prosemirror-keymap';
 import { search } from 'prosemirror-search';
 import { columnResizing, goToNextCell, tableEditing } from 'prosemirror-tables';
-import { Node as PmNode } from 'prosemirror-model';
+import { Fragment, Node as PmNode, Slice } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
-import { EditorState, NodeSelection, Plugin } from 'prosemirror-state';
+import { Command, EditorState, NodeSelection, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 
 import { weEditorInsertHardBreak } from './we-editor-commands';
 import { weEditorParseHtml } from './we-editor-html';
-import { WE_EDITOR_MAX_IMAGE_WIDTH, weEditorSafeImageSrc, weEditorSchema } from './we-editor-schema';
+import { WE_EDITOR_MAX_IMAGE_WIDTH, weEditorSafeImageSrc, weEditorSafeUrl, weEditorSchema } from './we-editor-schema';
 
 const s = weEditorSchema;
+
+// A URL starts with a scheme or "www." and never ends in punctuation that usually closes a sentence.
+const URL_RE = /(?:https?:\/\/|www\.)[^\s<>"]*[^\s<>".,;:!?'()[\]{}]/gi;
+
+/** The `href` for URL-looking text, or `null` when it is not a safe link. */
+export function weEditorAutolinkHref(text: string): string | null {
+  return weEditorSafeUrl(/^www\./i.test(text) ? `https://${text}` : text);
+}
+
+const unlinkable = (node: PmNode): boolean => node.marks.some((m) => m.type === s.marks['link'] || m.type === s.marks['code']);
+
+/** Adds link marks to bare URLs in `from..to` of `tr.doc`; text already linked or in code is left alone. */
+function linkifyRange(tr: Transaction, from: number, to: number): void {
+  tr.doc.nodesBetween(from, to, (node, pos, parent) => {
+    if (!node.isText) return !node.type.spec.code;
+    if (unlinkable(node) || !parent?.type.allowsMarkType(s.marks['link'])) return false;
+    for (const m of node.text!.matchAll(URL_RE)) {
+      const start = pos + m.index!;
+      const end = start + m[0].length;
+      const href = weEditorAutolinkHref(m[0]);
+      if (href && start >= from && end <= to) tr.addMark(start, end, s.marks['link'].create({ href }));
+    }
+    return false;
+  });
+}
+
+function linkifyFragment(fragment: Fragment, linkable = true): Fragment {
+  const out: PmNode[] = [];
+  fragment.forEach((node) => {
+    if (!node.isText) {
+      out.push(node.type.spec.code ? node : node.copy(linkifyFragment(node.content, node.type.allowsMarkType(s.marks['link']))));
+      return;
+    }
+    const text = node.text!;
+    let last = 0;
+    if (linkable && !unlinkable(node)) {
+      for (const m of text.matchAll(URL_RE)) {
+        const href = weEditorAutolinkHref(m[0]);
+        if (!href) continue;
+        if (m.index! > last) out.push(node.cut(last, m.index!));
+        const end = m.index! + m[0].length;
+        out.push(node.cut(m.index!, end).mark(s.marks['link'].create({ href }).addToSet(node.marks)));
+        last = end;
+      }
+    }
+    if (!last) out.push(node);
+    else if (last < text.length) out.push(node.cut(last));
+  });
+  return Fragment.from(out);
+}
+
+/** Links the URL right before the cursor; used by Enter. Never consumes the key. */
+const linkifyBeforeCursor: Command = (state, dispatch) => {
+  const { $from, empty } = state.selection;
+  if (!empty || !dispatch || $from.parent.type.spec.code) return false;
+  const tr = state.tr;
+  linkifyRange(tr, $from.start(), $from.pos);
+  if (tr.docChanged) dispatch(tr);
+  return false;
+};
+
+/**
+ * Autolink: a URL becomes a link when a space follows it (Backspace right after undoes that), when
+ * Enter follows it, and in pasted content. Pasting a single URL over selected text links the
+ * selection. Only `weEditorSafeUrl` URLs are linked; code is never touched.
+ */
+export function weEditorAutolink(): Plugin[] {
+  return [
+    keymap({ Enter: linkifyBeforeCursor }),
+    new Plugin({
+      props: {
+        transformPasted: (slice) => new Slice(linkifyFragment(slice.content), slice.openStart, slice.openEnd),
+        handlePaste: (view, event) => {
+          const { from, to, empty } = view.state.selection;
+          const text = event.clipboardData?.getData('text/plain').trim() ?? '';
+          const href = !empty && /^\S+$/.test(text) && text.match(URL_RE)?.[0] === text ? weEditorAutolinkHref(text) : null;
+          if (!href) return false;
+          view.dispatch(view.state.tr.addMark(from, to, s.marks['link'].create({ href })));
+          return true;
+        }
+      }
+    })
+  ];
+}
 
 /** Markdown-style shortcuts typed at the start of a block: `# `…`###### `, `- `/`* `, `1. `, `> `, ```` ``` ````. */
 export function weEditorInputRules(): InputRule[] {
@@ -27,7 +111,13 @@ export function weEditorInputRules(): InputRule[] {
       (m, node) => node.childCount + node.attrs['order'] === +m[1]
     ),
     wrappingInputRule(/^\s*>\s$/, s.nodes['blockquote']),
-    textblockTypeInputRule(/^```$/, s.nodes['code_block'])
+    textblockTypeInputRule(/^```$/, s.nodes['code_block']),
+    // Autolink on space: the typed space goes in, then the URL in front of it gets its link mark.
+    new InputRule(/(?:https?:\/\/|www\.)\S+\s$/i, (state, match, start, end) => {
+      const tr = state.tr.insertText(match[0].slice(-1), end);
+      linkifyRange(tr, start, end);
+      return tr.steps.length > 1 ? tr : null;
+    })
   ];
 }
 
@@ -37,6 +127,7 @@ export function weEditorPlugins(): Plugin[] {
   return [
     history(),
     inputRules({ rules: weEditorInputRules() }),
+    ...weEditorAutolink(),
     search(),
     columnResizing(),
     tableEditing(),

@@ -85,7 +85,7 @@ Froala / Quill / Lexical first. Everything here ships free in the MIT package.
 | # | Item | Notes |
 |---|---|---|
 | P1 ✅ | Find & replace | `prosemirror-search` (MIT) or own decorations; Ctrl+F panel, match case / whole word (= F1.7) |
-| P2 | Autolink | URLs become links while typing and on paste; same `weEditorSafeUrl` check |
+| P2 ✅ | Autolink | URLs become links while typing and on paste; same `weEditorSafeUrl` check |
 | P3 | Media embed | YouTube / Vimeo iframe node, provider allowlist on the parsed `src` |
 | P4 | Colour palette + special characters + emoji | Palette popover with "remove colour" (F0.4), character picker |
 | P5 | Code block language + syntax highlighting | decorations; highlighter licence check first |

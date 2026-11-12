@@ -85,6 +85,11 @@ Input rules, typed at the start of a block (not inside code blocks): `# ` … `#
 `- ` / `* ` bulleted list, `1. ` numbered list (the number becomes `start`), `> ` quote, ```` ``` ````
 code block. Backspace right after a rule fired restores the typed text.
 
+**Autolink:** a URL (`http://`, `https://` or `www.`) becomes a link when a space or Enter follows it
+and in pasted content; closing punctuation (`.`, `,`, `)` …) stays outside the link, `www.` links get
+`https://`. Pasting a single URL over selected text links the selection. Backspace right after the
+space undoes the link. Code is never linked; every `href` passes `weEditorSafeUrl`.
+
 ## HTML helpers
 
 | Function | Description |
@@ -123,7 +128,8 @@ work on `editorView` directly; queries `weEditorImageAt`, `weEditorMarkActive`, 
 
 Node views: `WeEditorImageView` (resize handle).
 
-State: `weEditorCreateState(html)`, `weEditorPlugins()`, `weEditorInputRules()`, `weEditorStats(doc)`,
+State: `weEditorCreateState(html)`, `weEditorPlugins()`, `weEditorInputRules()`, `weEditorAutolink()`,
+`weEditorAutolinkHref(text)`, `weEditorStats(doc)`,
 `WeEditorTaskItemView`.
 
 ## Tokens

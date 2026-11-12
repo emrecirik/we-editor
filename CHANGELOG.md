@@ -33,6 +33,8 @@ Target: 0.1.0 — first public release (roadmap phase F0).
   `weEditorSearchCount`; theme variables `--we-editor-search-match-bg`,
   `--we-editor-search-active-bg`; locale keys `find*`/`replace*`; DOM baseline re-recorded. New
   dependency `prosemirror-search` (MIT).
+- Autolink (P2): URLs become links after a space or Enter and in pasted content; a URL pasted over
+  a selection links it; `weEditorAutolink`, `weEditorAutolinkHref`.
 - Keyboard shortcuts (Ctrl/Cmd+B/I/U/E, Ctrl/Cmd+Shift+X, Ctrl/Cmd+,/., undo/redo, Shift+Enter,
   Tab/Shift+Tab in lists).
 - Schema-based HTML allowlist: `weEditorSanitizeHtml`, `weEditorParseHtml`,

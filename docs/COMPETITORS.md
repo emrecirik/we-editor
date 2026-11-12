@@ -42,7 +42,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | Math (LaTeX) | CK-P, Ty-P, TT, Q, Fr | ⬜ |
 | **Links & media** | | |
 | Links, new tab, unsafe schemes refused | all | ✅ |
-| Autolink while typing / pasting | CK, Ty, TT, Lx | ⬜ |
+| Autolink while typing / pasting | CK, Ty, TT, Lx | ✅ |
 | Anchors / bookmarks | CK, Ty, Fr | ⬜ |
 | Images: URL, upload, paste, drop, resize, position, alt | all | ✅ |
 | Image caption, link on image | CK, Ty | ⬜ |

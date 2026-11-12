@@ -1,3 +1,4 @@
+import { Slice } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -53,6 +54,48 @@ describe('we-editor input rules', () => {
     view.someProp('handleKeyDown', (f) => f(view, new KeyboardEvent('keydown', { key: 'Backspace' })));
     expect(weEditorSerializeHtml(view.state.doc)).toBe('<p># </p>');
     view.destroy();
+  });
+});
+
+describe('we-editor autolink', () => {
+  const key = (view: EditorView, k: string) => view.someProp('handleKeyDown', (f) => f(view, new KeyboardEvent('keydown', { key: k })));
+
+  it('links a URL when a space follows it, without trailing punctuation', () => {
+    expect(typed('', 'see https://a.com/x?q=1 ok')).toBe('<p>see <a href="https://a.com/x?q=1">https://a.com/x?q=1</a> ok</p>');
+    expect(typed('', 'at www.b.org. ')).toBe('<p>at <a href="https://www.b.org">www.b.org</a>. </p>');
+    expect(typed('', 'plain text ')).toBe('<p>plain text </p>');
+  });
+
+  it('leaves code alone and Backspace undoes the link', () => {
+    expect(typed('<p><code>x</code></p>', 'https://a.com ')).toBe('<p><code>xhttps://a.com </code></p>');
+    const view = typeInto('', 'https://a.com ');
+    key(view, 'Backspace');
+    expect(weEditorSerializeHtml(view.state.doc)).toBe('<p>https://a.com </p>');
+    view.destroy();
+  });
+
+  it('links the URL before the cursor on Enter', () => {
+    const view = typeInto('', 'https://a.com');
+    key(view, 'Enter');
+    expect(weEditorSerializeHtml(view.state.doc)).toBe('<p><a href="https://a.com">https://a.com</a></p><p></p>');
+    view.destroy();
+  });
+
+  it('links URLs in pasted text and a URL pasted over a selection', () => {
+    const view = typeInto('<p>x</p>', '');
+    view.pasteText('docs at https://a.com/docs, or www.b.org');
+    expect(weEditorSerializeHtml(view.state.doc)).toBe(
+      '<p>xdocs at <a href="https://a.com/docs">https://a.com/docs</a>, or <a href="https://www.b.org">www.b.org</a></p>'
+    );
+    view.destroy();
+
+    const state = weEditorCreateState('<p>read this</p>');
+    const v2 = new EditorView(document.createElement('div'), { state: state.apply(state.tr.setSelection(TextSelection.create(state.doc, 6, 10))) });
+    const data = new DataTransfer();
+    data.setData('text/plain', 'https://a.com');
+    v2.someProp('handlePaste', (f) => f(v2, new ClipboardEvent('paste', { clipboardData: data }), Slice.empty));
+    expect(weEditorSerializeHtml(v2.state.doc)).toBe('<p>read <a href="https://a.com">this</a></p>');
+    v2.destroy();
   });
 });
 
