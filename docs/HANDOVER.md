@@ -113,4 +113,4 @@ bash .github/compat/probe.sh 22 <scratch-dir> "$PWD/.github/compat/probe.ts" "$P
 - Architecture and security model: `docs/ARCHITECTURE.md`.
 - Every public symbol: `docs/api.md`; theme variables: `docs/theming.md`; locale keys:
   `docs/localization.md`; licences: `docs/LICENSES.md`.
-- Business-rule notes (Turkish, project-brain format): `docs/knowledge/_index.md`.
+- Business-rule notes (Turkish, project-brain format): `docs/knowledge/_index.md` — local only (`.git/info/exclude`), not in the public repo.
