@@ -35,7 +35,7 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 | F1.3 | Page layout | Page size (A4/Letter), margins, "page view" with visible page boundaries |
 | F1.4 | Page break | Page-break node, visible in the editor, honoured when printing |
 | F1.5 | Print / PDF export | Print stylesheet; `print()` through the browser; optional we-report hook — no paid library |
-| F1.6 | Paste from Word | MSO list paragraphs become real lists, `mso-*` styles stripped, tables kept |
+| F1.6 ✅ | Paste from Word | MSO list paragraphs become real lists, `mso-*` styles stripped, tables kept |
 | F1.7 | Find / replace ✅ | Ctrl+F panel, match case / whole word, highlight decorations, replace all |
 | F1.8 | Spell-check hook | Native `spellcheck` on by default; `WeEditorSpellChecker` interface for a server checker with decorations |
 | F1.9 ✅ | Word / character counter | Status bar + `(stats)` output |
@@ -92,7 +92,7 @@ Froala / Quill / Lexical first. Everything here ships free in the MIT package.
 | P6 ✅ | Source HTML view + preview | F3.1–F3.3; code-editor dependency decision first |
 | P7 🟡 | Line height, case change, format painter, styles | small marks/commands (F1.11–F1.13) |
 | P8 ✅ | Full screen, autosave hook, status bar with counts | F1.9, F1.10 |
-| P9 | Paste from Word / Google Docs | F1.6 |
+| P9 ✅ | Paste from Word / Google Docs | F1.6 |
 | P10 | Image caption, link on image; table caption and cell properties | |
 | P11 | Mentions + slash commands | one suggestion plugin |
 | P12 | Markdown in/out | `prosemirror-markdown` (MIT) |

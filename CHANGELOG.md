@@ -6,6 +6,10 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Paste from Word / Outlook / Google Docs (P9, F1.6): Word list paragraphs become nested `<ul>` / `<ol>`;
+  Office and Docs font, size, spacing, `mso-*` and default-colour styles are dropped on paste;
+  `weEditorCleanOfficeHtml`, `weEditorPasteFromOffice` (included in `weEditorPlugins()`).
+
 - Full screen, status bar and autosave (P8, F1.9/F1.10/F3.5): `fullscreen` toolbar item (Esc leaves);
   `statusBar` input with a clickable element path, save state and word/character counts; `autosave`
   hook + `autosaveDelay` (pending save runs on destroy); theme variable `--we-editor-fullscreen-z-index`;

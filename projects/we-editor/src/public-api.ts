@@ -15,4 +15,5 @@ export * from './lib/core/we-editor-commands';
 export * from './lib/core/we-editor-plugins';
 export * from './lib/core/we-editor-code';
 export * from './lib/core/we-editor-format';
+export * from './lib/core/we-editor-paste';
 export * from './lib/core/we-editor-source';

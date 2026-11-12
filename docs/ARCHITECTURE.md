@@ -49,6 +49,8 @@ Rules of thumb:
 - A code block's `language` (from `class="language-x"`, `lang-x` or `data-language`) passes
   `weEditorSafeCodeLanguage` (letters, digits, `+ # . _ -`, max 32) before it is written into `class`.
   Highlighting only adds ProseMirror decorations (classes); it never produces HTML strings.
+- Pasted Office / Docs HTML is cleaned by `weEditorCleanOfficeHtml` in an inert `DOMParser` document; the
+  result still goes through ProseMirror's clipboard parser and the schema like any paste.
 - HTML source view text is never rendered: it is parsed by `weEditorParseHtml` (inert document +
   schema) and replaces the document; `weEditorFormatHtml` also parses inertly and returns text only.
 - Image `src` passes `weEditorSafeImageSrc`: http/https/relative, or a base64 raster

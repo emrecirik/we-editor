@@ -467,6 +467,15 @@ describe('WeEditorComponent', () => {
     expect(el().querySelector('.we-editor__save')?.getAttribute('data-state')).toBe('saved');
   });
 
+  it('cleans Word lists and Office noise on paste', () => {
+    host.control.setValue('');
+    const item = (n: string, text: string) =>
+      '<p class=MsoListParagraph style="mso-list:l0 level1 lfo1"><span style="mso-list:Ignore">' + n + '<span> </span></span>' +
+      '<span style="font-family:Calibri;font-size:11pt;color:black">' + text + '</span></p>';
+    editor.editorView!.pasteHTML('<html xmlns:o="urn:schemas-microsoft-com:office:office"><body>' + item('1.', 'Step one') + item('2.', 'Step two') + '</body></html>');
+    expect(host.control.value).toBe('<ol><li><p>Step one</p></li><li><p>Step two</p></li></ol>');
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

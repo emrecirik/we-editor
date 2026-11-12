@@ -60,6 +60,10 @@ Disabled state comes from the form control (`control.disable()`).
 `blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `specialChars`,
 `findReplace`, `formatPainter`, `textCase`, `clearFormatting`, `source`, `fullscreen`, `'|'`.
 
+**Pasting from Word, Outlook or Google Docs** is cleaned automatically: Word's marker paragraphs
+become real nested `<ul>` / `<ol>` lists, and Office font, size, spacing, `mso-*` and default-colour
+styles are dropped while bold, italic, underline and real colours stay. Other HTML is not touched.
+
 `fullscreen` pins the editor over the page (`position: fixed`, `z-index: var(--we-editor-fullscreen-z-index)`);
 Esc or the button again leaves it.
 
@@ -158,7 +162,8 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorSetLineHeight(value | null)`, `weEditorLineHeightAt(state)`,
+image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorCleanOfficeHtml(html)` (the paste cleaner on its own),
+`weEditorPasteFromOffice()` (its plugin, in `weEditorPlugins()`), `weEditorSetLineHeight(value | null)`, `weEditorLineHeightAt(state)`,
 `weEditorChangeCase('upper' | 'lower' | 'title' | 'sentence', locale?)`, `weEditorPaintMarks(marks)`, `weEditorFormatHtml(html, indent?)` (pretty-print for display; inert
 parse, text out), `weEditorCreateSourceEditor(element, options)` (the CodeMirror HTML editor on its
 own), `weEditorSetCodeLanguage(language | null)`, `weEditorCodeLanguageAt(state)`

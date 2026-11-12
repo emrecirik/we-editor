@@ -11,6 +11,7 @@ import { EditorView, NodeView } from 'prosemirror-view';
 
 import { weEditorCodeHighlight } from './we-editor-code';
 import { weEditorInsertHardBreak } from './we-editor-commands';
+import { weEditorPasteFromOffice } from './we-editor-paste';
 import { weEditorParseHtml } from './we-editor-html';
 import { WE_EDITOR_MAX_IMAGE_WIDTH, weEditorEmbedUrl, weEditorSafeImageSrc, weEditorSafeUrl, weEditorSchema } from './we-editor-schema';
 
@@ -131,6 +132,7 @@ export function weEditorPlugins(): Plugin[] {
     ...weEditorAutolink(),
     search(),
     weEditorCodeHighlight(),
+    weEditorPasteFromOffice(),
     columnResizing(),
     tableEditing(),
     keymap({

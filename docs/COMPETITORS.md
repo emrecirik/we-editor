@@ -70,7 +70,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | Bubble / floating toolbar | CK, Ty, TT, Fr | ⬜ |
 | Keyboard shortcut help | CK, Ty, Fr | ⬜ |
 | **Paste & import / export** | | |
-| Paste from Word / Google Docs cleanup | CK (P enhanced), Ty-P, Fr | 🟡 allowlist only |
+| Paste from Word / Google Docs cleanup | CK (P enhanced), Ty-P, Fr | ✅ free: Word lists → real nested lists, Office/Docs style noise removed (P9) |
 | Markdown in / out | CK, Ty-P, TT, Fr, Lx | 🟡 input rules only |
 | Import Word (DOCX) | CK-P, Ty-P, TT-P, Fr | ⬜ |
 | Export Word / PDF | CK-P, Ty-P, TT-P, Fr | ⬜ |
