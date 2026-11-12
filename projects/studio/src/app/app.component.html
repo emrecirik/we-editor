@@ -1,0 +1,105 @@
+<header class="bar">
+  <div class="bar__inner">
+    <a class="brand" href="https://github.com/emrecirik/we-editor" aria-label="we-editor on GitHub">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__name">we-editor</span>
+      <span class="brand__sub">Studio</span>
+    </a>
+
+    <nav class="segmented" role="tablist" aria-label="Studio">
+      <button type="button" role="tab" [attr.aria-selected]="tab === 'editor'" (click)="select('editor')">{{ text.tabEditor }}</button>
+      <button type="button" role="tab" [attr.aria-selected]="tab === 'html'" (click)="select('html')">{{ text.tabHtml }}</button>
+      <button type="button" role="tab" [attr.aria-selected]="tab === 'start'" (click)="select('start')">{{ text.tabStart }}</button>
+    </nav>
+
+    <div class="bar__end">
+      <div class="segmented segmented--small" role="group" [attr.aria-label]="text.language">
+        <button type="button" [attr.aria-pressed]="lang === 'en'" (click)="setLanguage('en')">EN</button>
+        <button type="button" [attr.aria-pressed]="lang === 'tr'" (click)="setLanguage('tr')">TR</button>
+      </div>
+      <div class="segmented segmented--small" role="group" [attr.aria-label]="text.themeLabel">
+        <button type="button" [attr.aria-pressed]="theme === 'light'" (click)="setTheme('light')">{{ text.light }}</button>
+        <button type="button" [attr.aria-pressed]="theme === 'dark'" (click)="setTheme('dark')">{{ text.dark }}</button>
+      </div>
+      <a class="link-btn" href="https://www.npmjs.com/package/we-editor-angular">npm</a>
+      <a class="link-btn" href="https://github.com/emrecirik/we-editor">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <p class="tagline">{{ text.tagline }}</p>
+
+  @if (tab === 'editor') {
+    <section class="panel" role="tabpanel" [attr.aria-label]="text.tabEditor">
+      <div class="panel__head">
+        <div>
+          <h1>{{ text.editorTitle }}</h1>
+          <p class="muted">{{ text.editorIntro }}</p>
+        </div>
+        <div class="panel__actions">
+          <label class="check"><input type="checkbox" [checked]="readonly" (change)="readonly = !readonly"> {{ text.readonly }}</label>
+          <button type="button" class="link-btn" (click)="resetExample()">{{ text.resetExample }}</button>
+        </div>
+      </div>
+      <we-editor [formControl]="control" [readonly]="readonly" [placeholder]="text.placeholder" (stats)="stats = $event" />
+      @if (stats) {
+        <p class="muted small">{{ stats.words }} {{ text.words }} · {{ stats.characters }} {{ text.characters }}</p>
+      }
+      <aside class="tips">
+        <h2>{{ text.tryTitle }}</h2>
+        <ul>
+          @for (tip of text.editorTips; track tip) {
+            <li>{{ tip }}</li>
+          }
+        </ul>
+      </aside>
+    </section>
+  }
+
+  @if (tab === 'html') {
+    <section class="panel" role="tabpanel" [attr.aria-label]="text.tabHtml">
+      <div>
+        <h1>{{ text.htmlTitle }}</h1>
+        <p class="muted">{{ text.htmlIntro }}</p>
+      </div>
+      <div class="split">
+        <div class="card">
+          <h2>{{ text.htmlIn }}</h2>
+          <textarea rows="8" [value]="htmlDraft" (input)="htmlDraft = $any($event.target).value" [placeholder]="text.htmlInPlaceholder"></textarea>
+          <p class="muted small">{{ text.htmlSanitized }}</p>
+          <pre><code>{{ sanitized() }}</code></pre>
+          <button type="button" class="primary-btn" (click)="loadHtml()">{{ text.htmlLoad }}</button>
+        </div>
+        <div class="card">
+          <h2>{{ text.htmlOut }}</h2>
+          <pre class="scroll"><code>{{ control.value }}</code></pre>
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (tab === 'start') {
+    <section class="panel panel--narrow" role="tabpanel" [attr.aria-label]="text.tabStart">
+      <h1>{{ text.startTitle }}</h1>
+      <h2>{{ text.install }}</h2>
+      <pre><code>{{ installSnippet }}</code></pre>
+      <p>{{ text.themeStep }}</p>
+      <pre><code>{{ themeSnippet }}</code></pre>
+      <p>{{ text.useStep }}</p>
+      <pre><code>{{ usageSnippet }}</code></pre>
+      <pre><code>{{ localeSnippet }}</code></pre>
+      <p>
+        <a href="https://github.com/emrecirik/we-editor#readme">{{ text.docs }}</a> ·
+        <a href="https://github.com/emrecirik/we-editor/blob/main/docs/api.md">API</a> ·
+        <a href="https://github.com/emrecirik/we-editor/blob/main/docs/theming.md">Theming</a> ·
+        <a href="https://github.com/emrecirik/we-editor/blob/main/docs/localization.md">Localization</a> ·
+        <a href="../features.html">{{ text.features }}</a>
+      </p>
+      <p class="muted">
+        <a href="https://emrecirik.github.io/we-grid/">we-grid</a> ·
+        <a href="https://emrecirik.github.io/we-report/">we-report</a> — {{ text.sisterProject }}
+      </p>
+    </section>
+  }
+</main>

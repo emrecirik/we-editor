@@ -26,3 +26,6 @@ jobs:
 
       - name: Build the playground
         run: npx ng build playground
+
+      - name: Build the studio
+        run: npx ng build studio

@@ -6,6 +6,10 @@
 
 [English](README.md)
 
+![Başlık, biçimli metin, kaydırılmış resim, kontrol listesi ve tablo içeren we-editor](docs/images/editor-light.png)
+
+**Canlı deneyin:** [we-editor Studio](https://emrecirik.github.io/we-editor/studio/) — editör Türkçe ya da İngilizce, açık ya da koyu temada, güvenli HTML gidiş-dönüşüyle.
+
 Angular için ücretsiz, temalanabilir zengin metin editörü; [ProseMirror](https://prosemirror.net)
 üzerine kurulu. CSS framework'ü, ikon fontu veya ticari bağımlılık yok.
 [we-grid-angular](https://github.com/emrecirik/we-grid)'ın kardeş paketi.

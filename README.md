@@ -7,6 +7,10 @@
 
 [Türkçe](README.tr.md)
 
+![we-editor with a heading, formatted text, a floated picture, a checklist and a table](docs/images/editor-light.png)
+
+**Try it live:** [we-editor Studio](https://emrecirik.github.io/we-editor/studio/) — the editor in English or Turkish, light or dark, with the safe-HTML round trip.
+
 A free, themeable rich-text editor for Angular, built on [ProseMirror](https://prosemirror.net).
 No CSS framework, no icon font, no commercial dependency. A sibling of
 [we-grid-angular](https://github.com/emrecirik/we-grid).

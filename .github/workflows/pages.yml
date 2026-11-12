@@ -1,5 +1,5 @@
 # Publishes GitHub Pages: the docs/ folder (landing page, guides; rendered by Jekyll) plus the
-# playground as the live demo under /demo/. Runs on every push to main.
+# we-editor Studio, the live demo app, under /studio/. Runs on every push to main.
 name: Pages
 
 on:
@@ -29,7 +29,7 @@ jobs:
 
       - run: npm ci
       - run: npm run build:lib
-      - run: npx ng build playground --base-href /${{ github.event.repository.name }}/demo/
+      - run: npx ng build studio --base-href /${{ github.event.repository.name }}/studio/
 
       - name: Render docs with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -37,10 +37,10 @@ jobs:
           source: ./docs
           destination: ./_site
 
-      - name: Add the demo
+      - name: Add the studio
         run: |
-          sudo mkdir -p _site/demo
-          sudo cp -r dist/playground/browser/. _site/demo/
+          sudo mkdir -p _site/studio
+          sudo cp -r dist/studio/browser/. _site/studio/
 
       - uses: actions/upload-pages-artifact@v3
         with:
