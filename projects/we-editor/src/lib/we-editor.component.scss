@@ -609,3 +609,58 @@ we-editor {
 .we-editor--painting .we-editor__prosemirror {
   cursor: copy;
 }
+
+.we-editor--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--we-editor-fullscreen-z-index, 1000);
+  border-radius: 0;
+
+  .we-editor__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+}
+
+.we-editor__statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 3px 8px;
+  border-top: 1px solid var(--we-editor-border-color, #dee2e6);
+  background: var(--we-editor-toolbar-bg, #f3f6f9);
+  color: var(--we-editor-muted-color, #878a99);
+  font-size: 0.75rem;
+}
+
+.we-editor__path {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.we-editor__crumb {
+  padding: 1px 4px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-family: var(--we-editor-code-font-family, monospace);
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--we-editor-btn-hover-bg, rgba(0, 0, 0, 0.06));
+    color: var(--we-editor-font-color, #212529);
+  }
+}
+
+.we-editor__save[data-state='failed'] {
+  color: var(--we-editor-code-color, #c2255c);
+}

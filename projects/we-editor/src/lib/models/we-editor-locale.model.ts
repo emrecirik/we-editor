@@ -116,6 +116,13 @@ export interface WeEditorLocale {
   caseTitle: string;
   caseSentence: string;
   formatPainter: string;
+  fullscreen: string;
+  statusPath: string;
+  statusWords: string;
+  statusCharacters: string;
+  autosaveSaving: string;
+  autosaveSaved: string;
+  autosaveFailed: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -230,7 +237,14 @@ export const weEditorLocaleEn: WeEditorLocale = {
   caseLower: 'lowercase',
   caseTitle: 'Title Case',
   caseSentence: 'Sentence case',
-  formatPainter: 'Format painter'
+  formatPainter: 'Format painter',
+  fullscreen: 'Full screen',
+  statusPath: 'Element path',
+  statusWords: 'Words',
+  statusCharacters: 'Characters',
+  autosaveSaving: 'Saving…',
+  autosaveSaved: 'Saved',
+  autosaveFailed: 'Could not save'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -345,7 +359,14 @@ export const weEditorLocaleTr: WeEditorLocale = {
   caseLower: 'küçük harf',
   caseTitle: 'Her Kelime Büyük',
   caseSentence: 'Cümle düzeni',
-  formatPainter: 'Biçim boyacısı'
+  formatPainter: 'Biçim boyacısı',
+  fullscreen: 'Tam ekran',
+  statusPath: 'Öğe yolu',
+  statusWords: 'Kelime',
+  statusCharacters: 'Karakter',
+  autosaveSaving: 'Kaydediliyor…',
+  autosaveSaved: 'Kaydedildi',
+  autosaveFailed: 'Kaydedilemedi'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

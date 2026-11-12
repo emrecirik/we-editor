@@ -1,4 +1,5 @@
-<div class="we-editor" [class.we-editor--focused]="focused" [class.we-editor--disabled]="disabled" [class.we-editor--readonly]="readonly" [class.we-editor--painting]="!!painter">
+<div class="we-editor" [class.we-editor--focused]="focused" [class.we-editor--disabled]="disabled" [class.we-editor--readonly]="readonly" [class.we-editor--painting]="!!painter"
+     [class.we-editor--fullscreen]="fullscreen" (keydown.escape)="onRootEscape()">
   @if (toolbar.length) {
     <div class="we-editor__toolbar" role="toolbar" [attr.aria-label]="locale.toolbar" (mousedown)="onToolbarMouseDown($event)">
       @for (item of toolbar; track $index) {
@@ -35,7 +36,7 @@
             </select>
           }
           @case ('lineHeight') {
-            <select class="we-editor__select we-editor__select--narrow" [title]="locale.lineHeight" [attr.aria-label]="locale.lineHeight"
+            <select class="we-editor__select" [title]="locale.lineHeight" [attr.aria-label]="locale.lineHeight"
                     [disabled]="toolsOff" (change)="setLineHeight($any($event.target).value)">
               <option value="" [selected]="!ui.lineHeight">{{ locale.lineHeightDefault }}</option>
               @for (lh of lineHeights; track lh.value) {
@@ -78,6 +79,12 @@
                     [disabled]="!ui.enabled.source" [title]="locale.source" [attr.aria-label]="locale.source"
                     [attr.aria-pressed]="sourceMode !== 'off'" (click)="toggleSource()">
               <span aria-hidden="true" [innerHTML]="icon('source')"></span>
+            </button>
+          }
+          @case ('fullscreen') {
+            <button type="button" class="we-editor__btn" data-item="fullscreen" [class.we-editor__btn--active]="fullscreen"
+                    [title]="locale.fullscreen" [attr.aria-label]="locale.fullscreen" [attr.aria-pressed]="fullscreen" (click)="toggleFullscreen()">
+              <span aria-hidden="true" [innerHTML]="icon('fullscreen')"></span>
             </button>
           }
           @case ('specialChars') {
@@ -325,4 +332,19 @@
     <div #source class="we-editor__source" [hidden]="sourceMode === 'off'"></div>
     <div #content class="we-editor__content" [hidden]="sourceMode === 'code'"></div>
   </div>
+
+  @if (statusBar) {
+    <div class="we-editor__statusbar">
+      <nav class="we-editor__path" [attr.aria-label]="locale.statusPath">
+        @for (item of path; track item.depth; let last = $last) {
+          <button type="button" class="we-editor__crumb" (mousedown)="$event.preventDefault()" (click)="selectPath(item.depth)">{{ item.tag }}</button>
+          @if (!last) {
+            <span aria-hidden="true">›</span>
+          }
+        }
+      </nav>
+      <span class="we-editor__save" aria-live="polite" [attr.data-state]="saveState">{{ saveLabel() }}</span>
+      <span class="we-editor__counts">{{ locale.statusWords }}: {{ counts.words }} · {{ locale.statusCharacters }}: {{ counts.characters }}</span>
+    </div>
+  }
 </div>

@@ -29,6 +29,9 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `specialCharacters` | `readonly string[]` | `WE_EDITOR_DEFAULT_SPECIAL_CHARACTERS` | Entries of the special-characters picker (symbols and emoji); each is inserted as text |
 | `readonly` | `boolean` | `false` | Content not editable, toolbar disabled; the value is still readable |
 | `imageUpload` | `(file: File) => Promise<string>` \| `null` | `null` | Stores an image file (upload button, paste, drop) and resolves to its URL. When `null`, files are embedded as base64 `data:` URLs |
+| `statusBar` | `boolean` | `false` | Status bar under the content: element path (click a crumb to select that ancestor), autosave state, word and character counts |
+| `autosave` | `(html: string) => void \| Promise<void>` \| `null` | `null` | Called `autosaveDelay` ms after the last edit, and once more on destroy if an edit is still pending; a rejected promise shows "Could not save" |
+| `autosaveDelay` | `number` | `1500` | Milliseconds of quiet before `autosave` runs |
 | `placeholder` | `string` | `''` | Shown in an empty document (also set as `aria-placeholder`) |
 
 Disabled state comes from the form control (`control.disable()`).
@@ -55,7 +58,10 @@ Disabled state comes from the form control (`control.disable()`).
 `subscript`, `superscript`, `code`, `lineHeight`, `textColor`, `highlight`, `alignLeft`, `alignCenter`,
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
 `blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `specialChars`,
-`findReplace`, `formatPainter`, `textCase`, `clearFormatting`, `source`, `'|'`.
+`findReplace`, `formatPainter`, `textCase`, `clearFormatting`, `source`, `fullscreen`, `'|'`.
+
+`fullscreen` pins the editor over the page (`position: fixed`, `z-index: var(--we-editor-fullscreen-z-index)`);
+Esc or the button again leaves it.
 
 `lineHeight` sets `line-height` on the selected paragraphs and headings. `textCase` converts the
 selection to UPPERCASE, lowercase, Title Case or Sentence case, keeping its formatting; the rules follow

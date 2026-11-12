@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { WeEditorComponent, WeEditorStats, weEditorSanitizeHtml } from 'we-editor-angular';
+import { WeEditorComponent, weEditorSanitizeHtml } from 'we-editor-angular';
 import { STUDIO_SAMPLE, STUDIO_TEXT, StudioLanguage, saveStudioLanguage, studioLanguage } from './studio-text';
 
 type Tab = 'editor' | 'html' | 'start';
@@ -21,11 +21,13 @@ export class AppComponent implements OnInit {
   readonly text = STUDIO_TEXT[this.lang];
   private readonly docKey = `we-editor-studio:doc-${this.lang}`;
   readonly control = new FormControl(this.read(this.docKey) ?? STUDIO_SAMPLE[this.lang], { nonNullable: true });
-  stats: WeEditorStats | null = null;
   readonly = false;
   htmlDraft = this.text.htmlUnsafe;
   tab: Tab = 'editor';
   theme: Theme = 'light';
+
+  /** The editor's autosave hook keeps the document in this browser. */
+  readonly save = (html: string): void => this.write(this.docKey, html);
 
   readonly installSnippet = 'npm install we-editor-angular';
   readonly themeSnippet = '"styles": ["node_modules/we-editor-angular/styles/we-editor-theme.scss"]';
@@ -41,10 +43,6 @@ export class PostFormComponent {
 }`;
   readonly localeSnippet = `// app.config.ts — Turkish labels; pass your own object for any other language
 providers: [{ provide: WE_EDITOR_LOCALE, useValue: weEditorLocaleTr }]`;
-
-  constructor() {
-    this.control.valueChanges.subscribe((html) => this.write(this.docKey, html));
-  }
 
   ngOnInit(): void {
     // Screen readers and the editor's case rules (Turkish İ/ı) follow the page language.
@@ -84,6 +82,7 @@ providers: [{ provide: WE_EDITOR_LOCALE, useValue: weEditorLocaleTr }]`;
 
   loadHtml(): void {
     this.control.setValue(this.htmlDraft);
+    this.save(this.htmlDraft);
     this.select('editor');
   }
 

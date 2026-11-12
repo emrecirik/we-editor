@@ -56,11 +56,11 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | Table caption | CK, Ty | ⬜ |
 | Sort, column types | Ty-P | ⬜ (planned F2 — formulas too) |
 | **Productivity** | | |
-| Word / character count | CK, Ty, TT, Fr, Lx | 🟡 output only, no status bar |
+| Word / character count | CK, Ty, TT, Fr, Lx | ✅ status bar + output (P8) |
 | Placeholder | CK, Ty, TT, Fr, Q, Lx | ✅ |
 | Find & replace | CK, Ty, Fr | ✅ |
-| Autosave hook | CK, Ty, Fr | ⬜ |
-| Full screen | CK, Ty, Fr | ⬜ |
+| Autosave hook | CK, Ty, Fr | ✅ debounced, flushes on destroy, save state shown (P8) |
+| Full screen | CK, Ty, Fr | ✅ (P8) |
 | Slash commands / quick insert | CK-P, Fr, TT, Lx | ⬜ |
 | Templates / snippets | CK-P, Ty-P | ⬜ |
 | Merge tags (mail merge) | CK-P, Ty-P | ⬜ (planned F4.1) |

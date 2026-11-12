@@ -31,6 +31,7 @@ or copy that file and change values. Dark mode: `data-theme="dark"` on an ancest
 | `--we-editor-input-bg` | Selects, link input, secondary buttons |
 | `--we-editor-link-color` | Links in content |
 | `--we-editor-code-bg`, `--we-editor-code-color`, `--we-editor-code-font-family` | Inline code and code blocks (code colour also used for the link error) |
+| `--we-editor-fullscreen-z-index` | Stacking order of the editor in full screen (default `1000`) |
 | `--we-editor-code-keyword`, `--we-editor-code-string`, `--we-editor-code-comment`, `--we-editor-code-number`, `--we-editor-code-title`, `--we-editor-code-attr` | Syntax colours of highlighted code blocks (`hljs-*` token classes) |
 | `--we-editor-blockquote-border`, `--we-editor-blockquote-color` | Quotes |
 | `--we-editor-hr-color` | Horizontal rule |

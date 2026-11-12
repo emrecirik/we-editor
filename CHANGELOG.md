@@ -6,6 +6,11 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Full screen, status bar and autosave (P8, F1.9/F1.10/F3.5): `fullscreen` toolbar item (Esc leaves);
+  `statusBar` input with a clickable element path, save state and word/character counts; `autosave`
+  hook + `autosaveDelay` (pending save runs on destroy); theme variable `--we-editor-fullscreen-z-index`;
+  7 locale keys; the line height picker uses the regular select width; DOM baseline re-recorded.
+
 - Line height, change case and format painter (P7, F1.11/F1.13): toolbar items `lineHeight`,
   `textCase`, `formatPainter`; `lineHeights` input, `WE_EDITOR_DEFAULT_LINE_HEIGHTS`,
   `weEditorSafeLineHeight`, `weEditorSetLineHeight`, `weEditorLineHeightAt`, `weEditorChangeCase`

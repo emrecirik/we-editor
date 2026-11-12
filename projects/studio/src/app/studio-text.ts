@@ -30,8 +30,6 @@ const en = {
   editorIntro: 'Everything below runs in your browser and is editable. Your changes are kept in this browser only.',
   placeholder: 'Start typing… try # , - , 1.  or >',
   readonly: 'Read-only',
-  words: 'words',
-  characters: 'characters',
   tryTitle: 'Things to try',
   editorTips: [
     'Select text and use the toolbar: bold, font, size, alignment — the colour and highlight buttons open a palette with recent colours, Ω inserts symbols and emoji.',
@@ -42,6 +40,7 @@ const en = {
     'Paste a YouTube or Vimeo link on an empty line to embed the player; typed and pasted URLs become links.',
     'Put the cursor in the code block and pick a language in the bar under the toolbar — the code is coloured.',
     'Press </> at the end of the toolbar for the HTML source; Split shows code and design side by side, kept in sync.',
+    'The status bar shows where the cursor is (click p, td, table… to select it), the word count and the autosave state; ⛶ goes full screen, Esc comes back.',
     'Format painter: click inside formatted text, press the roller, then select other text. Aa changes case; the line height picker sits next to the font size.',
     'Ctrl+Z undoes everything; Tab and Shift+Tab nest lists and move between table cells.'
   ],
@@ -76,8 +75,6 @@ const tr: typeof en = {
   editorIntro: 'Aşağıdaki her şey tarayıcınızda çalışır ve düzenlenebilir. Değişiklikleriniz yalnızca bu tarayıcıda saklanır.',
   placeholder: 'Yazmaya başlayın… # , - , 1.  ya da > deneyin',
   readonly: 'Salt okunur',
-  words: 'kelime',
-  characters: 'karakter',
   tryTitle: 'Deneyebilecekleriniz',
   editorTips: [
     'Metni seçip araç çubuğunu kullanın: kalın, yazı tipi, boyut, hizalama — renk ve vurgu düğmeleri son kullanılan renklerle bir palet açar, Ω sembol ve emoji ekler.',
@@ -88,6 +85,7 @@ const tr: typeof en = {
     'Boş bir satıra YouTube ya da Vimeo bağlantısı yapıştırınca oynatıcı gömülür; yazılan ve yapıştırılan adresler bağlantı olur.',
     'İmleci kod bloğuna koyup araç çubuğunun altındaki bardan bir dil seçin — kod renklenir.',
     'Araç çubuğunun sonundaki </> ile HTML kaynağını açın; Bölünmüş görünüm kodu ve tasarımı yan yana, eşzamanlı gösterir.',
+    'Durum çubuğu imlecin nerede olduğunu (p, td, table… tıklayınca seçilir), kelime sayısını ve otomatik kaydı gösterir; ⛶ tam ekran, Esc geri döner.',
     'Biçim boyacısı: biçimli metne tıklayın, rulo düğmesine basın, sonra başka bir metni seçin. Aa büyük/küçük harfi değiştirir; satır aralığı yazı boyutunun yanında.',
     'Ctrl+Z her şeyi geri alır; Tab ve Shift+Tab listeleri iç içe alır, tablo hücreleri arasında gezer.'
   ],

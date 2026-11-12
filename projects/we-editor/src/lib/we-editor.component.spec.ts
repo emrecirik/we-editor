@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TextSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 
 import { WE_EDITOR_LOCALE, weEditorLocaleEn, weEditorLocaleTr } from './models/we-editor-locale.model';
 import { WeEditorComponent } from './we-editor.component';
@@ -389,6 +389,82 @@ describe('WeEditorComponent', () => {
     fixture.detectChanges();
     expect(host.control.value).toBe('<p style="line-height: 2;"><strong>bold</strong> <strong>plaın</strong></p>');
     expect(btn('formatPainter').getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('toggles full screen and leaves it with Escape', () => {
+    btn('fullscreen').click();
+    fixture.detectChanges();
+    const root = el().querySelector('.we-editor') as HTMLElement;
+    expect(root.classList).toContain('we-editor--fullscreen');
+    expect(btn('fullscreen').getAttribute('aria-pressed')).toBe('true');
+    editor.editorView!.dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    expect(root.classList).not.toContain('we-editor--fullscreen');
+  });
+
+  it('shows the element path and counts in the status bar; a crumb selects its element', () => {
+    editor.statusBar = true;
+    host.control.setValue('<table><tbody><tr><td><p>a b</p></td></tr></tbody></table>');
+    select(4, 4);
+    const crumbs = Array.from(el().querySelectorAll('.we-editor__crumb')).map((c) => c.textContent);
+    expect(crumbs).toEqual(['table', 'tr', 'td', 'p']);
+    expect(el().querySelector('.we-editor__counts')?.textContent).toContain('Words: 2');
+    // (A table crumb becomes a cell selection of the whole table — prosemirror-tables normalizes it.)
+    (el().querySelectorAll('.we-editor__crumb')[3] as HTMLButtonElement).click();
+    const selection = editor.editorView!.state.selection as NodeSelection;
+    expect(selection.node.type.name).toBe('paragraph');
+  });
+
+  it('autosaves after the delay, reports failures and saves a pending edit on destroy', async () => {
+    const saved: string[] = [];
+    let fail = false;
+    editor.statusBar = true;
+    editor.autosaveDelay = 10;
+    editor.autosave = (html) => (fail ? Promise.reject(new Error('offline')) : (saved.push(html), Promise.resolve()));
+    const view = editor.editorView!;
+    view.dispatch(view.state.tr.insertText('!', 12));
+    view.dispatch(view.state.tr.insertText('?', 13));
+    expect(saved).toEqual([]);
+    await new Promise((r) => setTimeout(r, 30));
+    fixture.detectChanges();
+    expect(saved).toEqual(['<p>hello world!?</p>']);
+    expect(el().querySelector('.we-editor__save')?.textContent).toContain('Saved');
+
+    fail = true;
+    spyOn(console, 'error');
+    view.dispatch(view.state.tr.insertText('x', 14));
+    await new Promise((r) => setTimeout(r, 30));
+    fixture.detectChanges();
+    expect(el().querySelector('.we-editor__save')?.getAttribute('data-state')).toBe('failed');
+
+    fail = false;
+    editor.autosaveDelay = 10000;
+    view.dispatch(view.state.tr.insertText('y', 15));
+    fixture.destroy();
+    await Promise.resolve();
+    expect(saved[saved.length - 1]).toBe('<p>hello world!?xy</p>');
+  });
+
+  it('shows the outcome of the newest save when saves overlap', async () => {
+    let failOld!: (e: Error) => void;
+    const calls: string[] = [];
+    editor.statusBar = true;
+    editor.autosaveDelay = 0;
+    editor.autosave = (html) => {
+      calls.push(html);
+      return calls.length === 1 ? new Promise<void>((_, reject) => (failOld = reject)) : Promise.resolve();
+    };
+    spyOn(console, 'error');
+    const view = editor.editorView!;
+    view.dispatch(view.state.tr.insertText('1', 12));
+    await new Promise((r) => setTimeout(r, 5));
+    view.dispatch(view.state.tr.insertText('2', 13));
+    await new Promise((r) => setTimeout(r, 5));
+    failOld(new Error('slow and failed'));
+    await new Promise((r) => setTimeout(r, 5));
+    fixture.detectChanges();
+    expect(calls.length).toBe(2);
+    expect(el().querySelector('.we-editor__save')?.getAttribute('data-state')).toBe('saved');
   });
 
   it('emits word and character counts on edits', () => {

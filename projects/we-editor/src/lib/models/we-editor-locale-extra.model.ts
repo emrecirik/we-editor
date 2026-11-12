@@ -112,7 +112,14 @@ export const weEditorLocaleDe: WeEditorLocale = {
   caseLower: 'kleinbuchstaben',
   caseTitle: 'Jedes Wort Groß',
   caseSentence: 'Satzanfang groß',
-  formatPainter: 'Format übertragen'
+  formatPainter: 'Format übertragen',
+  fullscreen: 'Vollbild',
+  statusPath: 'Elementpfad',
+  statusWords: 'Wörter',
+  statusCharacters: 'Zeichen',
+  autosaveSaving: 'Wird gespeichert…',
+  autosaveSaved: 'Gespeichert',
+  autosaveFailed: 'Speichern fehlgeschlagen'
 };
 
 export const weEditorLocaleFr: WeEditorLocale = {
@@ -227,7 +234,14 @@ export const weEditorLocaleFr: WeEditorLocale = {
   caseLower: 'minuscules',
   caseTitle: 'Chaque Mot En Majuscule',
   caseSentence: 'Majuscule en début de phrase',
-  formatPainter: 'Reproduire la mise en forme'
+  formatPainter: 'Reproduire la mise en forme',
+  fullscreen: 'Plein écran',
+  statusPath: 'Chemin de l’élément',
+  statusWords: 'Mots',
+  statusCharacters: 'Caractères',
+  autosaveSaving: 'Enregistrement…',
+  autosaveSaved: 'Enregistré',
+  autosaveFailed: 'Échec de l’enregistrement'
 };
 
 export const weEditorLocaleEs: WeEditorLocale = {
@@ -342,5 +356,12 @@ export const weEditorLocaleEs: WeEditorLocale = {
   caseLower: 'minúsculas',
   caseTitle: 'Tipo Título',
   caseSentence: 'Tipo oración',
-  formatPainter: 'Copiar formato'
+  formatPainter: 'Copiar formato',
+  fullscreen: 'Pantalla completa',
+  statusPath: 'Ruta del elemento',
+  statusWords: 'Palabras',
+  statusCharacters: 'Caracteres',
+  autosaveSaving: 'Guardando…',
+  autosaveSaved: 'Guardado',
+  autosaveFailed: 'No se pudo guardar'
 };

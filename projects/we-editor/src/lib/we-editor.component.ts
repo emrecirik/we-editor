@@ -18,7 +18,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { redo, undo } from 'prosemirror-history';
 import { Mark, Node as PmNode } from 'prosemirror-model';
-import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, NodeSelection, TextSelection, Transaction } from 'prosemirror-state';
 import { findNext, findPrev, replaceAll, replaceNext } from 'prosemirror-search';
 import {
   addColumnAfter,
@@ -242,6 +242,16 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
    */
   @Input() imageUpload: ((file: File) => Promise<string>) | null = null;
 
+  /** Shows a status bar under the content: element path (click to select an ancestor), save state, word and character counts. */
+  @Input() statusBar = false;
+
+  /**
+   * Called with the current HTML `autosaveDelay` ms after the last edit, and once more on destroy if an
+   * edit is still pending. A rejected promise shows "Could not save" in the status bar.
+   */
+  @Input() autosave: ((html: string) => void | Promise<void>) | null = null;
+  @Input() autosaveDelay = 1500;
+
   /** Word and character counts after every edit (not on `writeValue`/`setHtml`; use `getStats()`). */
   @Output() readonly stats = new EventEmitter<WeEditorStats>();
 
@@ -303,6 +313,12 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected colorOpen: 'text_color' | 'highlight' | null = null;
   protected recentColors: string[] = [];
   protected charsOpen = false;
+  protected fullscreen = false;
+  protected saveState: '' | 'saving' | 'saved' | 'failed' = '';
+  /** Counts shown in the status bar; refreshed on document changes only. */
+  protected counts: WeEditorStats = { words: 0, characters: 0 };
+  /** Ancestors of the cursor, outermost first, for the status bar path. */
+  protected path: { tag: string; depth: number }[] = [];
   protected readonly textCases: readonly WeEditorTextCase[] = ['upper', 'lower', 'title', 'sentence'];
   protected readonly caseLabels: Record<WeEditorTextCase, keyof WeEditorLocale> = { upper: 'caseUpper', lower: 'caseLower', title: 'caseTitle', sentence: 'caseSentence' };
   /** Marks picked up by the format painter, waiting for the next selection. */
@@ -324,6 +340,9 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   private _placeholder = '';
   private source?: Promise<WeEditorSourceEditor>;
   private sourceTimer?: ReturnType<typeof setTimeout>;
+  private autosaveTimer?: ReturnType<typeof setTimeout>;
+  private saveSeq = 0;
+  private destroyed = false;
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
@@ -386,6 +405,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       }
     });
     this.pendingHtml = null;
+    this.counts = this.getStats();
     this.refreshUi();
   }
 
@@ -394,6 +414,12 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   ngOnDestroy(): void {
+    // A pending autosave runs now rather than being lost.
+    if (this.autosaveTimer !== undefined) {
+      clearTimeout(this.autosaveTimer);
+      void this.runAutosave();
+    }
+    this.destroyed = true;
     clearTimeout(this.sourceTimer);
     void this.source?.then((editor) => editor.destroy());
     this.view?.destroy();
@@ -416,6 +442,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       return;
     }
     this.view.updateState(weEditorCreateState(html));
+    this.counts = this.getStats();
     this.syncSource();
     this.refreshUi();
   }
@@ -651,6 +678,32 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     return this.codeLanguages.some((l) => l.value === value);
   }
 
+  protected toggleFullscreen(): void {
+    this.fullscreen = !this.fullscreen;
+    this.refreshUi();
+    this.view?.focus();
+  }
+
+  /** Escape leaves full screen when no bar is open to take it first. */
+  protected onRootEscape(): void {
+    if (this.fullscreen && !this.colorOpen && !this.charsOpen && !this.linkOpen && !this.imageOpen && !this.tableOpen && !this.findOpen && !this.mediaOpen) {
+      this.toggleFullscreen();
+    }
+  }
+
+  /** Status bar path: selects the ancestor at `depth`. */
+  protected selectPath(depth: number): void {
+    if (!this.view) return;
+    const { state } = this.view;
+    this.view.dispatch(state.tr.setSelection(NodeSelection.create(state.doc, state.selection.$from.before(depth))));
+    this.view.focus();
+  }
+
+  protected saveLabel(): string {
+    const labels = { '': '', saving: this.locale.autosaveSaving, saved: this.locale.autosaveSaved, failed: this.locale.autosaveFailed };
+    return labels[this.saveState];
+  }
+
   protected setLineHeight(value: string): void {
     this.exec(weEditorSetLineHeight(value || null));
   }
@@ -815,6 +868,31 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.cdr.markForCheck();
   }
 
+  private scheduleAutosave(): void {
+    if (!this.autosave) return;
+    clearTimeout(this.autosaveTimer);
+    this.autosaveTimer = setTimeout(() => void this.runAutosave(), this.autosaveDelay);
+  }
+
+  private async runAutosave(): Promise<void> {
+    this.autosaveTimer = undefined;
+    if (!this.autosave) return;
+    // Saves can overlap; only the newest one decides what the status bar says.
+    const seq = ++this.saveSeq;
+    this.saveState = 'saving';
+    this.cdr.markForCheck();
+    let state: 'saved' | 'failed' = 'saved';
+    try {
+      await this.autosave(this.getHtml());
+    } catch (error) {
+      console.error('we-editor: autosave failed', error);
+      state = 'failed';
+    }
+    if (seq !== this.saveSeq || this.destroyed) return;
+    this.saveState = state;
+    this.cdr.markForCheck();
+  }
+
   private paintSoon(): boolean {
     if (this.painter) setTimeout(() => this.paint());
     return false;
@@ -842,7 +920,9 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     if (tr.docChanged) {
       if (!tr.getMeta(FROM_SOURCE)) this.syncSource();
       this.onChange(this.getHtml());
-      this.stats.emit(this.getStats());
+      this.counts = this.getStats();
+      this.stats.emit(this.counts);
+      this.scheduleAutosave();
     }
     this.refreshUi();
   }
@@ -891,6 +971,18 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     enabled.findReplace = this.sourceMode !== 'code';
     active.source = this.sourceMode !== 'off';
     active.formatPainter = !!this.painter;
+    active.fullscreen = this.fullscreen;
+    enabled.fullscreen = true;
+    if (this.statusBar) {
+      const { $from } = state.selection;
+      const path: { tag: string; depth: number }[] = [];
+      for (let d = 1; d <= $from.depth; d++) {
+        const node = $from.node(d);
+        const spec = node.type.spec.toDOM?.(node);
+        path.push({ tag: Array.isArray(spec) && typeof spec[0] === 'string' ? spec[0] : node.type.name, depth: d });
+      }
+      this.path = path;
+    }
     enabled.formatPainter = editable;
     enabled.source = !this.disabled;
     enabled.table = editable;

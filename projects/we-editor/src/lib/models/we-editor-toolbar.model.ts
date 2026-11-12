@@ -38,7 +38,8 @@ export type WeEditorToolbarItem =
   | 'specialChars'
   | 'findReplace'
   | 'clearFormatting'
-  | 'source';
+  | 'source'
+  | 'fullscreen';
 
 export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'undo', 'redo', '|',
@@ -50,7 +51,7 @@ export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'blockquote', 'codeBlock', 'horizontalRule', '|',
   'link', 'unlink', 'image', 'media', 'table', 'specialChars', '|',
   'findReplace', 'formatPainter', 'textCase', 'clearFormatting', '|',
-  'source'
+  'source', 'fullscreen'
 ];
 
 /** Entries of the line height picker: unitless CSS `line-height` values (0.5–5). */
