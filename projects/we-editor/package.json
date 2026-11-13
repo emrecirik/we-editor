@@ -1,6 +1,6 @@
 {
   "name": "we-editor-angular",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A themeable Angular rich-text editor built on ProseMirror — standalone component, reactive-forms ControlValueAccessor, safe HTML in/out, no CSS framework, no icon font.",
   "license": "MIT",
   "author": "Emre CIRIK",

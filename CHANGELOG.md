@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## 0.4.0 — 2026-11-13
+
+Image captions and links; table caption, cell colours and vertical alignment. Minor version: new
+features; the new locale keys are breaking only for hand-written full locale objects.
+
 ### Added
 
 - Table caption and cell properties (P10): the table tools bar sets a plain-text `<caption>`, the cell

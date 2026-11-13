@@ -17,7 +17,7 @@ A free, themeable rich-text editor for Angular, built on [ProseMirror](https://p
 No CSS framework, no icon font, no commercial dependency. A sibling of
 [we-grid-angular](https://github.com/emrecirik/we-grid).
 
-> **Status: 0.3.0.** The roadmap goes on to Word-level documents,
+> **Status: 0.4.0.** The roadmap goes on to Word-level documents,
 > spreadsheet tables, a design/code/split HTML editor and mail-merge templates — see
 > [docs/ROADMAP.md](docs/ROADMAP.md).
 

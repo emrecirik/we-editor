@@ -40,6 +40,8 @@ Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
 | P8 | Full screen, status bar (clickable element path, counts, save state), autosave hook | `ebc1fb9` |
 | P9 | Paste from Word / Outlook / Google Docs: nested lists, style noise removed | `cc6aa68` |
 | 0.3.0 | Release of P7–P9 | `da4538f` |
+| P10 | Image captions (`figure`) and links; table caption, cell background, vertical alignment | `534ab4b`, `2647b3b` |
+| 0.4.0 | Release of P10 | release commit |
 | P5 | Code block language picker + highlighting (lowlight / highlight.js, decision 0002); +~34 kB gzip in the Studio bundle | `c0190e5` |
 
 ### Done in session 2 (each one commit, pushed, CI green)
@@ -80,7 +82,7 @@ excluded locally (`.git/info/exclude`), as in we-grid.
 
 0. ~~First npm publish~~, ~~Trusted Publishing~~ — done 2026-11-12. Later releases go through the
    `editor-release` skill (tag-driven); the first one proves the OIDC binding. No `v0.1.0` tag / GitHub release exists yet.
-1. **P10…P18** in `docs/ROADMAP.md` (P7 "styles" still open — consumer-defined class allowlist);
+1. **P11…P18** in `docs/ROADMAP.md` (P7 "styles" still open — consumer-defined class allowlist);
    F3.3 device-width preview also open. Earlier list for reference: source HTML view + preview (decision note on the
    code-editor dependency first), line height / case change / format painter / styles, full screen +
    autosave + status bar, paste from Word / Google Docs, image & table captions + cell properties,
