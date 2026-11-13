@@ -45,7 +45,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | Autolink while typing / pasting | CK, Ty, TT, Lx | ✅ |
 | Anchors / bookmarks | CK, Ty, Fr | ⬜ |
 | Images: URL, upload, paste, drop, resize, position, alt | all | ✅ |
-| Image caption, link on image | CK, Ty | ⬜ |
+| Image caption, link on image | CK, Ty | ✅ `<figure>`/`<figcaption>`, link field (P10) |
 | Image editing (crop/rotate) | Ty-P, Fr | ⬜ |
 | Video / media embed | CK, Ty, TT, Fr, Q | ✅ YouTube, Vimeo |
 | File attachments | CK-P, Ty-P, Fr | ⬜ |

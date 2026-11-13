@@ -53,6 +53,8 @@ Rules of thumb:
   result still goes through ProseMirror's clipboard parser and the schema like any paste.
 - HTML source view text is never rendered: it is parsed by `weEditorParseHtml` (inert document +
   schema) and replaces the document; `weEditorFormatHtml` also parses inertly and returns text only.
+- A figure's image link (`href`) and an image's link mark pass `weEditorSafeUrl`; a `<figure>` without a
+  safe `<img>` is not a figure (its caption text survives as a paragraph).
 - Image `src` passes `weEditorSafeImageSrc`: http/https/relative, or a base64 raster
   `data:image/(png|jpeg|gif|webp|avif)` URL. SVG and other `data:` types are dropped (on parse, on
   command, in the node view, on serialize). Uploads accept the same raster types only.

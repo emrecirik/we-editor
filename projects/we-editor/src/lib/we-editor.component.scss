@@ -386,6 +386,35 @@ we-editor {
     }
   }
 
+  .we-editor__figure {
+    display: table;
+    margin: 0 0 0.6em;
+
+    &--left {
+      float: left;
+      margin: 0 1em 0.5em 0;
+    }
+
+    &--right {
+      float: right;
+      margin: 0 0 0.5em 1em;
+    }
+
+    &--center {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    figcaption {
+      display: table-caption;
+      caption-side: bottom;
+      padding-top: 4px;
+      color: var(--we-editor-muted-color, #878a99);
+      font-size: 0.875em;
+      text-align: center;
+    }
+  }
+
   .we-editor__image-frame {
     position: relative;
     display: inline-block;

@@ -15,6 +15,7 @@ import {
   weEditorSearchCount,
   weEditorSetSearch,
   weEditorSetImage,
+  weEditorImageAt,
   weEditorSetLink,
   weEditorSetStyle,
   weEditorToggleList,
@@ -110,6 +111,48 @@ describe('we-editor commands', () => {
     );
     expect(run(stateOf('<p>ab</p>', 2), weEditorSetImage({ src: 'javascript:alert(1)' }))).toBeNull();
     expect(run(stateOf('<pre><code>ab</code></pre>', 2), weEditorSetImage({ src: 'a.png' }))).toBeNull();
+  });
+
+  it('parses and serializes captioned figures, dropping unsafe links and figures without an image', () => {
+    const fig = '<figure style="float: right; margin: 0px 0px 0.5em 1em;"><a href="https://x.test/"><img src="a.png" alt="A" width="120"></a><figcaption>Cap <em>tion</em></figcaption></figure>';
+    expect(weEditorSanitizeHtml(fig)).toBe(fig);
+    expect(weEditorSanitizeHtml('<figure><a href="javascript:alert(1)"><img src="a.png"></a><figcaption>c</figcaption></figure>')).toBe(
+      '<figure><img src="a.png"><figcaption>c</figcaption></figure>'
+    );
+    expect(weEditorSanitizeHtml('<figure><img src="javascript:x"><figcaption>c</figcaption></figure>')).toBe('<p>c</p>');
+    expect(weEditorSanitizeHtml('<figure><img src="a.png"></figure>')).toBe('<figure><img src="a.png"><figcaption></figcaption></figure>');
+    // A link around the whole figure is not the image's link.
+    expect(weEditorSanitizeHtml('<a href="https://x.test"><figure><img src="a.png"><figcaption>c</figcaption></figure></a>')).toContain(
+      '<figure><img src="a.png">'
+    );
+  });
+
+  it('adds and removes a caption, keeping the caption text', () => {
+    const state = weEditorCreateState('<p>a<img src="a.png">b</p>');
+    const selected = state.apply(state.tr.setSelection(NodeSelection.create(state.doc, 2)));
+    let next = selected;
+    weEditorSetImage({ src: 'a.png', caption: true })(selected, (tr) => (next = selected.apply(tr)));
+    expect(weEditorSerializeHtml(next.doc)).toBe('<p>a</p><figure><img src="a.png"><figcaption></figcaption></figure><p>b</p>');
+    expect(next.selection.$from.parent.type.name).toBe('figure');
+    expect(weEditorImageAt(next)?.caption).toBeTrue();
+    next = next.apply(next.tr.insertText('Hills'));
+    let back = next;
+    weEditorSetImage({ src: 'a.png', caption: false })(next, (tr) => (back = next.apply(tr)));
+    expect(weEditorSerializeHtml(back.doc)).toBe('<p>a</p><p><img src="a.png"></p><p>Hills</p><p>b</p>');
+  });
+
+  it('links an image or a figure and refuses an unsafe link', () => {
+    const state = weEditorCreateState('<p><img src="a.png"></p>');
+    const selected = state.apply(state.tr.setSelection(NodeSelection.create(state.doc, 1)));
+    expect(run(selected, weEditorSetImage({ src: 'a.png', href: 'https://x.test' }))).toBe('<p><a href="https://x.test"><img src="a.png"></a></p>');
+    expect(run(selected, weEditorSetImage({ src: 'a.png', href: 'javascript:alert(1)' }))).toBeNull();
+    expect(run(selected, weEditorSetImage({ src: 'a.png', href: 'https://x.test', caption: true }))).toBe(
+      '<figure><a href="https://x.test"><img src="a.png"></a><figcaption></figcaption></figure>'
+    );
+    const linked = weEditorCreateState('<p><a href="https://x.test"><img src="a.png"></a></p>');
+    const sel2 = linked.apply(linked.tr.setSelection(NodeSelection.create(linked.doc, 1)));
+    expect(weEditorImageAt(sel2)?.href).toBe('https://x.test');
+    expect(run(sel2, weEditorSetImage({ src: 'a.png', href: '' }))).toBe('<p><img src="a.png"></p>');
   });
 
   it('updates the selected image', () => {

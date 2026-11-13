@@ -476,6 +476,34 @@ describe('WeEditorComponent', () => {
     expect(host.control.value).toBe('<ol><li><p>Step one</p></li><li><p>Step two</p></li></ol>');
   });
 
+  it('captions and links an image from the image bar; the caption is editable in place', () => {
+    host.control.setValue('<p>a<img src="https://x.com/a.png">b</p>');
+    const view = editor.editorView!;
+    view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 2)));
+    fixture.detectChanges();
+    btn('image').click();
+    fixture.detectChanges();
+    const bar = el().querySelector('form[data-bar="image"]') as HTMLFormElement;
+    const link = bar.querySelector('input[aria-label="Link (optional)"]') as HTMLInputElement;
+    link.value = 'javascript:alert(1)';
+    link.dispatchEvent(new Event('input'));
+    const caption = Array.from(bar.querySelectorAll('input[type="checkbox"]')).pop() as HTMLInputElement;
+    caption.click();
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    expect(el().querySelector('.we-editor__error')?.textContent).toContain(weEditorLocaleEn.linkInvalid);
+
+    link.value = 'https://x.test/';
+    link.dispatchEvent(new Event('input'));
+    bar.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+    const figure = el().querySelector('.we-editor__content figure.we-editor__figure') as HTMLElement;
+    expect(figure.querySelector('img')?.getAttribute('src')).toBe('https://x.com/a.png');
+    view.dispatch(view.state.tr.insertText('Cap'));
+    expect(figure.querySelector('figcaption')?.textContent).toBe('Cap');
+    expect(host.control.value).toBe('<p>a</p><figure><a href="https://x.test/"><img src="https://x.com/a.png"></a><figcaption>Cap</figcaption></figure><p>b</p>');
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

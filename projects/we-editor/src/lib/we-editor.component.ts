@@ -76,7 +76,7 @@ import { weEditorFormatHtml } from './core/we-editor-format';
 import { weEditorParseHtml, weEditorSerializeHtml } from './core/we-editor-html';
 import { WeEditorSourceEditor, weEditorCreateSourceEditor } from './core/we-editor-source';
 import { WeEditorEmbedView, WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
-import { weEditorSchema } from './core/we-editor-schema';
+import { weEditorSafeUrl, weEditorSchema } from './core/we-editor-schema';
 import { WE_EDITOR_ICONS } from './models/we-editor-icons.model';
 import { WE_EDITOR_LOCALE, WeEditorLocale } from './models/we-editor-locale.model';
 import {
@@ -302,8 +302,15 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected linkError = false;
   protected imageOpen = false;
   protected imageBusy = false;
-  protected imageError: '' | 'invalid' | 'upload' = '';
-  protected image: { url: string; alt: string; width: string; align: string } = { url: '', alt: '', width: '', align: '' };
+  protected imageError: '' | 'invalid' | 'link' | 'upload' = '';
+  protected image: { url: string; alt: string; width: string; align: string; caption: boolean; href: string } = {
+    url: '',
+    alt: '',
+    width: '',
+    align: '',
+    caption: false,
+    href: ''
+  };
   protected tableOpen = false;
   protected mediaOpen = false;
   protected mediaUrl = '';
@@ -368,6 +375,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       nodeViews: {
         task_item: (node, view, getPos) => new WeEditorTaskItemView(node, view, getPos, this.locale.taskItemToggle),
         image: (node, view, getPos) => new WeEditorImageView(node, view, getPos),
+        figure: (node, view, getPos) => new WeEditorImageView(node, view, getPos),
         embed: (node) => new WeEditorEmbedView(node)
       },
       handlePaste: (_view, event) => this.insertImageFiles(event.clipboardData?.files),
@@ -535,7 +543,14 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected openImage(): void {
     if (!this.view || !this.isEditable()) return;
     const img = this.ui.image;
-    this.image = { url: img?.src ?? '', alt: img?.alt ?? '', width: img?.width ? String(img.width) : '', align: img?.align ?? '' };
+    this.image = {
+      url: img?.src ?? '',
+      alt: img?.alt ?? '',
+      width: img?.width ? String(img.width) : '',
+      align: img?.align ?? '',
+      caption: !!img?.caption,
+      href: img?.href ?? ''
+    };
     this.imageError = '';
     this.closeBars();
     this.imageOpen = true;
@@ -543,10 +558,10 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
 
   protected applyImage(event?: Event): void {
     event?.preventDefault();
-    const { url, alt, width, align } = this.image;
-    const attrs: WeEditorImageAttrs = { src: url, alt, width: Number(width) || null, align: (align || null) as WeEditorImageAttrs['align'] };
+    const { url, alt, width, align, caption, href } = this.image;
+    const attrs: WeEditorImageAttrs = { src: url, alt, width: Number(width) || null, align: (align || null) as WeEditorImageAttrs['align'], caption, href };
     if (!this.exec(weEditorSetImage(attrs))) {
-      this.imageError = 'invalid';
+      this.imageError = href.trim() && !weEditorSafeUrl(href) ? 'link' : 'invalid';
       return;
     }
     this.closeImage();

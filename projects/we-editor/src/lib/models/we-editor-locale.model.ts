@@ -123,6 +123,8 @@ export interface WeEditorLocale {
   autosaveSaving: string;
   autosaveSaved: string;
   autosaveFailed: string;
+  imageCaption: string;
+  imageLink: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -244,7 +246,9 @@ export const weEditorLocaleEn: WeEditorLocale = {
   statusCharacters: 'Characters',
   autosaveSaving: 'Saving…',
   autosaveSaved: 'Saved',
-  autosaveFailed: 'Could not save'
+  autosaveFailed: 'Could not save',
+  imageCaption: 'Caption',
+  imageLink: 'Link (optional)'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -366,7 +370,9 @@ export const weEditorLocaleTr: WeEditorLocale = {
   statusCharacters: 'Karakter',
   autosaveSaving: 'Kaydediliyor…',
   autosaveSaved: 'Kaydedildi',
-  autosaveFailed: 'Kaydedilemedi'
+  autosaveFailed: 'Kaydedilemedi',
+  imageCaption: 'Başlık',
+  imageLink: 'Bağlantı (isteğe bağlı)'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

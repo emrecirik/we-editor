@@ -7,7 +7,7 @@ import { columnResizing, goToNextCell, tableEditing } from 'prosemirror-tables';
 import { Fragment, Node as PmNode, Slice } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
 import { Command, EditorState, NodeSelection, Plugin, Transaction } from 'prosemirror-state';
-import { EditorView, NodeView } from 'prosemirror-view';
+import { EditorView, NodeView, ViewMutationRecord } from 'prosemirror-view';
 
 import { weEditorCodeHighlight } from './we-editor-code';
 import { weEditorInsertHardBreak } from './we-editor-commands';
@@ -238,7 +238,9 @@ export class WeEditorTaskItemView implements NodeView {
  * that resizes it. Keyboard users set the width in the image bar instead.
  */
 export class WeEditorImageView implements NodeView {
-  readonly dom: HTMLSpanElement;
+  readonly dom: HTMLElement;
+  /** The caption, for a `figure` node; inline images have no editable content. */
+  readonly contentDOM: HTMLElement | null = null;
   private readonly frame: HTMLSpanElement;
   private readonly img: HTMLImageElement;
 
@@ -247,7 +249,8 @@ export class WeEditorImageView implements NodeView {
     private readonly view: EditorView,
     private readonly getPos: () => number | undefined
   ) {
-    this.dom = document.createElement('span');
+    const figure = node.type.name === 'figure';
+    this.dom = document.createElement(figure ? 'figure' : 'span');
     this.frame = document.createElement('span');
     this.frame.className = 'we-editor__image-frame';
     this.img = document.createElement('img');
@@ -258,6 +261,11 @@ export class WeEditorImageView implements NodeView {
     handle.addEventListener('pointerdown', (e) => this.startResize(e, handle));
     this.frame.append(this.img, handle);
     this.dom.appendChild(this.frame);
+    if (figure) {
+      this.frame.contentEditable = 'false';
+      this.contentDOM = document.createElement('figcaption');
+      this.dom.appendChild(this.contentDOM);
+    }
     this.render();
   }
 
@@ -272,8 +280,9 @@ export class WeEditorImageView implements NodeView {
     return (event.target as HTMLElement).classList?.contains('we-editor__image-handle') ?? false;
   }
 
-  ignoreMutation(): boolean {
-    return true;
+  /** The caption is ProseMirror's to watch; the image frame is ours. */
+  ignoreMutation(mutation: ViewMutationRecord): boolean {
+    return !this.contentDOM || !this.contentDOM.contains(mutation.target);
   }
 
   private render(): void {
@@ -284,7 +293,8 @@ export class WeEditorImageView implements NodeView {
     if (title) this.img.title = title;
     else this.img.removeAttribute('title');
     this.img.style.width = width ? `${width}px` : '';
-    this.dom.className = `we-editor__image${align ? ` we-editor__image--${align}` : ''}`;
+    const base = this.contentDOM ? 'we-editor__figure' : 'we-editor__image';
+    this.dom.className = `${base}${align ? ` ${base}--${align}` : ''}`;
   }
 
   private startResize(event: PointerEvent, handle: HTMLElement): void {

@@ -66,6 +66,32 @@ function imageAttrsFromDom(dom: HTMLElement): Record<string, unknown> | false {
   };
 }
 
+const IMAGE_ATTRS = { src: {}, alt: { default: null }, title: { default: null }, width: { default: null }, align: { default: null } };
+
+/** `<img>` attributes of an image or figure node; inside a figure the figure carries the alignment. */
+function imageDomAttrs(node: PmNode, withAlign: boolean): Record<string, string> {
+  const attrs: Record<string, string> = { src: weEditorSafeImageSrc(node.attrs['src']) ?? '' };
+  if (node.attrs['alt']) attrs['alt'] = node.attrs['alt'];
+  if (node.attrs['title']) attrs['title'] = node.attrs['title'];
+  if (node.attrs['width']) attrs['width'] = String(node.attrs['width']);
+  const style = withAlign ? imageStyle(node.attrs['align']) : null;
+  if (style) attrs['style'] = style;
+  return attrs;
+}
+
+function figureStyle(align: WeEditorImageAlign | null): string | null {
+  switch (align) {
+    case 'left':
+      return 'float: left; margin: 0 1em 0.5em 0';
+    case 'right':
+      return 'float: right; margin: 0 0 0.5em 1em';
+    case 'center':
+      return 'display: table; margin-left: auto; margin-right: auto';
+    default:
+      return null;
+  }
+}
+
 function imageStyle(align: WeEditorImageAlign | null): string | null {
   switch (align) {
     case 'left':
@@ -350,16 +376,41 @@ const nodes: Record<string, NodeSpec> = {
     inline: true,
     group: 'inline',
     draggable: true,
-    attrs: { src: {}, alt: { default: null }, title: { default: null }, width: { default: null }, align: { default: null } },
+    attrs: IMAGE_ATTRS,
     parseDOM: [{ tag: 'img[src]', getAttrs: (dom) => imageAttrsFromDom(dom as HTMLElement) }],
+    toDOM: (node): DOMOutputSpec => ['img', imageDomAttrs(node, true)]
+  },
+
+  // A captioned image: the image attributes live on the figure, its content is the caption text.
+  figure: {
+    group: 'block',
+    content: 'inline*',
+    draggable: true,
+    isolating: true,
+    attrs: { ...IMAGE_ATTRS, href: { default: null } },
+    parseDOM: [
+      {
+        tag: 'figure',
+        getAttrs: (dom) => {
+          const fig = dom as HTMLElement;
+          const img = fig.querySelector('img');
+          const attrs = img ? imageAttrsFromDom(img) : false;
+          if (!attrs) return false;
+          const float = fig.style.cssFloat;
+          const centred = fig.style.marginLeft === 'auto' && fig.style.marginRight === 'auto';
+          const align = float === 'left' || float === 'right' ? float : centred ? 'center' : attrs['align'];
+          // Only a link inside the figure belongs to the image; one wrapping the whole figure does not.
+          const a = img!.closest('a');
+          return { ...attrs, align, href: a && fig.contains(a) ? weEditorSafeUrl(a.getAttribute('href')) : null };
+        },
+        contentElement: (dom) => (dom as HTMLElement).querySelector('figcaption') ?? (dom as HTMLElement).ownerDocument.createElement('figcaption')
+      }
+    ],
     toDOM: (node): DOMOutputSpec => {
-      const attrs: Record<string, string> = { src: weEditorSafeImageSrc(node.attrs['src']) ?? '' };
-      if (node.attrs['alt']) attrs['alt'] = node.attrs['alt'];
-      if (node.attrs['title']) attrs['title'] = node.attrs['title'];
-      if (node.attrs['width']) attrs['width'] = String(node.attrs['width']);
-      const style = imageStyle(node.attrs['align']);
-      if (style) attrs['style'] = style;
-      return ['img', attrs];
+      const img: DOMOutputSpec = ['img', imageDomAttrs(node, false)];
+      const href = weEditorSafeUrl(node.attrs['href']);
+      const style = figureStyle(node.attrs['align']);
+      return ['figure', style ? { style } : {}, href ? ['a', { href }, img] : img, ['figcaption', 0]];
     }
   },
 

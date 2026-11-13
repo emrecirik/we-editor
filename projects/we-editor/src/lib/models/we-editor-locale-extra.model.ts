@@ -119,7 +119,9 @@ export const weEditorLocaleDe: WeEditorLocale = {
   statusCharacters: 'Zeichen',
   autosaveSaving: 'Wird gespeichert…',
   autosaveSaved: 'Gespeichert',
-  autosaveFailed: 'Speichern fehlgeschlagen'
+  autosaveFailed: 'Speichern fehlgeschlagen',
+  imageCaption: 'Bildunterschrift',
+  imageLink: 'Link (optional)'
 };
 
 export const weEditorLocaleFr: WeEditorLocale = {
@@ -241,7 +243,9 @@ export const weEditorLocaleFr: WeEditorLocale = {
   statusCharacters: 'Caractères',
   autosaveSaving: 'Enregistrement…',
   autosaveSaved: 'Enregistré',
-  autosaveFailed: 'Échec de l’enregistrement'
+  autosaveFailed: 'Échec de l’enregistrement',
+  imageCaption: 'Légende',
+  imageLink: 'Lien (facultatif)'
 };
 
 export const weEditorLocaleEs: WeEditorLocale = {
@@ -363,5 +367,7 @@ export const weEditorLocaleEs: WeEditorLocale = {
   statusCharacters: 'Caracteres',
   autosaveSaving: 'Guardando…',
   autosaveSaved: 'Guardado',
-  autosaveFailed: 'No se pudo guardar'
+  autosaveFailed: 'No se pudo guardar',
+  imageCaption: 'Pie de foto',
+  imageLink: 'Enlace (opcional)'
 };

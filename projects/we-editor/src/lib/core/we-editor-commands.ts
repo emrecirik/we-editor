@@ -414,6 +414,10 @@ export interface WeEditorImageAttrs {
   title?: string | null;
   width?: number | null;
   align?: WeEditorImageAlign | null;
+  /** `true`: a `<figure>` with an editable `<figcaption>`. */
+  caption?: boolean;
+  /** Link target of the image (must pass `weEditorSafeUrl`); empty or `null` removes the link. */
+  href?: string | null;
 }
 
 function imageAttrs(attrs: WeEditorImageAttrs): Record<string, unknown> | null {
@@ -424,30 +428,76 @@ function imageAttrs(attrs: WeEditorImageAttrs): Record<string, unknown> | null {
   return { src, alt: attrs.alt?.trim() || null, title: attrs.title?.trim() || null, width, align };
 }
 
-/** The selected image node (a `NodeSelection` on an image), if any. */
-export function weEditorImageAt(state: EditorState): WeEditorImageAttrs | null {
+/** The selected image or captioned figure (node selection, or the cursor in its caption). */
+function imageTarget(state: EditorState): { node: PmNode; pos: number } | null {
   const sel = state.selection;
-  return sel instanceof NodeSelection && sel.node.type === s.nodes['image'] ? (sel.node.attrs as WeEditorImageAttrs) : null;
+  if (sel instanceof NodeSelection && (sel.node.type === s.nodes['image'] || sel.node.type === s.nodes['figure'])) {
+    return { node: sel.node, pos: sel.from };
+  }
+  const { $from } = sel;
+  return $from.parent.type === s.nodes['figure'] ? { node: $from.parent, pos: $from.before() } : null;
+}
+
+/** The selected image, or the figure around the cursor (`caption: true`), with its link; else `null`. */
+export function weEditorImageAt(state: EditorState): WeEditorImageAttrs | null {
+  const target = imageTarget(state);
+  if (!target) return null;
+  const { node } = target;
+  const figure = node.type === s.nodes['figure'];
+  const href = figure ? node.attrs['href'] : (node.marks.find((m) => m.type === s.marks['link'])?.attrs['href'] ?? null);
+  return { ...(node.attrs as WeEditorImageAttrs), caption: figure, href };
 }
 
 /**
- * Inserts an image at the selection, or updates the selected image. Refuses an unsafe `src`
- * (see `weEditorSafeImageSrc`).
+ * Inserts an image at the selection, or updates the selected image / figure. `caption: true` makes it
+ * a `<figure>` with an editable caption (the cursor moves into it); `caption: false` turns a figure back
+ * into an inline image and keeps any caption text as the next paragraph. `href` links the image.
+ * Refuses an unsafe `src` (see `weEditorSafeImageSrc`) or `href` (see `weEditorSafeUrl`).
  */
 export function weEditorSetImage(attrs: WeEditorImageAttrs): Command {
   return (state, dispatch) => {
     const clean = imageAttrs(attrs);
     if (!clean) return false;
-    const type = s.nodes['image'];
-    const selected = weEditorImageAt(state);
-    if (!selected && !state.selection.$from.parent.type.contentMatch.matchType(type)) return false;
+    const href = attrs.href?.trim() ? weEditorSafeUrl(attrs.href) : null;
+    if (attrs.href?.trim() && !href) return false;
+    const image = s.nodes['image'];
+    const figure = s.nodes['figure'];
+    const link = href ? [s.marks['link'].create({ href })] : [];
+    const target = imageTarget(state);
+    if (!target && !state.selection.$from.parent.type.contentMatch.matchType(image)) return false;
     if (dispatch) {
       const tr = state.tr;
-      if (selected) {
-        const pos = state.selection.from;
-        tr.setNodeMarkup(pos, undefined, clean).setSelection(NodeSelection.create(tr.doc, pos));
+      const wasFigure = target?.node.type === figure;
+      if (target && wasFigure === !!attrs.caption) {
+        // Same kind: update in place.
+        const { pos } = target;
+        if (wasFigure) {
+          tr.setNodeMarkup(pos, undefined, { ...clean, href });
+        } else {
+          const marks = target.node.marks.filter((m) => m.type !== s.marks['link']).concat(link);
+          tr.setNodeMarkup(pos, undefined, clean, marks);
+          tr.setSelection(NodeSelection.create(tr.doc, pos));
+        }
+      } else if (target && wasFigure) {
+        // Figure → inline image; the caption survives as a paragraph.
+        const { node, pos } = target;
+        const blocks = [s.nodes['paragraph'].create(null, image.create(clean, null, link))];
+        if (node.content.size) blocks.push(s.nodes['paragraph'].create(null, node.content));
+        tr.replaceWith(pos, pos + node.nodeSize, blocks);
+        tr.setSelection(NodeSelection.create(tr.doc, pos + 1));
       } else {
-        tr.replaceSelectionWith(type.create(clean));
+        // New image or figure, or inline image → figure (the paragraph is split around it).
+        if (target) tr.setSelection(NodeSelection.create(tr.doc, target.pos));
+        const at = tr.selection.from;
+        tr.replaceSelectionWith(attrs.caption ? figure.create({ ...clean, href }) : image.create(clean, null, link));
+        if (attrs.caption) {
+          // Put the cursor in the new caption, wherever splitting the paragraph placed the figure.
+          const near = tr.mapping.map(at, -1);
+          tr.doc.nodesBetween(Math.max(0, near - 2), Math.min(tr.doc.content.size, near + 3), (node, pos) => {
+            if (node.type === figure && tr.selection.$from.parent.type !== figure) tr.setSelection(TextSelection.create(tr.doc, pos + 1));
+            return !node.isTextblock;
+          });
+        }
       }
       dispatch(tr.scrollIntoView());
     }

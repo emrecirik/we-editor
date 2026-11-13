@@ -106,8 +106,11 @@ pattern. In read-only mode only finding is offered.
 cells, split cell, header row, header column, delete table. Drag a column border to resize it
 (written as `data-colwidth`); Shift+click or drag across cells to select several.
 
-`image` opens the image bar: address, upload from computer, alternative text, width in px, and
-position (in line with text / left or right with text wrapping / centred). With an image selected
+`image` opens the image bar: address, upload from computer, alternative text, width in px,
+position (in line with text / left or right with text wrapping / centred), an optional **link** and a
+**caption** switch. With a caption the image becomes `<figure><img><figcaption>…</figcaption></figure>`
+(the cursor moves into the caption; the figure keeps the alignment); switching it off turns it back into
+an inline image and keeps the caption text as the next paragraph. With an image selected
 the bar edits it; dragging the corner handle of a selected image resizes it. Pasted and dropped
 image files (PNG, JPEG, GIF, WebP, AVIF) are inserted too.
 
@@ -162,7 +165,7 @@ Commands (ProseMirror `Command`s, usable with `editorView`): `weEditorToggleMark
 `weEditorIndent`, `weEditorOutdent`, `weEditorToggleList`, `weEditorToggleWrap`,
 `weEditorToggleCodeBlock`, `weEditorInsertHorizontalRule`, `weEditorInsertHardBreak`,
 `weEditorSetLink`, `weEditorRemoveLink`, `weEditorSetImage(attrs)` (insert, or update the selected
-image), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorCleanOfficeHtml(html)` (the paste cleaner on its own),
+image or figure; `caption` and `href` attributes), `weEditorInsertEmbed(url)`, `weEditorInsertText(text)`, `weEditorCleanOfficeHtml(html)` (the paste cleaner on its own),
 `weEditorPasteFromOffice()` (its plugin, in `weEditorPlugins()`), `weEditorSetLineHeight(value | null)`, `weEditorLineHeightAt(state)`,
 `weEditorChangeCase('upper' | 'lower' | 'title' | 'sentence', locale?)`, `weEditorPaintMarks(marks)`, `weEditorFormatHtml(html, indent?)` (pretty-print for display; inert
 parse, text out), `weEditorCreateSourceEditor(element, options)` (the CodeMirror HTML editor on its

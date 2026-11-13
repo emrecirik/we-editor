@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Image captions and image links (P10): **Caption** switch and **Link** field in the image bar; new
+  `figure` node (`<figure><img><figcaption>`) with alignment, width, resize handle and a validated
+  `href`; `WeEditorImageAttrs.caption` / `.href`, `weEditorImageAt` also reports a figure; locale keys
+  `imageCaption`, `imageLink`.
+
 ## 0.3.0 — 2026-11-12
 
 Paste from Word / Google Docs, status bar with element path, autosave, full screen, line height,

@@ -212,10 +212,17 @@
         <option value="center" [selected]="image.align === 'center'">{{ locale.imageAlignCenter }}</option>
         <option value="right" [selected]="image.align === 'right'">{{ locale.imageAlignRight }}</option>
       </select>
+      <input class="we-editor__input" type="text" inputmode="url" autocomplete="off" [attr.aria-label]="locale.imageLink"
+             [placeholder]="locale.imageLink" [value]="image.href" [attr.aria-invalid]="imageError === 'link'"
+             (input)="image.href = $any($event.target).value; imageError = ''" />
+      <label class="we-editor__check">
+        <input type="checkbox" [checked]="image.caption" (change)="image.caption = $any($event.target).checked" />
+        {{ locale.imageCaption }}
+      </label>
       <button type="submit" class="we-editor__text-btn we-editor__text-btn--primary" [disabled]="imageBusy">{{ locale.imageApply }}</button>
       <button type="button" class="we-editor__text-btn" (click)="closeImage()">{{ locale.imageCancel }}</button>
       @if (imageError) {
-        <span class="we-editor__error" role="alert">{{ imageError === 'invalid' ? locale.imageInvalid : locale.imageUploadFailed }}</span>
+        <span class="we-editor__error" role="alert">{{ imageError === 'invalid' ? locale.imageInvalid : imageError === 'link' ? locale.linkInvalid : locale.imageUploadFailed }}</span>
       }
     </form>
   }
