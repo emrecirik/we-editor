@@ -121,7 +121,14 @@ export const weEditorLocaleDe: WeEditorLocale = {
   autosaveSaved: 'Gespeichert',
   autosaveFailed: 'Speichern fehlgeschlagen',
   imageCaption: 'Bildunterschrift',
-  imageLink: 'Link (optional)'
+  imageLink: 'Link (optional)',
+  tableCaption: 'Tabellenbeschriftung',
+  tableCellColor: 'Zellenfarbe',
+  tableCellAlign: 'Vertikale Ausrichtung',
+  tableCellAlignDefault: 'Standard',
+  tableCellAlignTop: 'Oben',
+  tableCellAlignMiddle: 'Mitte',
+  tableCellAlignBottom: 'Unten'
 };
 
 export const weEditorLocaleFr: WeEditorLocale = {
@@ -245,7 +252,14 @@ export const weEditorLocaleFr: WeEditorLocale = {
   autosaveSaved: 'Enregistré',
   autosaveFailed: 'Échec de l’enregistrement',
   imageCaption: 'Légende',
-  imageLink: 'Lien (facultatif)'
+  imageLink: 'Lien (facultatif)',
+  tableCaption: 'Légende du tableau',
+  tableCellColor: 'Couleur de cellule',
+  tableCellAlign: 'Alignement vertical',
+  tableCellAlignDefault: 'Par défaut',
+  tableCellAlignTop: 'Haut',
+  tableCellAlignMiddle: 'Milieu',
+  tableCellAlignBottom: 'Bas'
 };
 
 export const weEditorLocaleEs: WeEditorLocale = {
@@ -369,5 +383,12 @@ export const weEditorLocaleEs: WeEditorLocale = {
   autosaveSaved: 'Guardado',
   autosaveFailed: 'No se pudo guardar',
   imageCaption: 'Pie de foto',
-  imageLink: 'Enlace (opcional)'
+  imageLink: 'Enlace (opcional)',
+  tableCaption: 'Título de la tabla',
+  tableCellColor: 'Color de celda',
+  tableCellAlign: 'Alineación vertical',
+  tableCellAlignDefault: 'Predeterminada',
+  tableCellAlignTop: 'Arriba',
+  tableCellAlignMiddle: 'Centro',
+  tableCellAlignBottom: 'Abajo'
 };

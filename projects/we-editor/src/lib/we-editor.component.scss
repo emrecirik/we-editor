@@ -104,6 +104,15 @@ we-editor {
   }
 }
 
+.we-editor__swatch--inline {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
+  vertical-align: -1px;
+  cursor: inherit;
+}
+
 .we-editor__char {
   min-width: 30px;
   height: 30px;
@@ -384,6 +393,14 @@ we-editor {
       display: block;
       text-align: center;
     }
+  }
+
+  table caption {
+    caption-side: top;
+    padding: 4px 0;
+    color: var(--we-editor-muted-color, #878a99);
+    font-size: 0.875em;
+    text-align: left;
   }
 
   .we-editor__figure {

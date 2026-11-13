@@ -2,6 +2,7 @@ import { chainCommands, exitCode, lift, setBlockType, toggleMark, wrapIn } from 
 import { Mark, MarkType, Node as PmNode, NodeType } from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { SearchQuery, getSearchState, setSearchState } from 'prosemirror-search';
+import { isInTable, selectionCell, setCellAttr } from 'prosemirror-tables';
 import { Command, EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 
 import {
@@ -9,6 +10,9 @@ import {
   WE_EDITOR_MAX_IMAGE_WIDTH,
   WeEditorAlign,
   WeEditorImageAlign,
+  WE_EDITOR_CELL_ALIGNS,
+  WeEditorCellAlign,
+  weEditorCleanCaption,
   weEditorSafeColor,
   weEditorEmbedUrl,
   weEditorSafeImageSrc,
@@ -501,6 +505,49 @@ export function weEditorSetImage(attrs: WeEditorImageAttrs): Command {
       }
       dispatch(tr.scrollIntoView());
     }
+    return true;
+  };
+}
+
+/** Sets (or with `null` clears) the background colour of the selected cells, or the cell at the cursor. */
+export function weEditorSetCellBackground(color: string | null): Command {
+  const safe = color ? weEditorSafeColor(color) : null;
+  return (state, dispatch) => (color && !safe ? false : setCellAttr('background', safe)(state, dispatch));
+}
+
+/** Sets (or with `null` clears) the vertical alignment of the selected cells, or the cell at the cursor. */
+export function weEditorSetCellAlign(align: WeEditorCellAlign | null): Command {
+  return (state, dispatch) => (align && !WE_EDITOR_CELL_ALIGNS.includes(align) ? false : setCellAttr('verticalAlign', align)(state, dispatch));
+}
+
+/** Background and vertical alignment of the cell at the cursor; `null` outside tables. */
+export function weEditorCellAt(state: EditorState): { background: string | null; verticalAlign: WeEditorCellAlign | null } | null {
+  if (!isInTable(state)) return null;
+  const cell = selectionCell(state).nodeAfter;
+  return cell ? { background: cell.attrs['background'] ?? null, verticalAlign: cell.attrs['verticalAlign'] ?? null } : null;
+}
+
+function tableAround(state: EditorState): { node: PmNode; pos: number } | null {
+  const { $from } = state.selection;
+  for (let d = $from.depth; d > 0; d--) {
+    const node = $from.node(d);
+    if (node.type === s.nodes['table']) return { node, pos: $from.before(d) };
+  }
+  return null;
+}
+
+/** The caption of the table at the cursor (`null` when it has none, `undefined` outside tables). */
+export function weEditorTableCaptionAt(state: EditorState): string | null | undefined {
+  const table = tableAround(state);
+  return table ? (table.node.attrs['caption'] as string | null) : undefined;
+}
+
+/** Sets the plain-text caption of the table at the cursor; empty text removes it. */
+export function weEditorSetTableCaption(text: string | null): Command {
+  return (state, dispatch) => {
+    const table = tableAround(state);
+    if (!table) return false;
+    dispatch?.(state.tr.setNodeMarkup(table.pos, undefined, { ...table.node.attrs, caption: weEditorCleanCaption(text) }));
     return true;
   };
 }

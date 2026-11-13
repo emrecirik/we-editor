@@ -103,7 +103,9 @@ pattern. In read-only mode only finding is offered.
 
 `table` opens the insert bar (rows, columns up to 50, header row). While the cursor is in a table a
 **table tools** bar appears: row above/below, delete row, column left/right, delete column, merge
-cells, split cell, header row, header column, delete table. Drag a column border to resize it
+cells, split cell, header row, header column, delete table, **cell colour** (palette; applies to all selected
+cells), **vertical alignment** (top / middle / bottom) and the **table caption** (plain text, `<caption>`, max 500
+characters; Enter or leaving the field applies it). Drag a column border to resize it
 (written as `data-colwidth`); Shift+click or drag across cells to select several.
 
 `image` opens the image bar: address, upload from computer, alternative text, width in px,
@@ -173,7 +175,9 @@ own), `weEditorSetCodeLanguage(language | null)`, `weEditorCodeLanguageAt(state)
 (`undefined` outside code blocks), the `weEditorCodeHighlight()` plugin (in `weEditorPlugins()`), `weEditorSetSearch({ search, replace, caseSensitive, wholeWord })`
 (highlight / clear a query), `weEditorSearchCount(state)` (`{ current, total }`, capped at
 `WE_EDITOR_MAX_SEARCH_COUNT` = 1000; `findNext`, `findPrev`, `replaceNext`, `replaceAll` come from
-`prosemirror-search`), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,
+`prosemirror-search`), `weEditorSetCellBackground(color | null)`, `weEditorSetCellAlign('top' | 'middle' | 'bottom' | null)`,
+`weEditorCellAt(state)`, `weEditorSetTableCaption(text)`, `weEditorTableCaptionAt(state)`, `weEditorCleanCaption(text)`,
+`WeEditorTableView` (the table node view with the caption), `weEditorInsertTable(rows, cols, header = true)` (max `WE_EDITOR_MAX_TABLE_SIZE` = 50). Row,
 column, merge and header commands come from `prosemirror-tables` (`addRowAfter`, `mergeCells`, …) and
 work on `editorView` directly; queries `weEditorImageAt`, `weEditorMarkActive`, `weEditorMarkAt`,
 `weEditorBlockLevel`, `weEditorAlignAt`, `weEditorListAt`, `weEditorLinkAt`.

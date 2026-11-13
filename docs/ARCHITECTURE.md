@@ -53,6 +53,9 @@ Rules of thumb:
   result still goes through ProseMirror's clipboard parser and the schema like any paste.
 - HTML source view text is never rendered: it is parsed by `weEditorParseHtml` (inert document +
   schema) and replaces the document; `weEditorFormatHtml` also parses inertly and returns text only.
+- Table cells keep `background-color` (through `weEditorSafeColor`) and `vertical-align` (top / middle /
+  bottom only); a table `<caption>` is plain text (whitespace collapsed, 500 characters). Background colour
+  on a `<td>`/`<th>` is the cell's attribute — the highlight rule skips elements read inside a table row.
 - A figure's image link (`href`) and an image's link mark pass `weEditorSafeUrl`; a `<figure>` without a
   safe `<img>` is not a figure (its caption text survives as a paragraph).
 - Image `src` passes `weEditorSafeImageSrc`: http/https/relative, or a base64 raster

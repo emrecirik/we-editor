@@ -34,7 +34,8 @@ wrapping component).
 replaced), `findNoResults`, `media`, `mediaUrl`, `mediaUrlPlaceholder`, `mediaInsert`, `mediaCancel`,
 `mediaInvalid`, `colorRemove`, `colorCustom`, `colorRecent`, `specialChars`, `codeLanguage`, `codeLanguagePlain`, `source`, `sourceCode`, `sourceSplit`, `sourceFormat`, `lineHeight`, `lineHeightDefault`, `textCase`, `caseUpper`, `caseLower`,
 `caseTitle`, `caseSentence`, `formatPainter`, `fullscreen`, `statusPath`, `statusWords`, `statusCharacters`,
-`autosaveSaving`, `autosaveSaved`, `autosaveFailed`, `imageCaption`, `imageLink`.
+`autosaveSaving`, `autosaveSaved`, `autosaveFailed`, `imageCaption`, `imageLink`, `tableCaption`, `tableCellColor`, `tableCellAlign`, `tableCellAlignDefault`,
+`tableCellAlignTop`, `tableCellAlignMiddle`, `tableCellAlignBottom`.
 
 Adding a key: interface + every shipped locale (En, Tr, De, Fr, Es) in the same change (specs fail
 when a shipped locale misses a key), and a line here. A new key is a breaking change for

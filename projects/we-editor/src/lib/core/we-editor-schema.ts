@@ -140,6 +140,18 @@ export function weEditorSafeCodeLanguage(value: string | null | undefined): stri
   return v && /^[a-z0-9][a-z0-9+#._-]{0,31}$/.test(v) ? v : null;
 }
 
+export type WeEditorCellAlign = 'top' | 'middle' | 'bottom';
+export const WE_EDITOR_CELL_ALIGNS: readonly WeEditorCellAlign[] = ['top', 'middle', 'bottom'];
+
+/** Longest table caption kept, in characters. */
+export const WE_EDITOR_MAX_CAPTION = 500;
+
+/** A table caption as plain text: whitespace collapsed, trimmed, capped; empty → `null`. */
+export function weEditorCleanCaption(value: string | null | undefined): string | null {
+  const v = (value ?? '').replace(/\s+/g, ' ').trim().slice(0, WE_EDITOR_MAX_CAPTION);
+  return v || null;
+}
+
 /** Validates a CSS colour value the editor is willing to write into a `style` attribute. */
 export function weEditorSafeColor(value: string | null | undefined): string | null {
   const v = value?.trim();
@@ -195,7 +207,39 @@ const clampInt = (v: unknown, max: number): number => {
 
 /** prosemirror-tables' cell specs, with spans and column widths clamped on parse. */
 function tableSpecs(): Record<string, NodeSpec> {
-  const specs: Record<string, NodeSpec> = tableNodes({ tableGroup: 'block', cellContent: 'block+', cellAttributes: {} });
+  const addStyle = (attrs: Record<string, unknown>, css: string): void => {
+    attrs['style'] = attrs['style'] ? `${attrs['style']} ${css}` : css;
+  };
+  const specs: Record<string, NodeSpec> = tableNodes({
+    tableGroup: 'block',
+    cellContent: 'block+',
+    cellAttributes: {
+      background: {
+        default: null,
+        getFromDOM: (dom) => weEditorSafeColor(dom.style.backgroundColor),
+        setDOMAttr: (value, attrs) => {
+          if (value) addStyle(attrs, `background-color: ${value};`);
+        }
+      },
+      verticalAlign: {
+        default: null,
+        getFromDOM: (dom) => (WE_EDITOR_CELL_ALIGNS.includes(dom.style.verticalAlign as WeEditorCellAlign) ? dom.style.verticalAlign : null),
+        setDOMAttr: (value, attrs) => {
+          if (value) addStyle(attrs, `vertical-align: ${value};`);
+        }
+      }
+    }
+  });
+  specs['table'] = {
+    ...specs['table'],
+    attrs: { caption: { default: null } },
+    parseDOM: [
+      { tag: 'table', getAttrs: (dom) => ({ caption: weEditorCleanCaption((dom as HTMLElement).querySelector(':scope > caption')?.textContent) }) },
+      // The caption is read by the table rule above; its text must not become cell content.
+      { tag: 'caption', ignore: true }
+    ],
+    toDOM: (node): DOMOutputSpec => (node.attrs['caption'] ? ['table', ['caption', node.attrs['caption']], ['tbody', 0]] : ['table', ['tbody', 0]])
+  };
   for (const name of ['table_cell', 'table_header']) {
     const rules = specs[name].parseDOM as readonly TagParseRule[];
     specs[name] = {
@@ -207,6 +251,7 @@ function tableSpecs(): Record<string, NodeSpec> {
           const colspan = clampInt(attrs['colspan'], WE_EDITOR_MAX_CELL_SPAN);
           const widths = attrs['colwidth'] as number[] | null;
           return {
+            ...attrs,
             colspan,
             rowspan: clampInt(attrs['rowspan'], WE_EDITOR_MAX_CELL_SPAN),
             colwidth: widths && widths.length === colspan ? widths.map((w) => clampInt(w, WE_EDITOR_MAX_IMAGE_WIDTH)) : null
@@ -523,7 +568,13 @@ const marks: Record<string, MarkSpec> = {
         tag: 'mark',
         getAttrs: (dom) => ({ value: weEditorSafeColor((dom as HTMLElement).style.backgroundColor) ?? 'yellow' })
       },
-      { style: 'background-color', getAttrs: (v) => (weEditorSafeColor(v as string) ? { value: (v as string).trim() } : false) }
+      {
+        style: 'background-color',
+        // A <td>/<th> is read while a table row is open; its background is the cell's own attribute, not a
+        // highlight. Every other place a highlighted element can appear is listed here.
+        context: 'doc/|blockquote/|list_item/|task_item/|table_cell/|table_header/|paragraph/|heading/|figure/',
+        getAttrs: (v) => (weEditorSafeColor(v as string) ? { value: (v as string).trim() } : false)
+      }
     ],
     toDOM: (mark: Mark): DOMOutputSpec => ['mark', { style: `background-color: ${mark.attrs['value']}` }, 0]
   }

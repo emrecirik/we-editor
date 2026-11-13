@@ -41,6 +41,11 @@ import {
   weEditorAlignAt,
   WeEditorImageAttrs,
   weEditorBlockLevel,
+  weEditorCellAt,
+  weEditorSetCellAlign,
+  weEditorSetCellBackground,
+  weEditorSetTableCaption,
+  weEditorTableCaptionAt,
   weEditorChangeCase,
   weEditorLineHeightAt,
   weEditorPaintMarks,
@@ -76,7 +81,7 @@ import { weEditorFormatHtml } from './core/we-editor-format';
 import { weEditorParseHtml, weEditorSerializeHtml } from './core/we-editor-html';
 import { WeEditorSourceEditor, weEditorCreateSourceEditor } from './core/we-editor-source';
 import { WeEditorEmbedView, WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
-import { weEditorSafeUrl, weEditorSchema } from './core/we-editor-schema';
+import { WE_EDITOR_CELL_ALIGNS, WeEditorCellAlign, weEditorSafeUrl, weEditorSchema } from './core/we-editor-schema';
 import { WE_EDITOR_ICONS } from './models/we-editor-icons.model';
 import { WE_EDITOR_LOCALE, WeEditorLocale } from './models/we-editor-locale.model';
 import {
@@ -190,6 +195,8 @@ interface WeEditorUiState {
   link: string | null;
   image: WeEditorImageAttrs | null;
   inTable: boolean;
+  tableCaption: string;
+  cell: { background: string | null; verticalAlign: WeEditorCellAlign | null } | null;
   /** Language of the code block holding the selection; `undefined` outside code blocks. */
   codeLanguage: string | null | undefined;
   matches: { current: number; total: number };
@@ -317,7 +324,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected mediaError = false;
   protected findOpen = false;
   /** Which palette is open: text colour or highlight. */
-  protected colorOpen: 'text_color' | 'highlight' | null = null;
+  protected colorOpen: 'text_color' | 'highlight' | 'cell' | null = null;
   protected recentColors: string[] = [];
   protected charsOpen = false;
   protected fullscreen = false;
@@ -335,7 +342,9 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected find = { search: '', replace: '', caseSensitive: false, wholeWord: false };
   protected tableSize = { rows: 3, cols: 3, header: true };
   protected readonly tableActions = Object.keys(TABLE_ACTIONS) as TableAction[];
-  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', lineHeight: '', textColor: null, highlight: null, link: null, image: null, inTable: false, codeLanguage: undefined, table: {}, matches: { current: 0, total: 0 } };
+  protected readonly cellAligns = WE_EDITOR_CELL_ALIGNS;
+  protected readonly cellAlignLabels: Record<WeEditorCellAlign, keyof WeEditorLocale> = { top: 'tableCellAlignTop', middle: 'tableCellAlignMiddle', bottom: 'tableCellAlignBottom' };
+  protected ui: WeEditorUiState = { active: {}, enabled: {}, block: 0, fontFamily: '', fontSize: '', lineHeight: '', textColor: null, highlight: null, link: null, image: null, inTable: false, tableCaption: '', cell: null, codeLanguage: undefined, table: {}, matches: { current: 0, total: 0 } };
 
   private readonly icons = inject(WE_EDITOR_ICONS);
   private readonly sanitizer = inject(DomSanitizer);
@@ -658,7 +667,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     return this.locale.findCount.replace('{current}', String(current || '–')).replace('{total}', String(total));
   }
 
-  protected openColor(markName: 'text_color' | 'highlight'): void {
+  protected openColor(markName: 'text_color' | 'highlight' | 'cell'): void {
     if (!this.view || !this.isEditable()) return;
     this.closeBars();
     this.colorOpen = markName;
@@ -667,7 +676,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   /** Applies a palette colour (`null` removes it) and remembers it as recently used. */
   protected pickColor(value: string | null): void {
     if (!this.colorOpen) return;
-    if (this.exec(weEditorSetStyle(this.colorOpen, value)) && value) {
+    const command = this.colorOpen === 'cell' ? weEditorSetCellBackground(value) : weEditorSetStyle(this.colorOpen, value);
+    if (this.exec(command) && value) {
       this.recentColors = [value, ...this.recentColors.filter((c) => c !== value)].slice(0, RECENT_COLORS);
     }
     this.colorOpen = null;
@@ -784,6 +794,14 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   protected formatSource(): void {
     this.flushSource();
     void this.source?.then((editor) => editor.setText(weEditorFormatHtml(this.getHtml())));
+  }
+
+  protected setTableCaption(text: string): void {
+    this.exec(weEditorSetTableCaption(text));
+  }
+
+  protected setCellAlign(value: string): void {
+    this.exec(weEditorSetCellAlign((value || null) as WeEditorCellAlign | null));
   }
 
   protected runTable(action: TableAction): void {
@@ -1016,6 +1034,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       link: weEditorLinkAt(state),
       image,
       inTable,
+      tableCaption: weEditorTableCaptionAt(state) ?? '',
+      cell: weEditorCellAt(state),
       codeLanguage: weEditorCodeLanguageAt(state),
       table,
       matches: this.findOpen ? weEditorSearchCount(state) : { current: 0, total: 0 }

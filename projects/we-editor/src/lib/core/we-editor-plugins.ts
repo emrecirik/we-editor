@@ -3,7 +3,7 @@ import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, textblockTypeInputRule, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { search } from 'prosemirror-search';
-import { columnResizing, goToNextCell, tableEditing } from 'prosemirror-tables';
+import { TableView, columnResizing, goToNextCell, tableEditing } from 'prosemirror-tables';
 import { Fragment, Node as PmNode, Slice } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
 import { Command, EditorState, NodeSelection, Plugin, Transaction } from 'prosemirror-state';
@@ -133,7 +133,7 @@ export function weEditorPlugins(): Plugin[] {
     search(),
     weEditorCodeHighlight(),
     weEditorPasteFromOffice(),
-    columnResizing(),
+    columnResizing({ View: WeEditorTableView }),
     tableEditing(),
     keymap({
       // Backspace right after an input rule fired restores the typed characters.
@@ -156,6 +156,40 @@ export function weEditorPlugins(): Plugin[] {
     }),
     keymap(baseKeymap)
   ];
+}
+
+/** prosemirror-tables' table view plus the caption (read-only here; edited from the table tools bar). */
+export class WeEditorTableView extends TableView {
+  private caption: HTMLTableCaptionElement | null = null;
+
+  constructor(node: PmNode, cellMinWidth: number) {
+    super(node, cellMinWidth);
+    this.renderCaption(node);
+  }
+
+  override update(node: PmNode): boolean {
+    if (!super.update(node)) return false;
+    this.renderCaption(node);
+    return true;
+  }
+
+  override ignoreMutation(record: ViewMutationRecord): boolean {
+    return (!!this.caption && this.caption.contains(record.target as Node)) || super.ignoreMutation(record);
+  }
+
+  private renderCaption(node: PmNode): void {
+    const text = node.attrs['caption'] as string | null;
+    if (!text) {
+      this.caption?.remove();
+      this.caption = null;
+      return;
+    }
+    if (!this.caption) {
+      this.caption = this.table.createCaption();
+      this.caption.contentEditable = 'false';
+    }
+    this.caption.textContent = text;
+  }
 }
 
 /** Word and character counts of a document. */

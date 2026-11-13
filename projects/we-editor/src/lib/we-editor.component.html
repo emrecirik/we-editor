@@ -145,7 +145,7 @@
 
   @if (colorOpen) {
     <div class="we-editor__linkbar we-editor__palette" role="toolbar" data-bar="color"
-         [attr.aria-label]="colorOpen === 'highlight' ? locale.highlight : locale.textColor" (mousedown)="onToolbarMouseDown($event)">
+         [attr.aria-label]="colorOpen === 'highlight' ? locale.highlight : colorOpen === 'cell' ? locale.tableCellColor : locale.textColor" (mousedown)="onToolbarMouseDown($event)">
       @for (color of colors; track color) {
         <button type="button" class="we-editor__swatch" [style.background]="color" [title]="color" [attr.aria-label]="color"
                 (click)="pickColor(color)"></button>
@@ -304,6 +304,21 @@
         <button type="button" class="we-editor__text-btn" [attr.data-action]="action" [disabled]="!ui.table[action]"
                 (click)="runTable(action)">{{ locale[action] }}</button>
       }
+      <button type="button" class="we-editor__text-btn" data-action="tableCellColor" [class.we-editor__text-btn--primary]="colorOpen === 'cell'"
+              (click)="colorOpen === 'cell' ? (colorOpen = null) : openColor('cell')">
+        <span class="we-editor__swatch we-editor__swatch--inline" aria-hidden="true" [style.background]="ui.cell?.background"></span>
+        {{ locale.tableCellColor }}
+      </button>
+      <select class="we-editor__select" [title]="locale.tableCellAlign" [attr.aria-label]="locale.tableCellAlign"
+              (change)="setCellAlign($any($event.target).value)">
+        <option value="" [selected]="!ui.cell?.verticalAlign">{{ locale.tableCellAlignDefault }}</option>
+        @for (a of cellAligns; track a) {
+          <option [value]="a" [selected]="ui.cell?.verticalAlign === a">{{ locale[cellAlignLabels[a]] }}</option>
+        }
+      </select>
+      <input class="we-editor__input" type="text" maxlength="500" autocomplete="off" [attr.aria-label]="locale.tableCaption"
+             [placeholder]="locale.tableCaption" [value]="ui.tableCaption" (change)="setTableCaption($any($event.target).value)"
+             (keydown.enter)="$event.preventDefault(); setTableCaption($any($event.target).value)" />
     </div>
   }
 

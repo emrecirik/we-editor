@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Table caption and cell properties (P10): the table tools bar sets a plain-text `<caption>`, the cell
+  background (palette, all selected cells) and vertical alignment; cell `background` / `verticalAlign`
+  attributes, table `caption` attribute, `WeEditorTableView`, `weEditorSetCellBackground`,
+  `weEditorSetCellAlign`, `weEditorCellAt`, `weEditorSetTableCaption`, `weEditorTableCaptionAt`,
+  `weEditorCleanCaption`; 7 locale keys.
+
+### Fixed
+
+- A table cell's `background-color` no longer turns its text into highlighted text on paste/load.
+
 - Image captions and image links (P10): **Caption** switch and **Link** field in the image bar; new
   `figure` node (`<figure><img><figcaption>`) with alignment, width, resize handle and a validated
   `href`; `WeEditorImageAttrs.caption` / `.href`, `weEditorImageAt` also reports a figure; locale keys

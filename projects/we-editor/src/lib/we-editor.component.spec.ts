@@ -504,6 +504,27 @@ describe('WeEditorComponent', () => {
     expect(host.control.value).toBe('<p>a</p><figure><a href="https://x.test/"><img src="https://x.com/a.png"></a><figcaption>Cap</figcaption></figure><p>b</p>');
   });
 
+  it('edits table caption, cell colour and vertical alignment from the table tools bar', () => {
+    host.control.setValue('<table><tbody><tr><td><p>a</p></td></tr></tbody></table>');
+    select(3, 3);
+    const bar = el().querySelector('[data-bar="table-tools"]') as HTMLElement;
+    const caption = bar.querySelector('input[aria-label="Table caption"]') as HTMLInputElement;
+    caption.value = 'Totals';
+    caption.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(el().querySelector('.we-editor__content table caption')?.textContent).toBe('Totals');
+
+    (bar.querySelector('[data-action="tableCellColor"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    (el().querySelector('[data-bar="color"] .we-editor__swatch[title="#ffe066"]') as HTMLButtonElement).click();
+    const valign = el().querySelector('[data-bar="table-tools"] select[aria-label="Vertical alignment"]') as HTMLSelectElement;
+    valign.value = 'middle';
+    valign.dispatchEvent(new Event('change'));
+    expect(host.control.value).toBe(
+      '<table><caption>Totals</caption><tbody><tr><td style="background-color: rgb(255, 224, 102); vertical-align: middle;"><p>a</p></td></tr></tbody></table>'
+    );
+  });
+
   it('emits word and character counts on edits', () => {
     const spy = jasmine.createSpy('stats');
     editor.stats.subscribe(spy);

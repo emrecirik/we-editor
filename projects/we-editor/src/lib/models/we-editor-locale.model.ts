@@ -125,6 +125,13 @@ export interface WeEditorLocale {
   autosaveFailed: string;
   imageCaption: string;
   imageLink: string;
+  tableCaption: string;
+  tableCellColor: string;
+  tableCellAlign: string;
+  tableCellAlignDefault: string;
+  tableCellAlignTop: string;
+  tableCellAlignMiddle: string;
+  tableCellAlignBottom: string;
 }
 
 export const weEditorLocaleEn: WeEditorLocale = {
@@ -248,7 +255,14 @@ export const weEditorLocaleEn: WeEditorLocale = {
   autosaveSaved: 'Saved',
   autosaveFailed: 'Could not save',
   imageCaption: 'Caption',
-  imageLink: 'Link (optional)'
+  imageLink: 'Link (optional)',
+  tableCaption: 'Table caption',
+  tableCellColor: 'Cell colour',
+  tableCellAlign: 'Vertical alignment',
+  tableCellAlignDefault: 'Default',
+  tableCellAlignTop: 'Top',
+  tableCellAlignMiddle: 'Middle',
+  tableCellAlignBottom: 'Bottom'
 };
 
 export const weEditorLocaleTr: WeEditorLocale = {
@@ -372,7 +386,14 @@ export const weEditorLocaleTr: WeEditorLocale = {
   autosaveSaved: 'Kaydedildi',
   autosaveFailed: 'Kaydedilemedi',
   imageCaption: 'Başlık',
-  imageLink: 'Bağlantı (isteğe bağlı)'
+  imageLink: 'Bağlantı (isteğe bağlı)',
+  tableCaption: 'Tablo başlığı',
+  tableCellColor: 'Hücre rengi',
+  tableCellAlign: 'Dikey hizalama',
+  tableCellAlignDefault: 'Varsayılan',
+  tableCellAlignTop: 'Üst',
+  tableCellAlignMiddle: 'Orta',
+  tableCellAlignBottom: 'Alt'
 };
 
 export const WE_EDITOR_LOCALE = new InjectionToken<WeEditorLocale>('WE_EDITOR_LOCALE', {

@@ -93,7 +93,7 @@ Froala / Quill / Lexical first. Everything here ships free in the MIT package.
 | P7 🟡 | Line height, case change, format painter, styles | small marks/commands (F1.11–F1.13) |
 | P8 ✅ | Full screen, autosave hook, status bar with counts | F1.9, F1.10 |
 | P9 ✅ | Paste from Word / Google Docs | F1.6 |
-| P10 | Image caption, link on image; table caption and cell properties | |
+| P10 ✅ | Image caption, link on image; table caption and cell properties | |
 | P11 | Mentions + slash commands | one suggestion plugin |
 | P12 | Markdown in/out | `prosemirror-markdown` (MIT) |
 | P13 | Bubble toolbar, drag handle, show blocks, shortcut help | |

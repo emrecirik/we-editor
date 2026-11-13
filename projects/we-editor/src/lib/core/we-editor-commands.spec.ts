@@ -23,7 +23,12 @@ import {
   weEditorChangeCase,
   weEditorLineHeightAt,
   weEditorPaintMarks,
-  weEditorSetLineHeight
+  weEditorSetLineHeight,
+  weEditorCellAt,
+  weEditorSetCellAlign,
+  weEditorSetCellBackground,
+  weEditorSetTableCaption,
+  weEditorTableCaptionAt
 } from './we-editor-commands';
 import { weEditorSanitizeHtml, weEditorSerializeHtml } from './we-editor-html';
 import { weEditorCreateState } from './we-editor-plugins';
@@ -170,6 +175,41 @@ describe('we-editor commands', () => {
     );
     expect(next.selection.$from.node(-1).type.name).toBe('table_header');
     expect(run(stateOf('<p>a</p>', 2), weEditorInsertTable(1, 2, false))).toBe('<p>a</p><table><tbody><tr><td><p></p></td><td><p></p></td></tr></tbody></table>');
+  });
+
+  it('keeps table captions and cell background / vertical alignment; drops unsafe values', () => {
+    const html =
+      '<table><caption>  Budget\n 2026 </caption><tbody><tr><td style="background-color: #ffe066; vertical-align: middle"><p>a</p></td>' +
+      '<td style="background-color: url(javascript:x); vertical-align: sideways"><p>b</p></td></tr></tbody></table>';
+    expect(weEditorSanitizeHtml(html)).toBe(
+      '<table><caption>Budget 2026</caption><tbody><tr><td style="background-color: rgb(255, 224, 102); vertical-align: middle;"><p>a</p></td><td><p>b</p></td></tr></tbody></table>'
+    );
+  });
+
+  it('still reads highlighted spans in list items, quotes and cells without a <p>', () => {
+    const mark = '<mark style="background-color: rgb(255, 224, 102);">x</mark>';
+    const span = '<span style="background-color: #ffe066">x</span>';
+    expect(weEditorSanitizeHtml(`<ul><li>${span}</li></ul>`)).toBe(`<ul><li><p>${mark}</p></li></ul>`);
+    expect(weEditorSanitizeHtml(`<blockquote>${span}</blockquote>`)).toBe(`<blockquote><p>${mark}</p></blockquote>`);
+    expect(weEditorSanitizeHtml(`<table><tbody><tr><td>${span}</td></tr></tbody></table>`)).toBe(
+      `<table><tbody><tr><td><p>${mark}</p></td></tr></tbody></table>`
+    );
+  });
+
+  it('sets the table caption and cell properties at the cursor', () => {
+    const table = '<table><tbody><tr><td><p>a</p></td><td><p>b</p></td></tr></tbody></table>';
+    const at = stateOf(table, 4);
+    expect(weEditorTableCaptionAt(at)).toBeNull();
+    expect(weEditorTableCaptionAt(stateOf('<p>x</p>', 1))).toBeUndefined();
+    expect(run(at, weEditorSetTableCaption(' Q1 '))).toContain('<table><caption>Q1</caption>');
+    expect(run(at, weEditorSetCellBackground('#ff0000'))).toContain('<td style="background-color: rgb(255, 0, 0);"><p>a</p></td><td><p>b</p></td>');
+    expect(run(at, weEditorSetCellBackground('expression(alert(1))'))).toBeNull();
+    expect(run(at, weEditorSetCellAlign('bottom'))).toContain('<td style="vertical-align: bottom;"><p>a</p></td>');
+    expect(weEditorCellAt(stateOf('<table><tbody><tr><td style="vertical-align: top"><p>a</p></td></tr></tbody></table>', 4))).toEqual({
+      background: null,
+      verticalAlign: 'top'
+    });
+    expect(weEditorSetTableCaption('x')(stateOf('<p>x</p>', 1))).toBeFalse();
   });
 
   it('refuses empty, oversized or code-block tables', () => {

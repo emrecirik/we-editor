@@ -53,7 +53,7 @@ package knowledge, not a fetched page — re-check before quoting them publicly.
 | **Tables** | | |
 | Insert, rows/columns, merge/split, header row/column, column resize, Tab | CK, Ty, TT, Fr, Lx | ✅ |
 | Cell / table properties (background, border, padding, v-align) | CK, Ty, Fr | ⬜ |
-| Table caption | CK, Ty | ⬜ |
+| Table caption | CK, Ty | ✅ plain-text `<caption>` (P10) |
 | Sort, column types | Ty-P | ⬜ (planned F2 — formulas too) |
 | **Productivity** | | |
 | Word / character count | CK, Ty, TT, Fr, Lx | ✅ status bar + output (P8) |
