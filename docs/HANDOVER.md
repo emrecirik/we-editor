@@ -1,190 +1,167 @@
 # Handover — read this first
 
-Last updated: 2026-11-12 (session 3). Owner: Emre CIRIK (`emrecirik`).
+Last updated: 2026-11-13 (end of session 3). Owner: Emre CIRIK (`emrecirik`).
 
 ## Current state
 
-- Angular 18.2 workspace (mirrors `C:\Projects\we-grid`): library `projects/we-editor` (npm name
-  `we-editor-angular`, **0.1.0 on npm since 2026-11-12** — published by hand from `dist/we-editor`;
-  npm put the first version through *staged publishing* (a `0.0.0-stage` placeholder version stays in
-  the version list, harmless). Trusted Publishing bound by Emre on 2026-11-12 (not yet exercised by a
-  tag-driven release), `projects/playground` (feature sandbox), `projects/studio` (the live demo, mirrors we-grid Studio:
-  EN/TR, light/dark, Editor / Safe HTML / Get started tabs),
-  CI / compat / release / pages workflows, `.claude/` agent + rule + skills (local only, gitignored).
-- Core decision: **ProseMirror used directly** — `docs/decisions/0001-editor-core.md`.
-- Public repo `github.com/emrecirik/we-editor`, `main` pushed (HTTPS remote — this machine has no
-  GitHub SSH key; `gh auth setup-git` is the credential helper).
-- **Live:** https://emrecirik.github.io/we-editor/ redirects to the Studio at `/studio/`; the old landing
-  page is `/features.html`; `/demo/` redirects to the Studio. Rebuilt by `.github/workflows/pages.yml` on
-  every push. Repo description, homepage and topics set (2026-11-12).
-- Author name is written **`Emre CIRIK`** everywhere (no Turkish letters) — fixed 2026-11-12 at Emre's request.
-- Vision (Emre, 2026-11-12, session 3): better than every paid editor, **free (MIT) for the
-  community**; we-editor is one of a growing family — we-grid, we-report, and soon **we-charts**
-  (dashboards, KPI tools). Keep the family look (Studio pages, EN/TR, light/dark, `Emre CIRIK`).
-- Goal set by Emre (2026-11-12): **no feature CKEditor 5 / TinyMCE / TipTap / Froala / Quill /
-  Lexical have that we lack, plus features they do not have**; then publish free (MIT) on npm. Gap
-  matrix with sources: `docs/COMPETITORS.md`; ordered work list: section **P** of `docs/ROADMAP.md`.
+- **`we-editor-angular` 0.4.0 is on npm** (`latest`). Releases are tag-driven and automatic: push a
+  `v*` tag → `.github/workflows/release.yml` builds, tests, publishes through **npm Trusted Publishing
+  (OIDC) with provenance** and creates the GitHub release from `CHANGELOG.md`. Proven on 0.2.0, 0.3.0,
+  0.4.0. (0.1.0 was published by hand; npm's staged publishing left a harmless `0.0.0-stage` version in
+  the list. A fresh tag can take a few minutes to show up as `latest` — registry lag, do not re-publish.)
+- Angular 18.2 workspace (mirrors `C:\Projects\we-grid`): library `projects/we-editor`,
+  `projects/playground` (feature sandbox), `projects/studio` (the live demo, like we-grid / we-report
+  Studio: EN/TR, light/dark, Editor / Safe HTML / Get started tabs, status bar + autosave to
+  localStorage), CI / compat / release / pages workflows, `.claude/` agent + rule + skills (local only).
+- **Live:** https://emrecirik.github.io/we-editor/ → Studio at `/studio/`; landing page with feature
+  cards and comparison at `/features.html`; `/demo/` redirects to the Studio. Rebuilt on every push.
+- Public repo `github.com/emrecirik/we-editor` (HTTPS remote; `gh auth setup-git` is the credential
+  helper — no SSH key on this machine). Description, homepage and topics are set.
+- Core decision: ProseMirror used directly (`docs/decisions/0001`). Code highlighting: lowlight +
+  highlight.js (`0002`). HTML source view: CodeMirror 6, dynamic `import()` (`0003`).
+- UI languages shipped: EN, TR, DE, FR, ES (`weEditorLocale*`). Author name is always **`Emre CIRIK`**.
+- **Vision (Emre, session 3):** better than every paid editor, **free (MIT) for the community**;
+  we-editor is one of a growing family — we-grid, we-report, and soon **we-charts** (dashboards, KPI
+  tools). Keep the family look (Studio pages, EN/TR, light/dark). Gap matrix with sources:
+  `docs/COMPETITORS.md`; ordered work list: section **P** of `docs/ROADMAP.md`.
 
-### Done in session 3 (2026-11-12)
+### Done in session 3 (2026-11-12 / 13) — each item one commit, pushed, CI green
 
 | Item | What | Commit |
 |---|---|---|
-| Name | `Emre Çırık` → `Emre CIRIK` in READMEs, landing page, decision note | `5b5ecf3` |
-| Studio | `projects/studio` live demo like we-grid / we-report; CI builds it; Pages serves it at `/studio/` | `8af368e` |
-| Locales | `weEditorLocaleDe` / `Fr` / `Es` (UI languages now as in we-grid) | `b5d12d9` |
+| Name | `Emre Çırık` → `Emre CIRIK` everywhere | `5b5ecf3` |
+| Studio | `projects/studio` live demo; CI builds it; Pages serves it at `/studio/` | `8af368e` |
+| Locales | `weEditorLocaleDe` / `Fr` / `Es` | `b5d12d9` |
 | P4 | Colour palette bar (swatches, custom, remove, recent) + special characters / emoji picker | `41008d9` |
-| 0.1.0 | Changelog section, READMEs (npm badge, feature list, status); published to npm by hand, smoke-installed in a clean folder; tag `v0.1.0` → GitHub release (npm step skipped, already published) | `d934fab` |
-| P6 | HTML source view: CodeMirror 6 lazy-loaded, code + split two-way sync, format (decision 0003) | `dbd5438` |
-| 0.2.0 | First tag-driven release; npm publish via OIDC with provenance verified | `3e82dbe` |
+| 0.1.0 | First npm release (by hand), GitHub release `v0.1.0` | `d934fab` |
+| P5 | Code block language picker + highlighting, 23 languages (lowlight / highlight.js) | `c0190e5` |
+| P6 | HTML source view: CodeMirror 6 lazy-loaded, Code + Split (two-way sync), Format | `dbd5438` |
+| 0.2.0 | First tag-driven release via OIDC | `3e82dbe` |
 | P7 | Line height, language-aware change case, format painter | `a5a62e8` |
 | P8 | Full screen, status bar (clickable element path, counts, save state), autosave hook | `ebc1fb9` |
 | P9 | Paste from Word / Outlook / Google Docs: nested lists, style noise removed | `cc6aa68` |
 | 0.3.0 | Release of P7–P9 | `da4538f` |
-| P10 | Image captions (`figure`) and links; table caption, cell background, vertical alignment | `534ab4b`, `2647b3b` |
-| 0.4.0 | Release of P10 | release commit |
-| P5 | Code block language picker + highlighting (lowlight / highlight.js, decision 0002); +~34 kB gzip in the Studio bundle | `c0190e5` |
+| P10 | Image captions (`figure`) and image links; table caption, cell background, vertical alignment | `534ab4b`, `2647b3b` |
+| 0.4.0 | Release of P10 | `108c465` |
 
-### Done in session 2 (each one commit, pushed, CI green)
+Session 2 (F0.12, images, tables, landing page, P1 find & replace, P2 autolink, P3 video embeds) is in
+`git log` and `CHANGELOG.md`.
 
-| Item | What | Commit |
-|---|---|---|
-| F0.12 | `placeholder` input, `stats` output / `getStats()`, Markdown input rules (`prosemirror-inputrules`) | `6130669` |
-| F1.2 | Images: URL / upload / paste / drop, resize handle, position, alt text, `imageUpload` hook, `weEditorSafeImageSrc` | `ae1ab33` |
-| F1.1 | Tables (`prosemirror-tables`): insert bar, table tools bar, merge/split, header row/column, column resize, Tab; spans clamped 1–100 | `bacdcc4` |
-| Pages | Landing page `docs/index.html`, screenshots `docs/images/`, demo under `/demo/`, `docs/COMPETITORS.md`, ROADMAP section P | `727ea73` |
-| P1 | Find & replace (`prosemirror-search`): Ctrl/Cmd+F bar, count, match case, whole words, replace all | `cb2689d` |
-| P2 | Autolink: after space / Enter, on paste, URL pasted over a selection | `e18122c` |
-| P3 | YouTube / Vimeo embeds: iframe allowlist, player URL rebuilt from the video id | `3fd8db9` |
-
-Also: `docs/knowledge/` was removed from the (unpushed) history before the first push and is now
-excluded locally (`.git/info/exclude`), as in we-grid.
-
-### Verified at the end of session 2
+### Verified at the end of session 3
 
 | Check | Result |
 |---|---|
-| `npm test` | **69 / 69 SUCCESS** (ChromeHeadless) |
-| `npm run build:lib`, `npx ng build playground` | OK |
-| GitHub: CI, Angular compatibility (19–22 matrix), Pages | all green on `3fd8db9` |
-| Playground in a real browser (Playwright) | every feature above clicked through; no console errors from our code |
-| Live demo / landing page | load, images present, demo editor works under `/we-editor/demo/` |
+| `npm test` | **108 / 108 SUCCESS** (ChromeHeadless) |
+| `npm run build:lib`, `npx ng build playground`, `npx ng build studio` | OK |
+| GitHub: CI, Angular compatibility (19–22 matrix), Pages, Release | all green on `108c465` / `v0.4.0` |
+| npm | `latest` = 0.4.0; clean-folder install checked on 0.1.0 (theme, LICENSE, README, ProseMirror deps present) |
+| Studio in a real browser (Playwright) | palette, special chars, code highlighting (light/dark), source Code/Split, TR change case + line height, status bar / full screen / autosave, image caption + link, table caption / cell colour / valign — no console errors |
+| `editor-contract-reviewer` | run on every feature; findings fixed (autosave status race, api.md table, figure link scope) |
 
 ### Not verified / not done
 
-- No screen-reader check; toolbar has no roving tabindex (F0.13).
+- Format painter and Word / Google Docs paste: covered by specs only (no real clipboard from Word).
+- No screen-reader check; toolbar has no roving tabindex (F0.13 / P16).
 - Zoneless consumer app not checked by hand (`.claude/rules/angular-compat.md`).
-- Drag-and-drop of image files and pasting a URL over a selection: covered by specs only.
-- TipTap / Lexical cells in `docs/COMPETITORS.md` partly from package knowledge, not fetched pages;
-  the landing-page comparison table is a short, hand-checked subset — re-check before quoting.
+- `docs/images/*` screenshots and `docs/features.html` comparison table predate P4–P10 (refresh with
+  the `editor-screenshots` skill).
 - `SampleUsageProjects/*` are still empty placeholders.
+- TipTap / Lexical cells in `docs/COMPETITORS.md` partly from package knowledge — re-check before quoting.
 
 ## Next tasks (in order)
 
-0. ~~First npm publish~~, ~~Trusted Publishing~~ — done 2026-11-12. Later releases go through the
-   `editor-release` skill (tag-driven); the first one proves the OIDC binding. No `v0.1.0` tag / GitHub release exists yet.
-1. **P11…P18** in `docs/ROADMAP.md` (P7 "styles" still open — consumer-defined class allowlist);
-   F3.3 device-width preview also open. Earlier list for reference: source HTML view + preview (decision note on the
-   code-editor dependency first), line height / case change / format painter / styles, full screen +
-   autosave + status bar, paste from Word / Google Docs, image & table captions + cell properties,
-   mentions + slash commands, Markdown in/out, bubble toolbar / drag handle, page break / details /
-   footnotes / TOC, math, a11y pass (F0.13), RTL + more locales, DOCX / PDF.
-2. Keep `docs/COMPETITORS.md` statuses, the landing page feature cards / "coming next" note and
-   `docs/images/*` (see the `editor-screenshots` skill) in step with each item.
-3. When P is done: first npm release (see manual steps), free, then the F2 / F3 differentiators
-   (formula tables, design/code/split view, e-mail mode, mail merge).
+1. **P11** — mentions (`@`) + slash commands (`/`), one suggestion plugin (keyboard navigable,
+   consumer-supplied items for mentions, locale strings, safe output e.g. `<span data-mention>`).
+2. **P12…P18** in `docs/ROADMAP.md` order: Markdown in/out (`prosemirror-markdown`, MIT), bubble toolbar /
+   drag handle / show blocks / shortcut help, page break / details / footnotes / TOC / anchors, math
+   (KaTeX, MIT), keyboard + screen-reader pass (F0.13), RTL + more locales, DOCX / PDF.
+3. Leftovers: P7 "styles" (consumer-defined class allowlist), F3.3 device-width preview (sandboxed
+   iframe), screenshots / features page refresh.
+4. Then the F2 / F3 differentiators (formula tables via `<we-sheet>`, e-mail mode, mail merge) —
+   write their decision notes first (open decision 3).
+5. Cut a minor release (`editor-release` skill) after each batch of green features.
 
-Before F2 and F3 start, write the decision notes they call for (`<we-sheet>` integration; code
-editor dependency for the HTML view).
+## How to work (agreed with Emre)
 
-## How to work (agreed with Emre, 2026-11-12)
-
-- Per feature: code in `core/` + component, specs, playground check in a real browser, docs
-  (`api.md`, `localization.md`, `theming.md`, `ARCHITECTURE.md` for safety rules), CHANGELOG,
-  ROADMAP/COMPETITORS status, `editor-contract-reviewer` agent → then **commit + push without asking**
-  and check the GitHub runs.
-- Permissive (MIT/BSD/ISC/Apache) official or widely used packages may be added for parity items
-  without asking: verify the licence in `node_modules`, add to `docs/LICENSES.md`, both
-  `package.json` files and `ng-package.json` `allowedNonPeerDependencies`; mention it in the report.
-- Session 3 (2026-11-12): Emre said "don't ask me, follow your recommendation" — work through
-  ROADMAP P in order, choose dependencies by the decision-note pattern, and cut minor releases with
-  a `v*` tag when a batch of features is green (npm publish is automatic via OIDC since 0.2.0).
-- Still ask for: destructive git operations, anything that changes licence/naming/ownership.
-- DOM baseline (`testing/we-editor-dom-baseline.ts`) changes with every new default toolbar button;
-  re-record from the failing spec's "actual" value (the file has CRLF line endings) and say so in the
-  changelog.
+- **Session 3: "don't ask me, follow your recommendation"** — work through ROADMAP P in order, pick
+  dependencies with a decision note (`docs/decisions/000N-*.md`), and cut minor releases with a `v*` tag
+  when a batch is green. Still ask for: destructive git operations, licence / naming / ownership changes.
+- Per feature (`editor-feature` skill): code in `core/` + component, specs (incl. an attack input for
+  anything security-relevant), check in the Studio in a real browser, docs (`api.md`, `localization.md`,
+  `theming.md`, `ARCHITECTURE.md` safety rules), CHANGELOG `[Unreleased]`, ROADMAP / COMPETITORS /
+  `features.html` / Studio tips, `editor-contract-reviewer` agent → **commit + push without asking**, check
+  `gh run list`.
+- Permissive (MIT/BSD/ISC/Apache) packages may be added without asking: verify the licence in
+  `node_modules`, add to `docs/LICENSES.md`, both `package.json` files and `ng-package.json`
+  `allowedNonPeerDependencies`. Heavy, optional ones are loaded with dynamic `import()` (see 0003).
+- New locale keys go into **all five** locales (En, Tr in `we-editor-locale.model.ts`; De, Fr, Es in
+  `we-editor-locale-extra.model.ts`); each addition is noted in the changelog as breaking for
+  hand-written full locale objects.
+- DOM baseline (`testing/we-editor-dom-baseline.ts`) changes with every new default toolbar item;
+  re-record from the failing spec's "actual" value and say so in the changelog.
+- Don't trust a reviewer's "no regression" without a spec — session 3 caught one only by testing.
 
 ## Commands
 
 ```bash
 nvm use 24.19.0             # same Node as the other projects on this machine
 npm install
-npm run build:lib           # must precede any playground build/serve
+npm run build:lib           # must precede any playground / studio build or serve
 npm test
 npm start                   # playground on http://localhost:4200
-npx ng build playground
-gh run list --limit 5       # CI / compat / Pages after a push
+npx ng serve studio --port 4300
+npx ng build playground && npx ng build studio
+gh run list --limit 5       # CI / compat / Pages / Release after a push
+node .github/scripts/changelog-section.mjs <version>   # preview release notes
 bash .github/compat/probe.sh 22 <scratch-dir> "$PWD/.github/compat/probe.ts" "$PWD/.github/compat/probe.html" <tarball>
 ```
 
+Release: bump `projects/we-editor/package.json`, move `[Unreleased]` notes under `## <version> — <date>`,
+update the status line in the three READMEs, commit, `git tag -a v<version> -m "we-editor-angular <version>"`,
+push the tag, watch the Release run, check `npm view we-editor-angular dist-tags` after a few minutes.
+
 ## Open decisions (ask Emre)
 
-1. **Normalize the form value on `writeValue`?** Today the control keeps the raw HTML it was given
-   until the first edit (sanitized HTML is only emitted after a change). Option: emit the sanitized
-   value once without marking dirty. Matters for consumers who save untouched forms.
+1. **Normalize the form value on `writeValue`?** The control keeps the raw HTML it was given until the
+   first edit. Option: emit the sanitized value once without marking dirty.
 2. **Colour output format.** Inline styles come out as CSSOM text (`rgb(255, 0, 0);`). Keep, or write
-   our own style serializer to preserve `#hex` (likely needed anyway for e-mail mode, F3.8)?
-3. ~~Colour UI~~ — going with a palette popover in P4 (parity list).
-4. **`<we-sheet>` reuse (F2)**: optional peer dependency on `we-grid-angular` vs. own engine. we-grid's
-   formula engine is not exported as a standalone API today — would need a we-grid change (separate
-   repo, separate decision).
-5. **Scope of F3 code view dependency** (CodeMirror 6, MIT, ~bundle cost) vs. a lightweight
-   `<textarea>` + highlight overlay.
-6. **Images without an `imageUpload` hook** are embedded as base64 `data:` URLs (chosen so uploads
-   work out of the box). Keep, or require the hook / add an opt-in flag?
+   our own style serializer to preserve `#hex` (likely needed for e-mail mode, F3.8)?
+3. **`<we-sheet>` reuse (F2)**: optional peer dependency on `we-grid-angular` vs. own engine (we-grid's
+   formula engine is not exported standalone today — would need a we-grid change).
+4. **Images without an `imageUpload` hook** are embedded as base64 `data:` URLs. Keep, or require the
+   hook / add an opt-in flag?
+5. **Status bar default:** `statusBar` is `false` so existing consumers see no change; turn it on by
+   default at 1.0?
 
 ## Known risks
 
-- **Playground dev server + `build:lib`:** rebuilding the library while `npm start` runs wipes
-  `dist/we-editor` and the server fails with "Cannot find module 'we-editor-angular'"; restart it.
-  The machine also ran low on memory late in session 2 (Claude Code stopped the dev server twice).
-- **Embeds:** the editor's YouTube iframe needs `allow-same-origin` (black player without it; the
-  frame is cross-origin, so it only gets its own origin). Vimeo runs with the stricter sandbox and logs
-  two CORS errors from its own Cloudflare script — harmless. Consumers rendering our HTML need
-  `frame-src` for youtube-nocookie.com / player.vimeo.com in their CSP.
-- **Tables:** output has no border styles (consumer CSS decides); column widths only as
-  `data-colwidth`. Tab in the last cell leaves the table (no auto-added row).
-- Floated images: list markers next to a floated image overlap it (browser default).
-- `stats` is not emitted on `writeValue`/`setHtml` (avoids ExpressionChanged errors in consumers);
-  consumers read `getStats()` for loaded content.
-- **Serialization on every keystroke** (`apply()` → `getHtml()`); marked `shortcut:` in
-  `we-editor.component.ts`. Debounce or lazy serialize if large documents get slow.
-- `ViewEncapsulation.None`: all editor CSS is global under `.we-editor`; consumer CSS for `p`, `ul`
-  etc. can leak into the content area.
-- Task list HTML uses `data-type="taskList"/"taskItem"` (TipTap-compatible on purpose).
-- ProseMirror packages are `^1.x` ranges in the published package; a breaking 2.0 would need a
-  bound update.
+- **Dev server + `build:lib`:** rebuilding the library while a dev server runs wipes `dist/we-editor`
+  and the server breaks; stop it, rebuild, restart. Stale servers can keep port 4300/4200 busy
+  (`netstat -ano | grep :4300` → `taskkill //PID <pid> //F //T`).
+- **Change case** follows the closest `lang` attribute, else the browser language — a page without
+  `lang` on a Turkish machine upper-cases English "i" to "İ". Studio sets `<html lang>`.
+- **Highlight vs cell background:** the highlight mark's `background-color` style rule has a `context`
+  list that excludes table rows (so `<td style="background-color">` stays a cell attribute). A new
+  block container node must be added to that list or highlighted spans directly inside it get lost.
+- **CodeMirror** (6 `@codemirror/*` / `@lezer/*` packages) is a runtime dependency but loaded only via
+  dynamic `import()`; bundlers without code splitting would inline it.
+- **Embeds:** the YouTube iframe needs `allow-same-origin`; consumers need `frame-src` for
+  youtube-nocookie.com / player.vimeo.com in their CSP.
+- **Tables:** no border styles in the output (consumer CSS decides); column widths only as
+  `data-colwidth`. Table caption is plain text only.
+- **Serialization on every keystroke** (`apply()` → `getHtml()`), plus re-highlighting all code blocks and
+  re-formatting the source view on change — all marked `shortcut:`. Debounce if large documents get slow.
+- `ViewEncapsulation.None`: editor CSS is global under `.we-editor`; consumer CSS can leak in.
+- Task list output contains `<label contenteditable="false"><input type="checkbox">` (TipTap-compatible).
 - Windows: Karma's ChromeHeadless sometimes reports "not killed in 2000 ms" at exit; harmless.
-
-## Manual steps for Emre
-
-1. ~~GitHub repo~~ — done 2026-11-12 (public, pushed). ~~GitHub Pages~~ — enabled (workflow build).
-2. **npm Trusted Publishing** — the Trusted Publisher form lives in an existing package's settings
-   (as of the last check; confirm on docs.npmjs.com/trusted-publishers), so the first version needs
-   one manual publish:
-   - `npm run build:lib && npm test`, then `cd dist/we-editor && npm publish --access public`
-     (2FA: security key is unusable from the CLI → recovery code `--otp=<code>`; or publish
-     `0.0.1-alpha.0` as a placeholder with `--tag alpha`).
-   - On npmjs.com → package `we-editor-angular` → Settings → **Trusted Publisher** → GitHub Actions:
-     organization/user `emrecirik`, repository `we-editor`, workflow filename `release.yml`,
-     environment empty. Optionally set "Require two-factor authentication and disallow tokens".
-   - From then on: bump version, changelog, `git tag v<version>`, push the tag (see the
-     `editor-release` skill).
+- Writing code through Node scripts in Bash heredocs can eat backslashes (`\s` → `s`); use the Edit /
+  Write tools for code containing regexes.
 
 ## Where things are
 
 - Contracts and rules: `CLAUDE.md` (local), `.claude/skills/editor-feature/SKILL.md`,
-  `.claude/skills/editor-screenshots/SKILL.md` (how each `docs/images/*` frame is made).
-- Architecture and security model: `docs/ARCHITECTURE.md`.
+  `.claude/skills/editor-release/SKILL.md`, `.claude/skills/editor-screenshots/SKILL.md`.
+- Architecture and security model: `docs/ARCHITECTURE.md`; decisions: `docs/decisions/`.
 - Every public symbol: `docs/api.md`; theme variables: `docs/theming.md`; locale keys:
   `docs/localization.md`; licences: `docs/LICENSES.md`.
 - Competitor gap and parity plan: `docs/COMPETITORS.md`, `docs/ROADMAP.md` section P.
