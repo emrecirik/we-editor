@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## 0.5.0 — 2026-11-24
+
+Track changes. Minor version: a new input, toolbar items and a dependency; the editor's HTML now
+reads `<ins data-id>` / `<del data-id>` as suggestions (a plain `<del>` stays strikethrough). The new
+locale keys are breaking only for hand-written full locale objects.
+
 ### Added
 
 - **Track changes** — `[trackChanges]` input and the `trackChanges`, `acceptChange`, `rejectChange`,
