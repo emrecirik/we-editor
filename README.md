@@ -42,6 +42,9 @@ No CSS framework, no icon font, no commercial dependency. A sibling of
 - **Code blocks with syntax highlighting** in 23 languages
 - **Paste from Word / Google Docs:** Word lists become real nested lists, Office style noise is removed
 - **Format painter**, **change case** (language-aware: Turkish İ/ı), **line height** — premium-only elsewhere
+- **Track changes**: edits become insertions and deletions to accept or reject — one at a time or all at once — kept in the HTML so a half-reviewed document saves and loads; paid in CKEditor 5, TinyMCE and TipTap ([docs](docs/api.md#track-changes))
+
+  ![Track changes in we-editor Studio: replaced words struck through in red, new text underlined in green, accept and reject buttons at the end of the toolbar](docs/images/editor-track-changes.png)
 - **Status bar** with a clickable element path (`table › tr › td › p`) and counts; **full screen**; **autosave** hook
 - Markdown shortcuts (`# `, `- `, `1. `, `> `, ```` ``` ````), autolink for typed and pasted URLs
 - Placeholder, word and character counts (`stats` output), undo / redo, keyboard shortcuts
