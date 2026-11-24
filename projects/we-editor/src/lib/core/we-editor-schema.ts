@@ -1,5 +1,6 @@
 import { DOMOutputSpec, Mark, MarkSpec, Node as PmNode, NodeSpec, Schema, TagParseRule } from 'prosemirror-model';
 import { tableNodes } from 'prosemirror-tables';
+import { WE_EDITOR_SUGGESTION_MARKS, weEditorDeletionMark, weEditorInsertionMark, weEditorModificationMark } from './we-editor-track';
 
 /** Paragraph/heading alignment. `null` means "inherit" (no inline style is written). */
 export type WeEditorAlign = 'left' | 'center' | 'right' | 'justify';
@@ -264,7 +265,8 @@ function tableSpecs(): Record<string, NodeSpec> {
 }
 
 const nodes: Record<string, NodeSpec> = {
-  doc: { content: 'block+' },
+  // Suggestion marks also sit on whole blocks — an inserted paragraph, a deleted list item
+  doc: { content: 'block+', marks: WE_EDITOR_SUGGESTION_MARKS },
 
   paragraph: {
     content: 'inline*',
@@ -297,7 +299,8 @@ const nodes: Record<string, NodeSpec> = {
   code_block: {
     attrs: { language: { default: null } },
     content: 'text*',
-    marks: '',
+    // Formatting stays out of code; tracked changes do not
+    marks: WE_EDITOR_SUGGESTION_MARKS,
     group: 'block',
     code: true,
     defining: true,
@@ -579,6 +582,16 @@ const marks: Record<string, MarkSpec> = {
     toDOM: (mark: Mark): DOMOutputSpec => ['mark', { style: `background-color: ${mark.attrs['value']}` }, 0]
   }
 };
+
+// Track changes marks whole blocks too — a deleted list item, an inserted row, a re-aligned paragraph
+// inside a quote. A container rejects marks it does not list, so every node holding blocks lists them.
+for (const spec of Object.values(nodes)) {
+  if (spec.content && !/inline|text/.test(spec.content) && spec.marks === undefined) spec.marks = WE_EDITOR_SUGGESTION_MARKS;
+}
+
+marks['insertion'] = weEditorInsertionMark;
+marks['deletion'] = weEditorDeletionMark;
+marks['modification'] = weEditorModificationMark;
 
 /** The F0 document schema. Plugins in later phases extend it (tables, images, placeholders…). */
 export const weEditorSchema = new Schema({ nodes, marks });

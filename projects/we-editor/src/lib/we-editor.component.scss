@@ -490,6 +490,19 @@ we-editor {
     color: var(--we-editor-link-color, #3b6fd8);
   }
 
+  // Track changes: suggested insertions and deletions
+  ins[data-id] {
+    color: var(--we-editor-insertion-color, #0a7d6b);
+    background: var(--we-editor-insertion-bg, rgba(10, 179, 156, 0.14));
+    text-decoration: underline;
+  }
+
+  del[data-id] {
+    color: var(--we-editor-deletion-color, #c0392b);
+    background: var(--we-editor-deletion-bg, rgba(240, 101, 72, 0.12));
+    text-decoration: line-through;
+  }
+
   code {
     padding: 0.1em 0.3em;
     border-radius: 3px;

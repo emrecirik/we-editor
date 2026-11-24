@@ -80,6 +80,8 @@ import { WE_EDITOR_DEFAULT_CODE_LANGUAGES, weEditorCodeLanguageAt, weEditorSetCo
 import { weEditorFormatHtml } from './core/we-editor-format';
 import { weEditorParseHtml, weEditorSerializeHtml } from './core/we-editor-html';
 import { WeEditorSourceEditor, weEditorCreateSourceEditor } from './core/we-editor-source';
+import { WeEditorChange, weEditorChanges, weEditorReviewAll, weEditorReviewChange, weEditorSetTracking, weEditorTrackingEnabled } from './core/we-editor-track';
+import { suggestChangesKey, withSuggestChanges } from '@handlewithcare/prosemirror-suggest-changes';
 import { WeEditorEmbedView, WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
 import { WE_EDITOR_CELL_ALIGNS, WeEditorCellAlign, weEditorSafeUrl, weEditorSchema } from './core/we-editor-schema';
 import { WE_EDITOR_ICONS } from './models/we-editor-icons.model';
@@ -157,6 +159,16 @@ const TABLE_ACTIONS = {
 type TableAction = keyof typeof TABLE_ACTIONS;
 
 const BUTTONS: Partial<Record<WeEditorToolbarItem, ButtonDef>> = {
+  trackChanges: {
+    icon: 'trackChanges',
+    label: 'trackChanges',
+    run: (state, dispatch) => weEditorSetTracking(!weEditorTrackingEnabled(state))(state, dispatch),
+    active: weEditorTrackingEnabled
+  },
+  acceptChange: { icon: 'acceptChange', label: 'acceptChange', run: weEditorReviewChange(true) },
+  rejectChange: { icon: 'rejectChange', label: 'rejectChange', run: weEditorReviewChange(false) },
+  acceptAllChanges: { icon: 'acceptAllChanges', label: 'acceptAllChanges', run: weEditorReviewAll(true) },
+  rejectAllChanges: { icon: 'rejectAllChanges', label: 'rejectAllChanges', run: weEditorReviewAll(false) },
   undo: { icon: 'undo', label: 'undo', run: undo },
   redo: { icon: 'redo', label: 'redo', run: redo },
   bold: { icon: 'bold', label: 'bold', ...mark('bold') },
@@ -258,6 +270,21 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
    */
   @Input() autosave: ((html: string) => void | Promise<void>) | null = null;
   @Input() autosaveDelay = 1500;
+
+  /**
+   * Records edits as suggestions — insertions underlined, deletions struck through — to be accepted
+   * or rejected (`acceptChange`, `rejectChange`, `acceptAllChanges`, `rejectAllChanges` toolbar items,
+   * or the methods). Suggestions travel in the HTML as `<ins data-id>` / `<del data-id>`.
+   */
+  @Input()
+  set trackChanges(on: boolean) {
+    this._trackChanges = on;
+    this.syncTracking();
+  }
+  get trackChanges(): boolean {
+    return this.view ? weEditorTrackingEnabled(this.view.state) : this._trackChanges;
+  }
+  private _trackChanges = false;
 
   /** Word and character counts after every edit (not on `writeValue`/`setHtml`; use `getStats()`). */
   @Output() readonly stats = new EventEmitter<WeEditorStats>();
@@ -392,7 +419,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
         const pos = view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos;
         return this.insertImageFiles(event.dataTransfer?.files, pos);
       },
-      dispatchTransaction: (tr) => this.apply(tr),
+      // While tracking is on, the decorator turns each edit into suggestion marks before it is applied
+      dispatchTransaction: withSuggestChanges((tr) => this.apply(tr)),
       handleKeyDown: (_view, event) => {
         // The palette and character bars keep focus in the editor, so Escape is handled here.
         if (event.key === 'Escape' && (this.colorOpen || this.charsOpen || this.painter)) {
@@ -422,6 +450,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       }
     });
     this.pendingHtml = null;
+    this.syncTracking();
     this.counts = this.getStats();
     this.refreshUi();
   }
@@ -442,6 +471,28 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     this.view?.destroy();
   }
 
+  /** The suggested changes in the document, in reading order (`trackChanges`) */
+  getChanges(): WeEditorChange[] {
+    return this.view ? weEditorChanges(this.view.state.doc) : [];
+  }
+
+  /** Accepts every suggested change — the text reads as edited, the marks are gone */
+  acceptAllChanges(): void {
+    if (this.view) weEditorReviewAll(true)(this.view.state, this.view.dispatch);
+  }
+
+  /** Rejects every suggested change — the text reads as before the edits */
+  rejectAllChanges(): void {
+    if (this.view) weEditorReviewAll(false)(this.view.state, this.view.dispatch);
+  }
+
+  /** Puts the view's recording in line with `trackChanges` — on init and after `setHtml` builds a new state */
+  private syncTracking(): void {
+    const view = this.view;
+    if (!view || weEditorTrackingEnabled(view.state) === this._trackChanges) return;
+    weEditorSetTracking(this._trackChanges)(view.state, view.dispatch);
+  }
+
   /** Current content as sanitized HTML (`''` when empty). */
   getHtml(): string {
     return this.view ? weEditorSerializeHtml(this.view.state.doc) : this.pendingHtml ?? '';
@@ -459,6 +510,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
       return;
     }
     this.view.updateState(weEditorCreateState(html));
+    this.syncTracking();
     this.counts = this.getStats();
     this.syncSource();
     this.refreshUi();
@@ -839,7 +891,8 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     const { state } = this.view;
     const doc = weEditorParseHtml(text);
     if (doc.eq(state.doc)) return;
-    this.view.dispatch(state.tr.replaceWith(0, state.doc.content.size, doc.content).setMeta(FROM_SOURCE, true));
+    // A source edit replaces the whole document — not a suggestion to mark from end to end
+    this.view.dispatch(state.tr.replaceWith(0, state.doc.content.size, doc.content).setMeta(FROM_SOURCE, true).setMeta(suggestChangesKey, { skip: true }));
   }
 
   /** Design → source, while the source view is open. */

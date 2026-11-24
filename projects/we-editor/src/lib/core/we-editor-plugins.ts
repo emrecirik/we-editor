@@ -9,6 +9,7 @@ import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-li
 import { Command, EditorState, NodeSelection, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, NodeView, ViewMutationRecord } from 'prosemirror-view';
 
+import { suggestChanges } from '@handlewithcare/prosemirror-suggest-changes';
 import { weEditorCodeHighlight } from './we-editor-code';
 import { weEditorInsertHardBreak } from './we-editor-commands';
 import { weEditorPasteFromOffice } from './we-editor-paste';
@@ -127,6 +128,8 @@ export function weEditorInputRules(): InputRule[] {
 export function weEditorPlugins(): Plugin[] {
   const listItems = [s.nodes['list_item'], s.nodes['task_item']];
   return [
+    // Off until switched on (`trackChanges`); the editor's dispatch turns edits into suggestions then
+    suggestChanges(),
     history(),
     inputRules({ rules: weEditorInputRules() }),
     ...weEditorAutolink(),

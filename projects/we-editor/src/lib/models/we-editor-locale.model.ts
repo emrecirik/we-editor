@@ -117,6 +117,12 @@ export interface WeEditorLocale {
   caseSentence: string;
   formatPainter: string;
   fullscreen: string;
+  /** Track changes (`trackChanges` toolbar items) */
+  trackChanges: string;
+  acceptChange: string;
+  rejectChange: string;
+  acceptAllChanges: string;
+  rejectAllChanges: string;
   statusPath: string;
   statusWords: string;
   statusCharacters: string;
@@ -248,6 +254,11 @@ export const weEditorLocaleEn: WeEditorLocale = {
   caseSentence: 'Sentence case',
   formatPainter: 'Format painter',
   fullscreen: 'Full screen',
+  trackChanges: 'Track changes',
+  acceptChange: 'Accept change',
+  rejectChange: 'Reject change',
+  acceptAllChanges: 'Accept all changes',
+  rejectAllChanges: 'Reject all changes',
   statusPath: 'Element path',
   statusWords: 'Words',
   statusCharacters: 'Characters',
@@ -379,6 +390,11 @@ export const weEditorLocaleTr: WeEditorLocale = {
   caseSentence: 'Cümle düzeni',
   formatPainter: 'Biçim boyacısı',
   fullscreen: 'Tam ekran',
+  trackChanges: 'Değişiklikleri izle',
+  acceptChange: 'Değişikliği kabul et',
+  rejectChange: 'Değişikliği reddet',
+  acceptAllChanges: 'Tüm değişiklikleri kabul et',
+  rejectAllChanges: 'Tüm değişiklikleri reddet',
   statusPath: 'Öğe yolu',
   statusWords: 'Kelime',
   statusCharacters: 'Karakter',

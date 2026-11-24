@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Track changes** — `[trackChanges]` input and the `trackChanges`, `acceptChange`, `rejectChange`,
+  `acceptAllChanges`, `rejectAllChanges` toolbar items (not in the default toolbar): edits become
+  insertions (underlined) and deletions (struck through) to accept or reject — at the cursor, over a
+  selection, or all at once. Suggestions are kept in the HTML as `<ins data-id>` / `<del data-id>`, so
+  a half-reviewed document saves and loads. `getChanges()`, `acceptAllChanges()`,
+  `rejectAllChanges()`; commands `weEditorReviewChange`, `weEditorReviewAll`, `weEditorSetTracking`;
+  CSS `--we-editor-insertion-*` / `--we-editor-deletion-*` in both themes; five locale keys in every
+  shipped locale (a hand-written full locale needs them). New dependency
+  `@handlewithcare/prosemirror-suggest-changes` 0.1.8 (MIT, pinned) — its HTML parsing is replaced by
+  a validating one: only plain numeric ids are read, and modifications are never read from HTML.
+
 ## 0.4.0 — 2026-11-13
 
 Image captions and links; table caption, cell colours and vertical alignment. Minor version: new

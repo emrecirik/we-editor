@@ -39,6 +39,8 @@ or copy that file and change values. Dark mode: `data-theme="dark"` on an ancest
 | `--we-editor-placeholder-color` | Placeholder text in an empty editor |
 | `--we-editor-search-match-bg` | Find & replace: every match |
 | `--we-editor-search-active-bg` | Find & replace: the current match |
+| `--we-editor-insertion-color` / `--we-editor-insertion-bg` *(0.5.0)* | Track changes: suggested insertions |
+| `--we-editor-deletion-color` / `--we-editor-deletion-bg` *(0.5.0)* | Track changes: suggested deletions |
 | `--we-editor-swatch` | Set by the component on the colour buttons to show the current colour |
 
 A new property is added to all three blocks of `we-editor-theme.scss`.

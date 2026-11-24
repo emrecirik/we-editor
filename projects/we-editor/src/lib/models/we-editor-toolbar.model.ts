@@ -39,7 +39,13 @@ export type WeEditorToolbarItem =
   | 'findReplace'
   | 'clearFormatting'
   | 'source'
-  | 'fullscreen';
+  | 'fullscreen'
+  // Track changes — not in the default toolbar; list them to offer review
+  | 'trackChanges'
+  | 'acceptChange'
+  | 'rejectChange'
+  | 'acceptAllChanges'
+  | 'rejectAllChanges';
 
 export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'undo', 'redo', '|',

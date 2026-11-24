@@ -32,6 +32,7 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `statusBar` | `boolean` | `false` | Status bar under the content: element path (click a crumb to select that ancestor), autosave state, word and character counts |
 | `autosave` | `(html: string) => void \| Promise<void>` \| `null` | `null` | Called `autosaveDelay` ms after the last edit, and once more on destroy if an edit is still pending; a rejected promise shows "Could not save" |
 | `autosaveDelay` | `number` | `1500` | Milliseconds of quiet before `autosave` runs |
+| `trackChanges` *(0.5.0)* | `boolean` | `false` | Records edits as suggestions to accept or reject — see [Track changes](#track-changes) |
 | `placeholder` | `string` | `''` | Shown in an empty document (also set as `aria-placeholder`) |
 
 Disabled state comes from the form control (`control.disable()`).
@@ -49,6 +50,8 @@ Disabled state comes from the form control (`control.disable()`).
 | `getHtml(): string` | Current content, serialized through the schema; `''` when empty |
 | `setHtml(html)` | Replace content and reset undo history, without emitting a change |
 | `getStats(): WeEditorStats` | Word and character counts (characters = Unicode code points, block breaks not counted) |
+| `getChanges(): WeEditorChange[]` *(0.5.0)* | The suggested changes, in reading order: `{ id, kind: 'insertion' \| 'deletion' \| 'modification', text, from, to }` |
+| `acceptAllChanges()` / `rejectAllChanges()` *(0.5.0)* | Accepts / rejects every suggested change |
 | `focus()` | Focus the editable area |
 | `editorView` | The underlying ProseMirror `EditorView` (advanced use; undefined before init) |
 
@@ -59,6 +62,33 @@ Disabled state comes from the form control (`control.disable()`).
 `alignRight`, `alignJustify`, `bulletList`, `orderedList`, `taskList`, `outdent`, `indent`,
 `blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `specialChars`,
 `findReplace`, `formatPainter`, `textCase`, `clearFormatting`, `source`, `fullscreen`, `'|'`.
+Not in the default toolbar *(0.5.0)*: `trackChanges`, `acceptChange`, `rejectChange`,
+`acceptAllChanges`, `rejectAllChanges`.
+
+### Track changes
+
+*(0.5.0)* With `[trackChanges]="true"` (or the `trackChanges` toolbar toggle) every edit becomes a
+suggestion: typed text is an **insertion** (underlined), removed text stays as a **deletion** (struck
+through), and a changed format is a **modification**. A deletion and the text typed in its place form
+one replacement with a single id, reviewed together.
+
+- `acceptChange` / `rejectChange` act on the change under the cursor, or on every change the selection
+  touches (one undo step); they are disabled elsewhere. `acceptAllChanges` / `rejectAllChanges` act on
+  the whole document. The same is available as `getChanges()`, `acceptAllChanges()`,
+  `rejectAllChanges()` and the commands `weEditorReviewChange(accept)`, `weEditorReviewAll(accept)`.
+- Suggestions travel in the HTML value as `<ins data-id="N">` and `<del data-id="N">`, so a document
+  can be saved half-reviewed and reviewed later or by someone else. Only a plain number is read as an
+  id; a plain `<del>` stays strikethrough. **Modifications are not kept in HTML**: their old value
+  could be anything (a `javascript:` link), so they are never read back — the HTML holds the new value.
+- Recording survives `setHtml` and `writeValue`. Suggestions carry no author or date yet.
+- Re-formatting text (bold, colour, a link) is suggested as a replacement — the old run deleted, the
+  re-formatted one inserted. A changed block attribute (alignment, a ticked task) is a modification.
+- Edits made in the HTML source view are not tracked: they replace the document as a whole.
+- Limits: a suggestion on a whole table row is lost when the HTML is loaded again (browsers move an
+  `<ins>` out of a `<tbody>`; the row stays, unmarked). Around block boundaries the underlying library
+  may leave a zero-width space (U+200B) in the text, which shows up in the HTML and the character count.
+  `acceptAllChanges()` / `rejectAllChanges()` work on a read-only editor too, like `setHtml`.
+- Built on `@handlewithcare/prosemirror-suggest-changes` (MIT, pinned), see `docs/LICENSES.md`.
 
 **Pasting from Word, Outlook or Google Docs** is cleaned automatically: Word's marker paragraphs
 become real nested `<ul>` / `<ol>` lists, and Office font, size, spacing, `mso-*` and default-colour
