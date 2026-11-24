@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## 0.6.0 — 2026-11-24
+
+Comments. Minor version: new inputs, an output and toolbar items; the editor now reads
+`<span data-comment-id>` as a comment mark. The new locale keys are breaking only for hand-written
+full locale objects.
+
 ### Added
 
 - **Comments** — the `comment` and `comments` toolbar items (not in the default toolbar): comment on
