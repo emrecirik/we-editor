@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { WE_EDITOR_LOCALE, WeEditorComponent, WeEditorStats, weEditorLocaleTr, weEditorSanitizeHtml } from 'we-editor-angular';
+import { WE_EDITOR_LOCALE, WeEditorComponent, WeEditorStats, WeEditorToolbarItem, weEditorLocaleTr, weEditorSanitizeHtml } from 'we-editor-angular';
 
 const SAMPLE = `
 <h1>Field trip report</h1>
@@ -45,6 +45,9 @@ export class EditorTrComponent {
 })
 export class AppComponent {
   readonly control = new FormControl(SAMPLE, { nonNullable: true, validators: Validators.required });
+  /** The track changes demo: a short contract clause to redline */
+  readonly reviewControl = new FormControl('<p>The supplier delivers the goods within 30 days of the order.</p>', { nonNullable: true });
+  readonly reviewToolbar: WeEditorToolbarItem[] = ['undo', 'redo', '|', 'bold', 'italic', '|', 'trackChanges', 'acceptChange', 'rejectChange', 'acceptAllChanges', 'rejectAllChanges'];
   lang: 'en' | 'tr' = 'en';
   dark = false;
   readonly = false;
