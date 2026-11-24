@@ -42,7 +42,7 @@
           <button type="button" class="link-btn" (click)="resetExample()">{{ text.resetExample }}</button>
         </div>
       </div>
-      <we-editor [formControl]="control" [readonly]="readonly" [placeholder]="text.placeholder" [statusBar]="true" [autosave]="save"
+      <we-editor [formControl]="control" [toolbar]="toolbar" [readonly]="readonly" [placeholder]="text.placeholder" [statusBar]="true" [autosave]="save"
                  [autosaveDelay]="800" />
       <aside class="tips">
         <h2>{{ text.tryTitle }}</h2>

@@ -42,7 +42,8 @@ const en = {
     'Press </> at the end of the toolbar for the HTML source; Split shows code and design side by side, kept in sync.',
     'The status bar shows where the cursor is (click p, td, table… to select it), the word count and the autosave state; ⛶ goes full screen, Esc comes back.',
     'Format painter: click inside formatted text, press the roller, then select other text. Aa changes case; the line height picker sits next to the font size.',
-    'Ctrl+Z undoes everything; Tab and Shift+Tab nest lists and move between table cells.'
+    'Ctrl+Z undoes everything; Tab and Shift+Tab nest lists and move between table cells.',
+    'Press the track changes button (at the end of the toolbar), then type and delete: insertions are underlined, deletions struck through. Put the cursor on one and accept ✓ or reject ✕ it — or all at once.'
   ],
   htmlTitle: 'HTML in, safe HTML out',
   htmlIntro: 'The editor is a form control: its value is HTML. Anything the schema does not know — scripts, event handlers, javascript: links, unknown iframes — is dropped on the way in.',
@@ -87,7 +88,8 @@ const tr: typeof en = {
     'Araç çubuğunun sonundaki </> ile HTML kaynağını açın; Bölünmüş görünüm kodu ve tasarımı yan yana, eşzamanlı gösterir.',
     'Durum çubuğu imlecin nerede olduğunu (p, td, table… tıklayınca seçilir), kelime sayısını ve otomatik kaydı gösterir; ⛶ tam ekran, Esc geri döner.',
     'Biçim boyacısı: biçimli metne tıklayın, rulo düğmesine basın, sonra başka bir metni seçin. Aa büyük/küçük harfi değiştirir; satır aralığı yazı boyutunun yanında.',
-    'Ctrl+Z her şeyi geri alır; Tab ve Shift+Tab listeleri iç içe alır, tablo hücreleri arasında gezer.'
+    'Ctrl+Z her şeyi geri alır; Tab ve Shift+Tab listeleri iç içe alır, tablo hücreleri arasında gezer.',
+    'Araç çubuğunun sonundaki değişiklikleri izle düğmesine basın, sonra yazın ve silin: eklenenlerin altı çizilir, silinenlerin üstü çizilir. İmleci birinin üzerine koyup kabul ✓ ya da ret ✕ edin — ya da hepsini birden.'
   ],
   htmlTitle: 'HTML girer, güvenli HTML çıkar',
   htmlIntro: 'Editör bir form kontrolüdür: değeri HTML’dir. Şemanın tanımadığı her şey — script, olay işleyicileri, javascript: bağlantıları, bilinmeyen iframe’ler — girişte atılır.',

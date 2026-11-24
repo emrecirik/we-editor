@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { WeEditorComponent, weEditorSanitizeHtml } from 'we-editor-angular';
+import { WE_EDITOR_DEFAULT_TOOLBAR, WeEditorComponent, WeEditorToolbarItem, weEditorSanitizeHtml } from 'we-editor-angular';
 import { STUDIO_SAMPLE, STUDIO_TEXT, StudioLanguage, saveStudioLanguage, studioLanguage } from './studio-text';
 
 type Tab = 'editor' | 'html' | 'start';
@@ -20,6 +20,8 @@ export class AppComponent implements OnInit {
   readonly lang: StudioLanguage = studioLanguage();
   readonly text = STUDIO_TEXT[this.lang];
   private readonly docKey = `we-editor-studio:doc-${this.lang}`;
+  /** The default toolbar plus the track changes buttons */
+  readonly toolbar: WeEditorToolbarItem[] = [...WE_EDITOR_DEFAULT_TOOLBAR, '|', 'trackChanges', 'acceptChange', 'rejectChange', 'acceptAllChanges', 'rejectAllChanges'];
   readonly control = new FormControl(this.read(this.docKey) ?? STUDIO_SAMPLE[this.lang], { nonNullable: true });
   readonly = false;
   htmlDraft = this.text.htmlUnsafe;
