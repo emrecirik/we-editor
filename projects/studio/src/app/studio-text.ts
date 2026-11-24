@@ -26,6 +26,7 @@ const en = {
   tabEditor: 'Editor',
   tabHtml: 'Safe HTML',
   tabStart: 'Get started',
+  commentAuthor: 'You',
   editorTitle: 'Field trip report',
   editorIntro: 'Everything below runs in your browser and is editable. Your changes are kept in this browser only.',
   placeholder: 'Start typing… try # , - , 1.  or >',
@@ -43,7 +44,8 @@ const en = {
     'The status bar shows where the cursor is (click p, td, table… to select it), the word count and the autosave state; ⛶ goes full screen, Esc comes back.',
     'Format painter: click inside formatted text, press the roller, then select other text. Aa changes case; the line height picker sits next to the font size.',
     'Ctrl+Z undoes everything; Tab and Shift+Tab nest lists and move between table cells.',
-    'Press the track changes button (at the end of the toolbar), then type and delete: insertions are underlined, deletions struck through. Put the cursor on one and accept ✓ or reject ✕ it — or all at once.'
+    'Press the track changes button (at the end of the toolbar), then type and delete: insertions are underlined, deletions struck through. Put the cursor on one and accept ✓ or reject ✕ it — or all at once.',
+    'Select some text and press the comment button: the comments panel opens under the document — reply, resolve or delete a thread, click its quote to jump to the text.'
   ],
   htmlTitle: 'HTML in, safe HTML out',
   htmlIntro: 'The editor is a form control: its value is HTML. Anything the schema does not know — scripts, event handlers, javascript: links, unknown iframes — is dropped on the way in.',
@@ -72,6 +74,7 @@ const tr: typeof en = {
   tabEditor: 'Editör',
   tabHtml: 'Güvenli HTML',
   tabStart: 'Başlarken',
+  commentAuthor: 'Siz',
   editorTitle: 'Gezi raporu',
   editorIntro: 'Aşağıdaki her şey tarayıcınızda çalışır ve düzenlenebilir. Değişiklikleriniz yalnızca bu tarayıcıda saklanır.',
   placeholder: 'Yazmaya başlayın… # , - , 1.  ya da > deneyin',
@@ -89,7 +92,8 @@ const tr: typeof en = {
     'Durum çubuğu imlecin nerede olduğunu (p, td, table… tıklayınca seçilir), kelime sayısını ve otomatik kaydı gösterir; ⛶ tam ekran, Esc geri döner.',
     'Biçim boyacısı: biçimli metne tıklayın, rulo düğmesine basın, sonra başka bir metni seçin. Aa büyük/küçük harfi değiştirir; satır aralığı yazı boyutunun yanında.',
     'Ctrl+Z her şeyi geri alır; Tab ve Shift+Tab listeleri iç içe alır, tablo hücreleri arasında gezer.',
-    'Araç çubuğunun sonundaki değişiklikleri izle düğmesine basın, sonra yazın ve silin: eklenenlerin altı çizilir, silinenlerin üstü çizilir. İmleci birinin üzerine koyup kabul ✓ ya da ret ✕ edin — ya da hepsini birden.'
+    'Araç çubuğunun sonundaki değişiklikleri izle düğmesine basın, sonra yazın ve silin: eklenenlerin altı çizilir, silinenlerin üstü çizilir. İmleci birinin üzerine koyup kabul ✓ ya da ret ✕ edin — ya da hepsini birden.',
+    'Bir metin seçip yorum düğmesine basın: belgenin altında yorumlar paneli açılır — yanıtlayın, çözüldü yapın ya da silin; alıntıya tıklayınca metne gidilir.'
   ],
   htmlTitle: 'HTML girer, güvenli HTML çıkar',
   htmlIntro: 'Editör bir form kontrolüdür: değeri HTML’dir. Şemanın tanımadığı her şey — script, olay işleyicileri, javascript: bağlantıları, bilinmeyen iframe’ler — girişte atılır.',

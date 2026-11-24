@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { WE_EDITOR_DEFAULT_TOOLBAR, WeEditorComponent, WeEditorToolbarItem, weEditorSanitizeHtml } from 'we-editor-angular';
+import { WE_EDITOR_DEFAULT_TOOLBAR, WeEditorComment, WeEditorComponent, WeEditorToolbarItem, weEditorSanitizeHtml } from 'we-editor-angular';
 import { STUDIO_SAMPLE, STUDIO_TEXT, StudioLanguage, saveStudioLanguage, studioLanguage } from './studio-text';
 
 type Tab = 'editor' | 'html' | 'start';
@@ -20,8 +20,11 @@ export class AppComponent implements OnInit {
   readonly lang: StudioLanguage = studioLanguage();
   readonly text = STUDIO_TEXT[this.lang];
   private readonly docKey = `we-editor-studio:doc-${this.lang}`;
-  /** The default toolbar plus the track changes buttons */
-  readonly toolbar: WeEditorToolbarItem[] = [...WE_EDITOR_DEFAULT_TOOLBAR, '|', 'trackChanges', 'acceptChange', 'rejectChange', 'acceptAllChanges', 'rejectAllChanges'];
+  private readonly commentsKey = `we-editor-studio:comments-${this.lang}`;
+  /** The default toolbar plus the review buttons: track changes and comments */
+  readonly toolbar: WeEditorToolbarItem[] = [...WE_EDITOR_DEFAULT_TOOLBAR, '|', 'trackChanges', 'acceptChange', 'rejectChange', 'acceptAllChanges', 'rejectAllChanges', '|', 'comment', 'comments'];
+  /** Comment threads live next to the document, not in its HTML — kept in this browser like the document */
+  comments: WeEditorComment[] = this.readComments();
   readonly control = new FormControl(this.read(this.docKey) ?? STUDIO_SAMPLE[this.lang], { nonNullable: true });
   readonly = false;
   htmlDraft = this.text.htmlUnsafe;
@@ -73,9 +76,16 @@ providers: [{ provide: WE_EDITOR_LOCALE, useValue: weEditorLocaleTr }]`;
     this.applyTheme();
   }
 
+  saveComments(list: WeEditorComment[]): void {
+    this.comments = list;
+    this.write(this.commentsKey, JSON.stringify(list));
+  }
+
   resetExample(): void {
+    this.comments = [];
     try {
       localStorage.removeItem(this.docKey);
+      localStorage.removeItem(this.commentsKey);
     } catch {
       // storage blocked — nothing was saved either
     }
@@ -109,6 +119,18 @@ providers: [{ provide: WE_EDITOR_LOCALE, useValue: weEditorLocaleTr }]`;
       localStorage.setItem(key, value);
     } catch {
       // storage blocked — the choice lasts for this visit
+    }
+  }
+
+  private readComments(): WeEditorComment[] {
+    try {
+      const list: unknown = JSON.parse(this.read(this.commentsKey) ?? '[]');
+      // Stored data is checked, not trusted: only well-formed threads come back
+      return Array.isArray(list)
+        ? list.filter((c): c is WeEditorComment => !!c && typeof c === 'object' && typeof c.id === 'string' && typeof c.text === 'string' && typeof c.createdAt === 'string')
+        : [];
+    } catch {
+      return [];
     }
   }
 }

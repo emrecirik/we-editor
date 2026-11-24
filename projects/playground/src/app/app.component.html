@@ -22,11 +22,11 @@
   </section>
 
   <section>
-    <h3>Track changes</h3>
+    <h3>Track changes and comments</h3>
     <p>Type, delete or paste — each edit is kept as a suggestion until you accept or reject it (cursor on a change, or a
       selection over several). <code>[trackChanges]</code>, toolbar items <code>trackChanges</code>, <code>acceptChange</code>,
       <code>rejectChange</code>, <code>acceptAllChanges</code>, <code>rejectAllChanges</code>.</p>
-    <we-editor #review [formControl]="reviewControl" [trackChanges]="true" [toolbar]="reviewToolbar" />
+    <we-editor #review [formControl]="reviewControl" [trackChanges]="true" [toolbar]="reviewToolbar" [comments]="reviewComments" commentAuthor="Reviewer" (commentsChange)="reviewComments = $event" />
     <p class="pg-status">{{ review.getChanges().length }} change(s) · HTML: <code>{{ reviewControl.value }}</code></p>
   </section>
 
