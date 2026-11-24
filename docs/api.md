@@ -33,6 +33,8 @@ import { WeEditorComponent } from 'we-editor-angular';
 | `autosave` | `(html: string) => void \| Promise<void>` \| `null` | `null` | Called `autosaveDelay` ms after the last edit, and once more on destroy if an edit is still pending; a rejected promise shows "Could not save" |
 | `autosaveDelay` | `number` | `1500` | Milliseconds of quiet before `autosave` runs |
 | `trackChanges` *(0.5.0)* | `boolean` | `false` | Records edits as suggestions to accept or reject — see [Track changes](#track-changes) |
+| `comments` *(0.6.0)* | `WeEditorComment[]` | `[]` | The document's comment threads — see [Comments](#comments) |
+| `commentAuthor` *(0.6.0)* | `string` | `''` | Written as the author of new comments and replies |
 | `placeholder` | `string` | `''` | Shown in an empty document (also set as `aria-placeholder`) |
 
 Disabled state comes from the form control (`control.disable()`).
@@ -41,6 +43,7 @@ Disabled state comes from the form control (`control.disable()`).
 
 | Output | Type | Description |
 |---|---|---|
+| `commentsChange` *(0.6.0)* | `WeEditorComment[]` | The whole list, after a comment is added, answered, resolved or deleted — store it next to the HTML |
 | `stats` | `WeEditorStats` (`{ words, characters }`) | After every edit. Not emitted by `writeValue`/`setHtml` — read `getStats()` for loaded content |
 
 ### Methods
@@ -63,7 +66,7 @@ Disabled state comes from the form control (`control.disable()`).
 `blockquote`, `codeBlock`, `horizontalRule`, `link`, `unlink`, `image`, `media`, `table`, `specialChars`,
 `findReplace`, `formatPainter`, `textCase`, `clearFormatting`, `source`, `fullscreen`, `'|'`.
 Not in the default toolbar *(0.5.0)*: `trackChanges`, `acceptChange`, `rejectChange`,
-`acceptAllChanges`, `rejectAllChanges`.
+`acceptAllChanges`, `rejectAllChanges`, and *(0.6.0)* `comment`, `comments`.
 
 ### Track changes
 
@@ -89,6 +92,32 @@ one replacement with a single id, reviewed together.
   may leave a zero-width space (U+200B) in the text, which shows up in the HTML and the character count.
   `acceptAllChanges()` / `rejectAllChanges()` work on a read-only editor too, like `setHtml`.
 - Built on `@handlewithcare/prosemirror-suggest-changes` (MIT, pinned), see `docs/LICENSES.md`.
+
+### Comments
+
+*(0.6.0)* Select text and press `comment` to write a comment on it; `comments` opens the panel under
+the document: each thread shows the commented text (click it to select that text), the author and
+time, the comment and its replies, with Reply, Resolve / Reopen and Delete. The thread under the
+cursor is outlined.
+
+```html
+<we-editor formControlName="body" [toolbar]="toolbar" [comments]="comments"
+           [commentAuthor]="user.name" (commentsChange)="saveComments($event)" />
+```
+
+- **The HTML carries only an id.** The commented text is `<span data-comment-id="c…">`; the threads
+  (`WeEditorComment`: `id`, `text`, `author?`, `createdAt`, `resolved?`, `replies?`) live in the
+  `comments` input and come back through `commentsChange` — store them next to the document. No
+  comment text ever reaches the page as HTML, and only ids of letters, digits, `_` and `-` (up to 64)
+  are read back.
+- Comments may overlap. Adding one is not recorded as a tracked change. Deleting a thread takes its
+  mark off the text; a thread whose text was deleted stays in your list but leaves the panel.
+- Commands for your own UI: `weEditorAddComment(id)`, `weEditorRemoveComment(id)`,
+  `weEditorCommentRanges(doc)`, `weEditorCommentsAt(state)`, `weEditorNewCommentId()`.
+- Dates are written in the content's language (the closest `lang` attribute), like change case.
+- Pasted or dropped content never brings comment marks along (a copied id would join two places
+  into one thread). Reply, Resolve and Delete are shown only while the editor can be edited; a mark
+  whose thread is gone (an undone delete) can still be deleted from the panel.
 
 **Pasting from Word, Outlook or Google Docs** is cleaned automatically: Word's marker paragraphs
 become real nested `<ul>` / `<ol>` lists, and Office font, size, spacing, `mso-*` and default-colour

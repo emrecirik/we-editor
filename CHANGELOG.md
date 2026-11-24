@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Comments** — the `comment` and `comments` toolbar items (not in the default toolbar): comment on
+  the selected text, then reply, resolve, reopen or delete in a panel under the document; click a
+  thread's quote to select its text. The HTML keeps only `<span data-comment-id>`; the threads come in
+  through `[comments]` and go out through `(commentsChange)`, with `commentAuthor` for new ones.
+  Commands `weEditorAddComment`, `weEditorRemoveComment`, `weEditorCommentRanges`,
+  `weEditorCommentsAt`, `weEditorNewCommentId`; types `WeEditorComment`, `WeEditorCommentReply`;
+  CSS `--we-editor-comment-bg` / `--we-editor-comment-border` in both themes; twelve locale keys in
+  every shipped locale (a hand-written full locale needs them).
+
 ## 0.5.0 — 2026-11-24
 
 Track changes. Minor version: a new input, toolbar items and a dependency; the editor's HTML now

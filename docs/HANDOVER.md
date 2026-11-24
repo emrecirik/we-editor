@@ -4,7 +4,7 @@ Last updated: 2026-11-13 (end of session 3). Owner: Emre CIRIK (`emrecirik`).
 
 ## Current state
 
-- **`we-editor-angular` 0.4.0 is on npm** (`latest`). Releases are tag-driven and automatic: push a
+- **`we-editor-angular` 0.6.0 is on npm** (`latest`; 0.5.0 track changes, 0.6.0 comments). Releases are tag-driven and automatic: push a
   `v*` tag → `.github/workflows/release.yml` builds, tests, publishes through **npm Trusted Publishing
   (OIDC) with provenance** and creates the GitHub release from `CHANGELOG.md`. Proven on 0.2.0, 0.3.0,
   0.4.0. (0.1.0 was published by hand; npm's staged publishing left a harmless `0.0.0-stage` version in
@@ -67,6 +67,17 @@ Session 2 (F0.12, images, tables, landing page, P1 find & replace, P2 autolink, 
   the `editor-screenshots` skill).
 - `SampleUsageProjects/*` are still empty placeholders.
 - TipTap / Lexical cells in `docs/COMPETITORS.md` partly from package knowledge — re-check before quoting.
+
+## Session 4 (2026-11-24)
+
+- **0.5.0** track changes (`@handlewithcare/prosemirror-suggest-changes` 0.1.8, MIT, pinned; its HTML
+  parsing replaced by a validating one), **0.6.0** comments (threads outside the HTML, ids only in it).
+  Studio has the review buttons and keeps comments in localStorage; the features page and README show both.
+- Found while testing in a real browser, fixed and covered by specs: block-level suggestions crashed
+  without `marks` on container nodes; a tracked format change leaked old values into the HTML; the
+  comment box took focus too late (keys replaced the selection); a disabled default button blocked
+  Enter; the comment count badge covered the button next to it.
+- Next after this: P11 (mentions + slash commands) below.
 
 ## Next tasks (in order)
 

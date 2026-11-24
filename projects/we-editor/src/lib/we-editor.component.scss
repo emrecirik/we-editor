@@ -490,6 +490,12 @@ we-editor {
     color: var(--we-editor-link-color, #3b6fd8);
   }
 
+  // Comments: the commented text
+  span[data-comment-id] {
+    background: var(--we-editor-comment-bg, rgba(247, 184, 75, 0.22));
+    border-bottom: 2px solid var(--we-editor-comment-border, #e0a030);
+  }
+
   // Track changes: suggested insertions and deletions
   ins[data-id] {
     color: var(--we-editor-insertion-color, #0a7d6b);
@@ -722,4 +728,96 @@ we-editor {
 
 .we-editor__save[data-state='failed'] {
   color: var(--we-editor-code-color, #c2255c);
+}
+
+// Comments panel under the content
+.we-editor__comments {
+  display: grid;
+  gap: 8px;
+  padding: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  border-top: 1px solid var(--we-editor-border-color, #dee2e6);
+  background: var(--we-editor-toolbar-bg, #f3f6f9);
+}
+
+.we-editor__thread {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: var(--we-editor-radius, 6px);
+  background: var(--we-editor-bg, #fff);
+  border-left: 3px solid var(--we-editor-comment-border, #e0a030);
+
+  p {
+    margin: 0;
+  }
+}
+
+.we-editor__thread--active {
+  box-shadow: 0 0 0 2px var(--we-editor-focus-ring, rgba(64, 81, 137, 0.35));
+}
+
+.we-editor__thread--resolved {
+  opacity: 0.6;
+  border-left-color: var(--we-editor-border-color, #dee2e6);
+}
+
+.we-editor__thread-quote {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--we-editor-muted-color, #878a99);
+  font: inherit;
+  font-style: italic;
+  text-align: start;
+  cursor: pointer;
+}
+
+.we-editor__thread-meta {
+  color: var(--we-editor-muted-color, #878a99);
+  font-size: 0.8125rem;
+}
+
+.we-editor__thread-reply {
+  display: grid;
+  padding-left: 10px;
+  border-left: 2px solid var(--we-editor-border-color, #dee2e6);
+}
+
+.we-editor__thread-badge {
+  color: var(--we-editor-accent-color, #405189);
+}
+
+.we-editor__thread-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  .we-editor__input {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+}
+
+// The thread count sits on the Comments button's corner, so the button keeps its size
+.we-editor__btn[data-item='comments'] {
+  position: relative;
+}
+
+.we-editor__count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: var(--we-editor-comment-border, #e0a030);
+  color: var(--we-editor-bg, #fff);
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 14px;
+  text-align: center;
+  pointer-events: none;
 }

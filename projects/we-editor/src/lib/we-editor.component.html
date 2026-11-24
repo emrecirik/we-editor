@@ -101,6 +101,23 @@
               <span aria-hidden="true" [innerHTML]="icon('link')"></span>
             </button>
           }
+          @case ('comment') {
+            <button type="button" class="we-editor__btn" data-item="comment" [class.we-editor__btn--active]="commentOpen"
+                    [disabled]="!ui.enabled.comment" [title]="locale.comment" [attr.aria-label]="locale.comment"
+                    [attr.aria-expanded]="commentOpen" (click)="commentOpen ? closeComment() : openComment()">
+              <span aria-hidden="true" [innerHTML]="icon('comment')"></span>
+            </button>
+          }
+          @case ('comments') {
+            <button type="button" class="we-editor__btn" data-item="comments" [class.we-editor__btn--active]="commentsPanel"
+                    [title]="locale.comments" [attr.aria-label]="locale.comments" [attr.aria-pressed]="commentsPanel"
+                    (click)="toggleCommentsPanel()">
+              <span aria-hidden="true" [innerHTML]="icon('comments')"></span>
+              @if (openComments) {
+                <span class="we-editor__count">{{ openComments }}</span>
+              }
+            </button>
+          }
           @case ('image') {
             <button type="button" class="we-editor__btn" data-item="image" [class.we-editor__btn--active]="ui.active.image || imageOpen"
                     [disabled]="!ui.enabled.image" [title]="locale.image" [attr.aria-label]="locale.image"
@@ -188,6 +205,15 @@
       @if (linkError) {
         <span class="we-editor__error" role="alert">{{ locale.linkInvalid }}</span>
       }
+    </form>
+  }
+
+  @if (commentOpen) {
+    <form class="we-editor__linkbar" data-bar="comment" (submit)="applyComment($event)" (keydown.escape)="closeComment()">
+      <input #commentInput class="we-editor__input" type="text" autocomplete="off" maxlength="2000" [attr.aria-label]="locale.comment"
+             [placeholder]="locale.commentPlaceholder" [value]="commentDraft" (input)="commentDraft = $any($event.target).value" />
+      <button type="submit" class="we-editor__text-btn we-editor__text-btn--primary">{{ locale.commentAdd }}</button>
+      <button type="button" class="we-editor__text-btn" (click)="closeComment()">{{ locale.commentCancel }}</button>
     </form>
   }
 
@@ -354,6 +380,46 @@
     <div #source class="we-editor__source" [hidden]="sourceMode === 'off'"></div>
     <div #content class="we-editor__content" [hidden]="sourceMode === 'code'"></div>
   </div>
+
+  @if (commentsPanel) {
+    <section class="we-editor__comments" [attr.aria-label]="locale.comments">
+      @for (thread of commentThreads; track thread.range.id) {
+        <article class="we-editor__thread" [class.we-editor__thread--active]="activeComments.includes(thread.range.id)"
+                 [class.we-editor__thread--resolved]="thread.comment?.resolved">
+          <button type="button" class="we-editor__thread-quote" (click)="goToComment(thread.range)">“{{ thread.range.text }}”</button>
+          @if (thread.comment; as c) {
+            <p class="we-editor__thread-meta">
+              @if (c.author) { <strong>{{ c.author }}</strong> · }{{ commentDate(c.createdAt) }}
+              @if (c.resolved) { · <span class="we-editor__thread-badge">{{ locale.commentResolved }}</span> }
+            </p>
+            <p class="we-editor__thread-text">{{ c.text }}</p>
+            @for (r of replies(c); track $index) {
+              <p class="we-editor__thread-reply">
+                <span class="we-editor__thread-meta">@if (r.author) { <strong>{{ r.author }}</strong> · }{{ commentDate(r.createdAt) }}</span>
+                {{ r.text }}
+              </p>
+            }
+            @if (canReview) {
+            <form class="we-editor__thread-actions" (submit)="$event.preventDefault(); replyTo(c.id)">
+              <input class="we-editor__input" type="text" autocomplete="off" maxlength="2000" [attr.aria-label]="locale.commentReply"
+                     [placeholder]="locale.commentReplyPlaceholder" [value]="replyDrafts[c.id] ?? ''" (input)="replyDrafts[c.id] = $any($event.target).value" />
+              <button type="submit" class="we-editor__text-btn">{{ locale.commentReply }}</button>
+              <button type="button" class="we-editor__text-btn" (click)="resolveComment(c.id, !c.resolved)">{{ c.resolved ? locale.commentReopen : locale.commentResolve }}</button>
+              <button type="button" class="we-editor__text-btn" (click)="deleteComment(c.id)">{{ locale.commentDelete }}</button>
+            </form>
+            }
+          } @else if (canReview) {
+            <!-- A mark without its thread (an undone delete, or HTML from elsewhere) can still be taken off -->
+            <div class="we-editor__thread-actions">
+              <button type="button" class="we-editor__text-btn" (click)="deleteComment(thread.range.id)">{{ locale.commentDelete }}</button>
+            </div>
+          }
+        </article>
+      } @empty {
+        <p class="we-editor__thread-meta">{{ locale.commentsEmpty }}</p>
+      }
+    </section>
+  }
 
   @if (statusBar) {
     <div class="we-editor__statusbar">

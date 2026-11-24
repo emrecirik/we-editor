@@ -43,6 +43,10 @@ Angular için ücretsiz, temalanabilir zengin metin editörü; [ProseMirror](htt
 - **Biçim boyacısı**, **büyük/küçük harf dönüştürme** (dile duyarlı: Türkçe İ/ı), **satır aralığı** — başka editörlerde ücretli
 - **Değişiklik izleme**: düzenlemeler kabul ya da reddedilecek eklemelere ve silmelere dönüşür — tek tek ya da hepsi birden — HTML'de saklanır, yarısı incelenmiş belge kaydedilip açılabilir; CKEditor 5, TinyMCE ve TipTap'te ücretli ([doküman](docs/api.md#track-changes))
 
+- **Yorumlar**: herhangi bir metne yorum yazın, belgenin altındaki panelde yanıtlayın, çözüldü yapın ya da yeniden açın — HTML'de yalnız bir kimlik kalır, yorumlar sizin verinizdir ([doküman](docs/api.md#comments))
+
+  ![we-editor Studio'da belgenin altında yorumlar, biri yanıtlı, yorumlanan metin vurgulu](docs/images/editor-comments.png)
+
   ![we-editor Studio'da değişiklik izleme: değiştirilen kelimeler kırmızı üstü çizili, yeni metin yeşil altı çizili, kabul ve ret düğmeleri araç çubuğunun sonunda](docs/images/editor-track-changes.png)
 - Tıklanabilir öğe yolu (`table › tr › td › p`) ve sayılarla **durum çubuğu**; **tam ekran**; **otomatik kaydetme** kancası
 - Markdown kısayolları (`# `, `- `, `1. `, `> `, ```` ``` ````), yazılan ve yapıştırılan adresler için otomatik bağlantı

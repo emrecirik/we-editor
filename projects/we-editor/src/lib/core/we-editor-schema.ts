@@ -1,5 +1,6 @@
 import { DOMOutputSpec, Mark, MarkSpec, Node as PmNode, NodeSpec, Schema, TagParseRule } from 'prosemirror-model';
 import { tableNodes } from 'prosemirror-tables';
+import { weEditorCommentMark } from './we-editor-comments';
 import { WE_EDITOR_SUGGESTION_MARKS, weEditorDeletionMark, weEditorInsertionMark, weEditorModificationMark } from './we-editor-track';
 
 /** Paragraph/heading alignment. `null` means "inherit" (no inline style is written). */
@@ -589,6 +590,7 @@ for (const spec of Object.values(nodes)) {
   if (spec.content && !/inline|text/.test(spec.content) && spec.marks === undefined) spec.marks = WE_EDITOR_SUGGESTION_MARKS;
 }
 
+marks['comment'] = weEditorCommentMark;
 marks['insertion'] = weEditorInsertionMark;
 marks['deletion'] = weEditorDeletionMark;
 marks['modification'] = weEditorModificationMark;

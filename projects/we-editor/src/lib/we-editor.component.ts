@@ -80,6 +80,8 @@ import { WE_EDITOR_DEFAULT_CODE_LANGUAGES, weEditorCodeLanguageAt, weEditorSetCo
 import { weEditorFormatHtml } from './core/we-editor-format';
 import { weEditorParseHtml, weEditorSerializeHtml } from './core/we-editor-html';
 import { WeEditorSourceEditor, weEditorCreateSourceEditor } from './core/we-editor-source';
+import { WeEditorCommentRange, weEditorAddComment, weEditorCommentRanges, weEditorCommentsAt, weEditorNewCommentId, weEditorRemoveComment } from './core/we-editor-comments';
+import { WeEditorComment } from './models/we-editor-comment.model';
 import { WeEditorChange, weEditorChanges, weEditorReviewAll, weEditorReviewChange, weEditorSetTracking, weEditorTrackingEnabled } from './core/we-editor-track';
 import { suggestChangesKey, withSuggestChanges } from '@handlewithcare/prosemirror-suggest-changes';
 import { WeEditorEmbedView, WeEditorImageView, WeEditorStats, WeEditorTaskItemView, weEditorCreateState, weEditorStats } from './core/we-editor-plugins';
@@ -286,6 +288,26 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   }
   private _trackChanges = false;
 
+  /**
+   * The comment threads of the document (`comment` / `comments` toolbar items). The HTML only marks
+   * the commented text with an id (`<span data-comment-id>`); the threads are yours to store, and come
+   * back through `commentsChange` whenever one is added, answered, resolved or deleted.
+   */
+  @Input() comments: WeEditorComment[] = [];
+  /** Written as the author of new comments and replies */
+  @Input() commentAuthor = '';
+  @Output() readonly commentsChange = new EventEmitter<WeEditorComment[]>();
+
+  protected commentOpen = false;
+  protected commentDraft = '';
+  protected commentsPanel = false;
+  protected replyDrafts: Record<string, string> = {};
+  /** The threads whose text is in the document, in reading order, and the ids under the cursor */
+  protected commentThreads: { range: WeEditorCommentRange; comment: WeEditorComment | undefined }[] = [];
+  protected activeComments: string[] = [];
+  /** Threads still open — what the badge on the Comments button counts */
+  protected openComments = 0;
+
   /** Word and character counts after every edit (not on `writeValue`/`setHtml`; use `getStats()`). */
   @Output() readonly stats = new EventEmitter<WeEditorStats>();
 
@@ -303,6 +325,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
 
   @ViewChild('linkInput')
   private set linkInput(ref: ElementRef<HTMLInputElement> | undefined) {
+    ref?.nativeElement.focus();
+  }
+
+  @ViewChild('commentInput')
+  private set commentInput(ref: ElementRef<HTMLInputElement> | undefined) {
     ref?.nativeElement.focus();
   }
 
@@ -456,6 +483,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   ngOnChanges(): void {
+    if (this.view) this.refreshComments(this.view.state);
     this.refreshUi();
   }
 
@@ -484,6 +512,97 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   /** Rejects every suggested change — the text reads as before the edits */
   rejectAllChanges(): void {
     if (this.view) weEditorReviewAll(false)(this.view.state, this.view.dispatch);
+  }
+
+  /** Reply, resolve and delete change the document or its threads — only while it can be edited */
+  protected get canReview(): boolean {
+    return this.isEditable();
+  }
+
+  /** Pairs the commented ranges with their threads — on every document change, not on every check */
+  private refreshComments(state: EditorState): void {
+    const byId = new Map(this.comments.filter((c) => c && typeof c.id === 'string').map((c) => [c.id, c]));
+    this.commentThreads = weEditorCommentRanges(state.doc).map((range) => ({ range, comment: byId.get(range.id) }));
+    this.openComments = this.commentThreads.filter((t) => t.comment && !t.comment.resolved).length;
+    this.activeComments = weEditorCommentsAt(state);
+  }
+
+  /** A thread's replies, whatever shape stored data came back in */
+  protected replies(comment: WeEditorComment): WeEditorComment['replies'] {
+    return Array.isArray(comment.replies) ? comment.replies : [];
+  }
+
+  protected openComment(): void {
+    if (!this.view || !this.isEditable() || this.view.state.selection.empty) return;
+    this.closeBars();
+    this.commentDraft = '';
+    this.commentOpen = true;
+    // Draw and focus the comment box now: keys typed right after the click must not replace the selection
+    this.cdr.detectChanges();
+  }
+
+  protected closeComment(): void {
+    this.commentOpen = false;
+    this.view?.focus();
+  }
+
+  protected applyComment(event?: Event): void {
+    event?.preventDefault();
+    const text = this.commentDraft.trim();
+    if (!text) return;
+    const id = weEditorNewCommentId();
+    if (!this.exec(weEditorAddComment(id))) return;
+    this.emitComments([...this.comments, { id, text, author: this.commentAuthor || undefined, createdAt: new Date().toISOString() }]);
+    this.commentOpen = false;
+    this.commentsPanel = true;
+    this.refreshUi();
+  }
+
+  protected toggleCommentsPanel(): void {
+    this.commentsPanel = !this.commentsPanel;
+    this.refreshUi();
+  }
+
+  /** Selects the commented text */
+  protected goToComment(range: WeEditorCommentRange): void {
+    const view = this.view;
+    if (!view) return;
+    view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, range.from, range.to)).scrollIntoView());
+    view.focus();
+  }
+
+  protected replyTo(id: string): void {
+    const text = (this.replyDrafts[id] ?? '').trim();
+    if (!text) return;
+    this.replyDrafts[id] = '';
+    this.emitComments(
+      this.comments.map((c) => (c.id === id ? { ...c, replies: [...(c.replies ?? []), { text, author: this.commentAuthor || undefined, createdAt: new Date().toISOString() }] } : c))
+    );
+  }
+
+  protected resolveComment(id: string, resolved: boolean): void {
+    this.emitComments(this.comments.map((c) => (c.id === id ? { ...c, resolved } : c)));
+  }
+
+  /** Deletes the thread and takes its mark off the text — also a mark left without its thread (an undone delete) */
+  protected deleteComment(id: string): void {
+    if (!this.isEditable()) return;
+    this.exec(weEditorRemoveComment(id));
+    if (this.comments.some((c) => c.id === id)) this.emitComments(this.comments.filter((c) => c.id !== id));
+  }
+
+  protected commentDate(iso: string): string {
+    const date = new Date(iso);
+    // Written in the content's language (closest `lang`), like change case; else the browser's
+    const lang = this.contentRef.nativeElement.closest('[lang]')?.getAttribute('lang') || undefined;
+    return isNaN(date.getTime()) ? '' : date.toLocaleString(lang, { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  private emitComments(list: WeEditorComment[]): void {
+    this.comments = list;
+    this.commentsChange.emit(list);
+    if (this.view) this.refreshComments(this.view.state);
+    this.cdr.markForCheck();
   }
 
   /** Puts the view's recording in line with `trackChanges` — on init and after `setHtml` builds a new state */
@@ -904,7 +1023,7 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
   /** Only one bar under the toolbar at a time. */
   private closeBars(): void {
     if (this.findOpen && this.view) weEditorSetSearch({ search: '' })(this.view.state, this.view.dispatch);
-    this.linkOpen = this.imageOpen = this.tableOpen = this.findOpen = this.mediaOpen = this.charsOpen = false;
+    this.linkOpen = this.imageOpen = this.tableOpen = this.findOpen = this.mediaOpen = this.charsOpen = this.commentOpen = false;
     this.colorOpen = null;
   }
 
@@ -1045,6 +1164,11 @@ export class WeEditorComponent implements ControlValueAccessor, OnInit, OnChange
     }
     active.link = weEditorMarkActive(state, s.marks['link']);
     enabled.link = editable;
+    enabled.comment = editable && !state.selection.empty;
+    enabled.comments = true;
+    active.comments = this.commentsPanel;
+    // Only screens that offer comments pay for walking the document
+    if (this.commentsPanel || this.toolbar.includes('comment') || this.toolbar.includes('comments')) this.refreshComments(state);
     const inTable = isInTable(state);
     const table: WeEditorUiState['table'] = {};
     if (inTable) for (const a of this.tableActions) table[a] = editable && TABLE_ACTIONS[a](state);

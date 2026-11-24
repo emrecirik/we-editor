@@ -75,7 +75,7 @@ Status: ✅ done · 🟡 partial · ⬜ not started.
 | F4.2 | Sanitizer hardening | Spec corpus from the OWASP XSS filter-evasion vectors; sanitizer contract documented for a server-side mirror |
 | F4.3 | Collaboration hooks (later) | Expose steps / `prosemirror-collab` hooks; no backend shipped |
 | F4.4 | we-report document templates | Template authored in we-editor rendered by we-report; contract note in `docs/` |
-| F4.5 | Comments / track changes | Track changes done (unreleased, 0.5.0); comments next |
+| F4.5 | Comments / track changes | Done — track changes 0.5.0, comments 0.6.0 |
 
 ## P — Competitor parity (before the first npm release)
 

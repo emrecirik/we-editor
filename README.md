@@ -44,6 +44,10 @@ No CSS framework, no icon font, no commercial dependency. A sibling of
 - **Format painter**, **change case** (language-aware: Turkish İ/ı), **line height** — premium-only elsewhere
 - **Track changes**: edits become insertions and deletions to accept or reject — one at a time or all at once — kept in the HTML so a half-reviewed document saves and loads; paid in CKEditor 5, TinyMCE and TipTap ([docs](docs/api.md#track-changes))
 
+- **Comments**: comment on any text, reply, resolve and reopen in a panel under the document — the HTML keeps only an id, the threads are your data ([docs](docs/api.md#comments))
+
+  ![Comment threads under the document in we-editor Studio, one with a reply, the commented text highlighted](docs/images/editor-comments.png)
+
   ![Track changes in we-editor Studio: replaced words struck through in red, new text underlined in green, accept and reject buttons at the end of the toolbar](docs/images/editor-track-changes.png)
 - **Status bar** with a clickable element path (`table › tr › td › p`) and counts; **full screen**; **autosave** hook
 - Markdown shortcuts (`# `, `- `, `1. `, `> `, ```` ``` ````), autolink for typed and pasted URLs

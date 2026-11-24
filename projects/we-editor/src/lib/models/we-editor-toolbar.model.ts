@@ -45,7 +45,10 @@ export type WeEditorToolbarItem =
   | 'acceptChange'
   | 'rejectChange'
   | 'acceptAllChanges'
-  | 'rejectAllChanges';
+  | 'rejectAllChanges'
+  // Comments — not in the default toolbar either
+  | 'comment'
+  | 'comments';
 
 export const WE_EDITOR_DEFAULT_TOOLBAR: readonly WeEditorToolbarItem[] = [
   'undo', 'redo', '|',

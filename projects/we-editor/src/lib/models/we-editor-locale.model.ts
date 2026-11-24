@@ -123,6 +123,19 @@ export interface WeEditorLocale {
   rejectChange: string;
   acceptAllChanges: string;
   rejectAllChanges: string;
+  /** Comments (`comment`, `comments` toolbar items) */
+  comment: string;
+  comments: string;
+  commentPlaceholder: string;
+  commentAdd: string;
+  commentCancel: string;
+  commentReply: string;
+  commentReplyPlaceholder: string;
+  commentResolve: string;
+  commentReopen: string;
+  commentDelete: string;
+  commentsEmpty: string;
+  commentResolved: string;
   statusPath: string;
   statusWords: string;
   statusCharacters: string;
@@ -259,6 +272,18 @@ export const weEditorLocaleEn: WeEditorLocale = {
   rejectChange: 'Reject change',
   acceptAllChanges: 'Accept all changes',
   rejectAllChanges: 'Reject all changes',
+  comment: 'Comment',
+  comments: 'Comments',
+  commentPlaceholder: 'Write a comment…',
+  commentAdd: 'Add comment',
+  commentCancel: 'Cancel',
+  commentReply: 'Reply',
+  commentReplyPlaceholder: 'Reply…',
+  commentResolve: 'Resolve',
+  commentReopen: 'Reopen',
+  commentDelete: 'Delete',
+  commentsEmpty: 'No comments yet. Select some text and press Comment.',
+  commentResolved: 'Resolved',
   statusPath: 'Element path',
   statusWords: 'Words',
   statusCharacters: 'Characters',
@@ -395,6 +420,18 @@ export const weEditorLocaleTr: WeEditorLocale = {
   rejectChange: 'Değişikliği reddet',
   acceptAllChanges: 'Tüm değişiklikleri kabul et',
   rejectAllChanges: 'Tüm değişiklikleri reddet',
+  comment: 'Yorum ekle',
+  comments: 'Yorumlar',
+  commentPlaceholder: 'Bir yorum yazın…',
+  commentAdd: 'Yorumu ekle',
+  commentCancel: 'Vazgeç',
+  commentReply: 'Yanıtla',
+  commentReplyPlaceholder: 'Yanıt…',
+  commentResolve: 'Çözüldü',
+  commentReopen: 'Yeniden aç',
+  commentDelete: 'Sil',
+  commentsEmpty: 'Henüz yorum yok. Bir metin seçip Yorum ekle düğmesine basın.',
+  commentResolved: 'Çözüldü',
   statusPath: 'Öğe yolu',
   statusWords: 'Kelime',
   statusCharacters: 'Karakter',
